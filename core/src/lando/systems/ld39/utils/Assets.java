@@ -32,6 +32,7 @@ public class Assets {
 
     public static Texture testTexture;
     public static Texture whitePixel;
+    public static Texture carBase;
 
     public static boolean initialized;
 
@@ -49,6 +50,7 @@ public class Assets {
         mgr = new AssetManager();
         mgr.load("images/badlogic.jpg", Texture.class, nearestParams);
         mgr.load("images/white-pixel.png", Texture.class, nearestParams);
+        mgr.load("images/car-base.png", Texture.class, nearestParams);
 
         if (tween == null) {
             tween = new TweenManager();
@@ -72,6 +74,7 @@ public class Assets {
 
         testTexture = mgr.get("images/badlogic.jpg", Texture.class);
         whitePixel = mgr.get("images/white-pixel.png", Texture.class);
+        carBase = mgr.get("images/car-base.png", Texture.class);
 
         final Texture distText = new Texture(Gdx.files.internal("fonts/ubuntu.png"), true);
         distText.setFilter(Texture.TextureFilter.MipMapLinearNearest, Texture.TextureFilter.Linear);
