@@ -85,12 +85,11 @@ public class GameScreen extends BaseScreen {
     private void updateCamera(float dt) {
         camera.zoom = MathUtils.clamp(camera.zoom, minZoom, maxZoom);
 
-        float deltaY = playerCar.speed * dt;
-
+        float deltaY = playerCar.speed;
         // move camera based on car speed - update position of car in so it doesn't drop
         playerCar.position.y += deltaY;
         camera.position.y += deltaY;
-        constraintBounds.y = camera.position.y - constraintOffset.y;
+        constraintBounds.y += deltaY;
 
         // Keep camera within world bounds
 //        float minY = world.bounds.y + camera.viewportHeight / 2 * camera.zoom;

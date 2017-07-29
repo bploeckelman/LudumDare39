@@ -91,7 +91,8 @@ public class PlayerCar extends GameObject {
     }
 
     private void setSpeed() {
-        speed = 1000 * (position.y - constraintBounds.y) / constraintBounds.height;
+        // i can't drive 55
+        speed = 10 + (20 * (position.y - constraintBounds.y) / constraintBounds.height);
     }
 
     private void constrainBounds(Rectangle bounds) {
