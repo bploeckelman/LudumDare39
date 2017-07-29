@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import lando.systems.ld39.objects.PlayerCar;
+import lando.systems.ld39.road.Road;
 import lando.systems.ld39.utils.Assets;
 import lando.systems.ld39.utils.Config;
 import lando.systems.ld39.utils.accessors.RectangleAccessor;
@@ -24,6 +25,8 @@ public class GameScreen extends BaseScreen {
     public static float minZoom = 0.2f;
     public static float DRAG_DELTA = 10f;
 
+    public Road road;
+
     private Vector3 touchStart;
     private Vector3 cameraTouchStart;
     private boolean cancelTouchUp;
@@ -33,7 +36,9 @@ public class GameScreen extends BaseScreen {
     private Rectangle testPixel;
     private Vector2 testPixelVel;
 
+
     public GameScreen() {
+        road = new Road();
         touchStart = new Vector3();
         cameraTouchStart = new Vector3();
         cancelTouchUp = false;
@@ -52,6 +57,11 @@ public class GameScreen extends BaseScreen {
             Gdx.app.exit();
         }
 
+        if (Gdx.input.isKeyPressed(Input.Keys.W)){
+            camera.position.y += 10;
+            camera.update();
+        }
+        road.update(dt);
         updateObjects(dt);
         updateWorld(dt);
         updateCamera(dt);
@@ -66,6 +76,7 @@ public class GameScreen extends BaseScreen {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         {
+            road.render(batch, camera);
             // world.render(batch);
             batch.draw(Assets.whitePixel, testPixel.x, testPixel.y, testPixel.width, testPixel.height);
 
