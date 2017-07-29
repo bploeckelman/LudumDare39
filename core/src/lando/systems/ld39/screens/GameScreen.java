@@ -108,6 +108,7 @@ public class GameScreen extends BaseScreen {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         {
+            road.renderFrameBuffer(batch, camera);
             renderWorld(batch);
             renderObjects(batch);
         }

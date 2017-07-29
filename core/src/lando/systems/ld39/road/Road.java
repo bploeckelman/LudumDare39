@@ -1,10 +1,14 @@
 package lando.systems.ld39.road;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Array;
+import lando.systems.ld39.utils.Assets;
+import lando.systems.ld39.utils.Config;
 
 /**
  * Created by dsgraham on 7/29/17.
@@ -12,10 +16,15 @@ import com.badlogic.gdx.utils.Array;
 public class Road {
 
     public float segmentLength = 400;
+    public float shoulderWidth = 40;
     public Array<RoadDef> roadSegments;
     public ShapeRenderer shapes;
+    public Texture fboTexture;
+    public FrameBuffer fbo;
 
     public Road(){
+        fbo = new FrameBuffer(Pixmap.Format.RGB888, Config.gameWidth, Config.gameHeight, false);
+        fboTexture = fbo.getColorBufferTexture();
         shapes = new ShapeRenderer();
         shapes.setAutoShapeType(true);
         roadSegments = new Array<RoadDef>();
@@ -31,27 +40,75 @@ public class Road {
 
     }
 
-    public void render(SpriteBatch batch, OrthographicCamera camera){
+    public void renderFrameBuffer(SpriteBatch batch, OrthographicCamera camera){
+        fbo.begin();
         batch.end();
         shapes.setProjectionMatrix(camera.combined);
         shapes.begin(ShapeRenderer.ShapeType.Filled);
-        shapes.setColor(Color.WHITE);
+        shapes.setColor(Color.BLACK);
         float cameraBottom = camera.position.y - camera.viewportHeight/2f;
+        shapes.rect(0, cameraBottom, camera.viewportWidth, camera.viewportHeight);
+        shapes.setColor(Color.WHITE);
         for (int i = 0; i < (camera.viewportHeight / segmentLength) +1; i++){
             int roadIndex = (int)(cameraBottom / segmentLength) + i;
             if (roadIndex < 0 || roadIndex >= roadSegments.size) continue;
             RoadDef current = roadSegments.get(roadIndex);
             RoadDef next = roadSegments.get(roadIndex + 1);
+            // Road
             shapes.triangle(current.leftSide, roadIndex * segmentLength,
-                            current.leftSide + current.width, roadIndex * segmentLength,
-                            next.leftSide, (roadIndex + 1) * segmentLength);
+                    current.leftSide + current.width, roadIndex * segmentLength,
+                    next.leftSide, (roadIndex + 1) * segmentLength);
             shapes.triangle(current.leftSide + current.width, roadIndex * segmentLength,
-                            next.leftSide, (roadIndex + 1) * segmentLength,
-                            next.leftSide + next.width, (roadIndex +1) * segmentLength);
+                    next.leftSide, (roadIndex + 1) * segmentLength,
+                    next.leftSide + next.width, (roadIndex +1) * segmentLength);
+            // Left Side
+            shapes.triangle(current.leftSide - shoulderWidth, roadIndex * segmentLength,
+                    current.leftSide, roadIndex * segmentLength,
+                    next.leftSide - shoulderWidth, (roadIndex +1) *segmentLength,
+                    Color.BLACK, Color.WHITE, Color.BLACK);
+            shapes.triangle(current.leftSide, roadIndex * segmentLength,
+                    next.leftSide - shoulderWidth, (roadIndex + 1) * segmentLength,
+                    next.leftSide, (roadIndex + 1) * segmentLength,
+                    Color.WHITE, Color.BLACK, Color.WHITE);
+
+            // Right Side
+            shapes.triangle(current.leftSide + current.width, roadIndex * segmentLength,
+                    current.leftSide + current.width + shoulderWidth, roadIndex * segmentLength,
+                    next.leftSide + next.width, (roadIndex + 1) * segmentLength,
+                    Color.WHITE, Color.BLACK, Color.WHITE);
+            shapes.triangle(current.leftSide + current.width + shoulderWidth, roadIndex * segmentLength,
+                    next.leftSide + next.width, (roadIndex + 1) * segmentLength,
+                    next.leftSide + next.width + shoulderWidth, (roadIndex + 1) * segmentLength,
+                    Color.BLACK, Color.WHITE, Color.BLACK);
         }
 
         shapes.end();
 
         batch.begin();
+        fbo.end();
+    }
+
+    public void render(SpriteBatch batch, OrthographicCamera camera){
+        batch.setShader(Assets.roadShader);
+
+        Gdx.graphics.getGL20().glActiveTexture(GL20.GL_TEXTURE2);
+        Assets.roadTexture.bind(2);
+
+        Assets.roadShader.setUniformi("u_texture3", 2); //passing first texture!!!
+
+
+        Gdx.graphics.getGL20().glActiveTexture(GL20.GL_TEXTURE1);
+        Assets.grassTexture.bind(1);
+
+        Assets.roadShader.setUniformi("u_texture2", 1); //passing first texture!!!
+
+        Gdx.graphics.getGL20().glActiveTexture(GL20.GL_TEXTURE0);
+        fboTexture.bind(0);
+        Assets.roadShader.setUniformi("u_texture", 0); //passing second texture!!!
+
+        Assets.roadShader.setUniformf("u_camera", camera.position.x / camera.viewportWidth, camera.position.y/ camera.viewportHeight);
+
+        batch.draw(fboTexture, 0, camera.position.y + camera.viewportHeight/2f, camera.viewportWidth, - camera.viewportHeight);
+        batch.setShader(null);
     }
 }

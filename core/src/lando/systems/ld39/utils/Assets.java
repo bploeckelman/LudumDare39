@@ -30,6 +30,10 @@ public class Assets {
     public static BitmapFont font;
     public static ShaderProgram fontShader;
 
+    public static ShaderProgram roadShader;
+    public static Texture grassTexture;
+    public static Texture roadTexture;
+
     public static TextureAtlas atlas;
 
     public static TextureRegion testTexture;
@@ -63,6 +67,10 @@ public class Assets {
             Tween.registerAccessor(OrthographicCamera.class, new CameraAccessor());
         }
 
+        mgr.load("images/grass.png", Texture.class);
+        mgr.load("images/road.png", Texture.class);
+
+
         batch = new SpriteBatch();
         shapes = new ShapeRenderer();
         layout = new GlyphLayout();
@@ -72,6 +80,11 @@ public class Assets {
         if (!mgr.update()) return mgr.getProgress();
         if (initialized) return 1f;
         initialized = true;
+
+        grassTexture = mgr.get("images/grass.png");
+        grassTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
+        roadTexture = mgr.get("images/road.png");
+        roadTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
 
         testTexture = atlas.findRegion("badlogic");
         whitePixel = atlas.findRegion("white-pixel");
@@ -84,8 +97,10 @@ public class Assets {
 
         fontShader = loadShader("shaders/dist.vert", "shaders/dist.frag");
 
+        roadShader = loadShader("shaders/default.vert", "shaders/road.frag");
         return 1f;
     }
+
 
     public static void dispose() {
         batch.dispose();
