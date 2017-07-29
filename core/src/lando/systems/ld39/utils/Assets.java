@@ -30,9 +30,11 @@ public class Assets {
     public static BitmapFont font;
     public static ShaderProgram fontShader;
 
-    public static Texture testTexture;
-    public static Texture whitePixel;
-    public static Texture carBase;
+    public static TextureAtlas atlas;
+
+    public static TextureRegion testTexture;
+    public static TextureRegion whitePixel;
+    public static TextureRegion carBase;
 
     public static boolean initialized;
 
@@ -48,9 +50,8 @@ public class Assets {
         nearestParams.magFilter = Texture.TextureFilter.Nearest;
 
         mgr = new AssetManager();
-        mgr.load("images/badlogic.jpg", Texture.class, nearestParams);
-        mgr.load("images/white-pixel.png", Texture.class, nearestParams);
-        mgr.load("images/car-base.png", Texture.class, nearestParams);
+
+        atlas = new TextureAtlas(Gdx.files.internal("sprites.atlas"));
 
         if (tween == null) {
             tween = new TweenManager();
@@ -72,9 +73,9 @@ public class Assets {
         if (initialized) return 1f;
         initialized = true;
 
-        testTexture = mgr.get("images/badlogic.jpg", Texture.class);
-        whitePixel = mgr.get("images/white-pixel.png", Texture.class);
-        carBase = mgr.get("images/car-base.png", Texture.class);
+        testTexture = atlas.findRegion("badlogic");
+        whitePixel = atlas.findRegion("white-pixel");
+        carBase = atlas.findRegion("car-base");
 
         final Texture distText = new Texture(Gdx.files.internal("fonts/ubuntu.png"), true);
         distText.setFilter(Texture.TextureFilter.MipMapLinearNearest, Texture.TextureFilter.Linear);
