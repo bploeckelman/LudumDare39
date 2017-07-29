@@ -12,11 +12,13 @@ import com.badlogic.gdx.utils.Array;
 import lando.systems.ld39.utils.Assets;
 import lando.systems.ld39.utils.Config;
 
+import java.util.Random;
+
 /**
  * Created by dsgraham on 7/29/17.
  */
 public class Road {
-
+    public Random rand = new Random();
     public float segmentLength = 400;
     public float shoulderWidth = 40;
     public Array<RoadDef> roadSegments;
@@ -30,12 +32,7 @@ public class Road {
         shapes = new ShapeRenderer();
         shapes.setAutoShapeType(true);
         roadSegments = new Array<RoadDef>();
-        for (int i = 0; i < 100; i ++) {
-            roadSegments.add(RoadDef.center);
-            roadSegments.add(RoadDef.left);
-            roadSegments.add(RoadDef.left);
-            roadSegments.add(RoadDef.center);
-        }
+        generateRoad();
     }
 
     public void update(float dt) {
@@ -53,8 +50,8 @@ public class Road {
         shapes.setColor(Color.WHITE);
         for (int i = 0; i < (camera.viewportHeight / segmentLength) +1; i++){
             int roadIndex = (int)(cameraBottom / segmentLength) + i;
-            RoadDef current = getRoadDef(i);
-            RoadDef next = getRoadDef(i+1);
+            RoadDef current = getRoadDef(roadIndex);
+            RoadDef next = getRoadDef(roadIndex+1);
 
             // Road
             shapes.triangle(current.leftSide, roadIndex * segmentLength,
@@ -137,5 +134,33 @@ public class Road {
         if (i < 0) return RoadDef.center;
         if (i >= roadSegments.size) return RoadDef.center;
         return roadSegments.get(i);
+    }
+
+    private void generateRoad(){
+        roadSegments.clear();
+        roadSegments.add(RoadDef.center);
+        roadSegments.add(RoadDef.center);
+        roadSegments.add(RoadDef.center);
+        roadSegments.add(RoadDef.center);
+        for (int i = 0; i < 100; i++){
+            int type = rand.nextInt(4);
+            int count = rand.nextInt(4) + 1;
+            for (int j = 0; j < count; j++){
+                switch (type) {
+                    case 0:
+                        roadSegments.add(RoadDef.center);
+                        break;
+                    case 1:
+                        roadSegments.add(RoadDef.left);
+                        break;
+                    case 2:
+                        roadSegments.add(RoadDef.right);
+                        break;
+                    case 3:
+                        roadSegments.add(RoadDef.thin);
+                        break;
+                }
+            }
+        }
     }
 }
