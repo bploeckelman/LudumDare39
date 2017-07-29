@@ -3,6 +3,7 @@ package lando.systems.ld39.screens;
 import aurelienribon.tweenengine.Tween;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
@@ -33,6 +34,9 @@ public class GameScreen extends BaseScreen {
 
     public PlayerCar playerCar;
 
+    public Rectangle constraintBounds;
+    private Vector2 constraintOffset;
+
     private Vector3 touchStart;
     private Vector3 cameraTouchStart;
     private boolean cancelTouchUp;
@@ -43,12 +47,16 @@ public class GameScreen extends BaseScreen {
         cameraTouchStart = new Vector3();
         cancelTouchUp = false;
 
+        constraintBounds = new Rectangle(0, 10, camera.viewportWidth, camera.viewportHeight * 0.7f);
+        constraintOffset = new Vector2((camera.viewportWidth /2) - 10, camera.viewportHeight /2);
+
         createCar();
     }
 
     private void createCar() {
         playerCar = new PlayerCar();
-        playerCar.constrain(camera);
+        playerCar.constraintBounds = constraintBounds;
+
         gameObjects.add(playerCar);
     }
 
@@ -57,13 +65,6 @@ public class GameScreen extends BaseScreen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             Gdx.app.exit();
         }
-
-
-
-//        if (Gdx.input.isKeyPressed(Input.Keys.W)){
-//            camera.position.y += 10;
-//            camera.update();
-//        }
 
         updateWorld(dt);
         updateObjects(dt);
@@ -75,6 +76,7 @@ public class GameScreen extends BaseScreen {
     }
 
     private void updateObjects(float dt) {
+        playerCar.constraintBounds = constraintBounds;
         for(GameObject gameObject : gameObjects) {
             gameObject.update(dt);
         }
@@ -82,6 +84,13 @@ public class GameScreen extends BaseScreen {
 
     private void updateCamera(float dt) {
         camera.zoom = MathUtils.clamp(camera.zoom, minZoom, maxZoom);
+
+        float deltaY = playerCar.speed * dt;
+
+        // move camera based on car speed - update position of car in so it doesn't drop
+        playerCar.position.y += deltaY;
+        camera.position.y += deltaY;
+        constraintBounds.y = camera.position.y - constraintOffset.y;
 
         // Keep camera within world bounds
 //        float minY = world.bounds.y + camera.viewportHeight / 2 * camera.zoom;
@@ -131,6 +140,10 @@ public class GameScreen extends BaseScreen {
     }
 
     private void renderObjects(SpriteBatch batch) {
+//        batch.setColor(Color.RED);
+//        batch.draw(Assets.whitePixel, constraintBounds.x, constraintBounds.y, constraintBounds.width, constraintBounds.height);
+//        batch.setColor(Color.WHITE);
+
         for (GameObject gameObject : gameObjects) {
             gameObject.render(batch);
         }

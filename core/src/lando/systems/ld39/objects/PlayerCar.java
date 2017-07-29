@@ -13,7 +13,10 @@ import lando.systems.ld39.utils.Config;
 
 public class PlayerCar extends GameObject {
 
-    public Rectangle constraintBounds = new Rectangle(100, 100, 400, 400);
+    // this is the bounds the car can move around
+    public Rectangle constraintBounds;
+
+    public float speed = 0;
 
     private float bounds_offset_x = 10f;
     private float bounds_offset_y = 10f;
@@ -39,10 +42,6 @@ public class PlayerCar extends GameObject {
 
         position.x = (Config.gameWidth  - bounds.width) / 2f;
         position.y = (Config.gameHeight - bounds.height) / 2f;
-    }
-
-    public void constrain(OrthographicCamera camera) {
-        constraintBounds = new Rectangle(0, 10, camera.viewportWidth, camera.viewportHeight * 0.7f);
     }
 
     @Override
@@ -81,9 +80,17 @@ public class PlayerCar extends GameObject {
         // update position (center)
         position.x = bounds.x + bounds_offset_x;
         position.y = bounds.y + bounds_offset_y;
+
+        setSpeed();
+    }
+
+    private void setSpeed() {
+        speed = 1000 * (position.y - constraintBounds.y) / constraintBounds.height;
     }
 
     private void constrainBounds(Rectangle bounds) {
+        if (constraintBounds == null) return;
+
         if (bounds.x < constraintBounds.x) {
             bounds.x = constraintBounds.x;
         }
@@ -102,7 +109,7 @@ public class PlayerCar extends GameObject {
     }
 
     private boolean isUp() {
-        return isPressed(Input.Keys.A, Input.Keys.UP, Input.Keys.DPAD_UP);
+        return isPressed(Input.Keys.W, Input.Keys.UP, Input.Keys.DPAD_UP);
     }
 
     private boolean isPressed(int... keys) {
