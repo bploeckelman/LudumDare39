@@ -13,7 +13,7 @@ import lando.systems.ld39.screens.GameScreen;
 import lando.systems.ld39.utils.Assets;
 import lando.systems.ld39.utils.Config;
 
-public class PlayerCar extends GameObject {
+public class PlayerCar extends Vehicle {
 
     // this is the bounds the car can move around
     public Rectangle constraintBounds;
@@ -34,15 +34,8 @@ public class PlayerCar extends GameObject {
     // TODO: addon layers
 
     public PlayerCar(GameScreen gameScreen) {
-        super(gameScreen);
+        super(gameScreen, Assets.carBase);
 
-        animStateTime = 0f;
-        anim = new Animation<TextureRegion>(anim_frame_duration, new TextureRegion(Assets.carBase));
-        anim.setPlayMode(Animation.PlayMode.LOOP);
-        keyframe = anim.getKeyFrame(animStateTime);
-
-        bounds.width = keyframe.getRegionWidth();
-        bounds.height = keyframe.getRegionHeight();
         bounds_offset_x = bounds.width / 2;
         bounds_offset_y = bounds.height / 2;
 
@@ -52,19 +45,8 @@ public class PlayerCar extends GameObject {
 
     @Override
     public void update(float dt) {
-        animStateTime += dt;
-        keyframe = anim.getKeyFrame(animStateTime);
+        super.update(dt);
 
-        updatePosition();
-    }
-
-    @Override
-    public void render(SpriteBatch batch) {
-        batch.draw(keyframe, bounds.x, bounds.y);
-    }
-
-    // movement
-    private void updatePosition() {
         bounds.x = position.x - bounds_offset_x;
         bounds.y = position.y - bounds_offset_y;
 
@@ -92,7 +74,7 @@ public class PlayerCar extends GameObject {
 
     private void setSpeed() {
         // i can't drive 55
-        speed = 10 + (20 * (position.y - constraintBounds.y) / constraintBounds.height);
+        speed = 10 + (10 * (position.y - constraintBounds.y) / constraintBounds.height);
     }
 
     private void constrainBounds(Rectangle bounds) {
@@ -140,13 +122,8 @@ public class PlayerCar extends GameObject {
         return isPressed(Input.Keys.D, Input.Keys.RIGHT, Input.Keys.DPAD_RIGHT);
     }
 
-    private int tiresOnRoad(){
-        int count = 0;
-        if (gameScreen.road.isOnRoad(position.x - tireOffset_x, position.y - tireOffset_y)) count++;
-        if (gameScreen.road.isOnRoad(position.x + tireOffset_x, position.y - tireOffset_y)) count++;
-        if (gameScreen.road.isOnRoad(position.x - tireOffset_x, position.y + tireOffset_y)) count++;
-        if (gameScreen.road.isOnRoad(position.x + tireOffset_x, position.y + tireOffset_y)) count++;
-        return count;
-
+    @Override
+    public void render(SpriteBatch batch) {
+        batch.draw(keyframe, bounds.x, bounds.y);
     }
 }
