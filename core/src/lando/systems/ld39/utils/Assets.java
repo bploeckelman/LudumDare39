@@ -40,6 +40,7 @@ public class Assets {
     public static TextureRegion testTexture;
     public static TextureRegion whitePixel;
     public static TextureRegion carBase;
+    public static Texture map;
 
     public static boolean initialized;
 
@@ -55,6 +56,7 @@ public class Assets {
         nearestParams.magFilter = Texture.TextureFilter.Nearest;
 
         mgr = new AssetManager();
+        mgr.load("images/usa-map-v1.png", Texture.class);
 
         atlas = new TextureAtlas(Gdx.files.internal("sprites.atlas"));
 
@@ -94,6 +96,8 @@ public class Assets {
         testTexture = atlas.findRegion("badlogic");
         whitePixel = atlas.findRegion("white-pixel");
         carBase = atlas.findRegion("car-base");
+
+        map = mgr.get("images/usa-map-v1.png", Texture.class);
 
         final Texture distText = new Texture(Gdx.files.internal("fonts/ubuntu.png"), true);
         distText.setFilter(Texture.TextureFilter.MipMapLinearNearest, Texture.TextureFilter.Linear);
