@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import lando.systems.ld39.utils.Assets;
 import lando.systems.ld39.utils.Config;
@@ -51,9 +53,9 @@ public class Road {
         shapes.setColor(Color.WHITE);
         for (int i = 0; i < (camera.viewportHeight / segmentLength) +1; i++){
             int roadIndex = (int)(cameraBottom / segmentLength) + i;
-            if (roadIndex < 0 || roadIndex >= roadSegments.size) continue;
-            RoadDef current = roadSegments.get(roadIndex);
-            RoadDef next = roadSegments.get(roadIndex + 1);
+            RoadDef current = getRoadDef(i);
+            RoadDef next = getRoadDef(i+1);
+
             // Road
             shapes.triangle(current.leftSide, roadIndex * segmentLength,
                     current.leftSide + current.width, roadIndex * segmentLength,
@@ -94,21 +96,46 @@ public class Road {
         Gdx.graphics.getGL20().glActiveTexture(GL20.GL_TEXTURE2);
         Assets.roadTexture.bind(2);
 
-        Assets.roadShader.setUniformi("u_texture3", 2); //passing first texture!!!
+        Assets.roadShader.setUniformi("u_texture3", 2);
 
 
         Gdx.graphics.getGL20().glActiveTexture(GL20.GL_TEXTURE1);
         Assets.grassTexture.bind(1);
 
-        Assets.roadShader.setUniformi("u_texture2", 1); //passing first texture!!!
+        Assets.roadShader.setUniformi("u_texture2", 1);
 
         Gdx.graphics.getGL20().glActiveTexture(GL20.GL_TEXTURE0);
         fboTexture.bind(0);
-        Assets.roadShader.setUniformi("u_texture", 0); //passing second texture!!!
+        Assets.roadShader.setUniformi("u_texture", 0); 
 
         Assets.roadShader.setUniformf("u_camera", camera.position.x / camera.viewportWidth, camera.position.y/ camera.viewportHeight);
 
         batch.draw(fboTexture, 0, camera.position.y + camera.viewportHeight/2f, camera.viewportWidth, - camera.viewportHeight);
         batch.setShader(null);
+    }
+
+    public boolean isOnRoad(float pnt_x, float pnt_y){
+        int roadIndex = (int)(pnt_y / segmentLength);
+        RoadDef current = getRoadDef(roadIndex);
+        RoadDef next = getRoadDef(roadIndex + 1);
+        if (Intersector.isPointInTriangle(pnt_x, pnt_y,
+                current.leftSide, roadIndex * segmentLength,
+                current.leftSide + current.width, roadIndex * segmentLength,
+                next.leftSide, (roadIndex + 1) * segmentLength)){
+            return true;
+        }
+        if (Intersector.isPointInTriangle(pnt_x, pnt_y,
+                current.leftSide + current.width, roadIndex * segmentLength,
+                next.leftSide, (roadIndex + 1) * segmentLength,
+                next.leftSide + next.width, (roadIndex +1) * segmentLength)){
+            return true;
+        }
+        return false;
+    }
+
+    private RoadDef getRoadDef(int i){
+        if (i < 0) return RoadDef.center;
+        if (i >= roadSegments.size) return RoadDef.center;
+        return roadSegments.get(i);
     }
 }

@@ -2,12 +2,14 @@ package lando.systems.ld39.objects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import lando.systems.ld39.screens.GameScreen;
 import lando.systems.ld39.utils.Assets;
 import lando.systems.ld39.utils.Config;
 
@@ -20,15 +22,19 @@ public class PlayerCar extends GameObject {
 
     private float bounds_offset_x = 10f;
     private float bounds_offset_y = 10f;
+    private float tireOffset_x = 21;
+    private float tireOffset_y = 18;
+
     private static float anim_frame_duration = 0.1f;
+
 
     private Animation<TextureRegion> anim;
     private float animStateTime;
 
     // TODO: addon layers
 
-    public PlayerCar() {
-        super();
+    public PlayerCar(GameScreen gameScreen) {
+        super(gameScreen);
 
         animStateTime = 0f;
         anim = new Animation<TextureRegion>(anim_frame_duration, new TextureRegion(Assets.carBase));
@@ -131,5 +137,15 @@ public class PlayerCar extends GameObject {
 
     private boolean isRight() {
         return isPressed(Input.Keys.D, Input.Keys.RIGHT, Input.Keys.DPAD_RIGHT);
+    }
+
+    private int tiresOnRoad(){
+        int count = 0;
+        if (gameScreen.road.isOnRoad(position.x - tireOffset_x, position.y - tireOffset_y)) count++;
+        if (gameScreen.road.isOnRoad(position.x + tireOffset_x, position.y - tireOffset_y)) count++;
+        if (gameScreen.road.isOnRoad(position.x - tireOffset_x, position.y + tireOffset_y)) count++;
+        if (gameScreen.road.isOnRoad(position.x + tireOffset_x, position.y + tireOffset_y)) count++;
+        return count;
+
     }
 }

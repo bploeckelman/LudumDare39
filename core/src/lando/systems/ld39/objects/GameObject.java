@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import lando.systems.ld39.screens.GameScreen;
 import lando.systems.ld39.utils.Assets;
 
 public abstract class GameObject {
@@ -11,8 +12,10 @@ public abstract class GameObject {
     public Vector2 position;
     public Rectangle bounds;
     public TextureRegion keyframe;
+    public GameScreen gameScreen;
 
-    public GameObject() {
+    public GameObject(GameScreen gameScreen) {
+        this.gameScreen = gameScreen;
         this.position = new Vector2();
         this.bounds = new Rectangle();
     }

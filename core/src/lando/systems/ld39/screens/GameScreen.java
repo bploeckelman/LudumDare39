@@ -54,9 +54,9 @@ public class GameScreen extends BaseScreen {
     }
 
     private void createCar() {
-        playerCar = new PlayerCar();
-        playerCar.constraintBounds = constraintBounds;
 
+        playerCar = new PlayerCar(this);
+        playerCar.constraintBounds = constraintBounds;
         gameObjects.add(playerCar);
     }
 
