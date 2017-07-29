@@ -2,6 +2,7 @@ package lando.systems.ld39.objects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -18,8 +19,8 @@ public class PlayerCar extends GameObject {
 
     private float bounds_offset_x = 10f;
     private float bounds_offset_y = 10f;
-    private float tireOffset_x = 5;
-    private float tireOffset_y = 5;
+    private float tireOffset_x = 21;
+    private float tireOffset_y = 18;
 
     private static float anim_frame_duration = 0.1f;
 
