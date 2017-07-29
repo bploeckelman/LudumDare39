@@ -47,7 +47,7 @@ public class GameScreen extends BaseScreen {
     }
 
     private void createCar() {
-        playerCar = new PlayerCar();
+        playerCar = new PlayerCar(this);
         playerCar.constrain(camera);
         gameObjects.add(playerCar);
     }
@@ -57,8 +57,6 @@ public class GameScreen extends BaseScreen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             Gdx.app.exit();
         }
-
-
 
 //        if (Gdx.input.isKeyPressed(Input.Keys.W)){
 //            camera.position.y += 10;
