@@ -1,8 +1,6 @@
 package lando.systems.ld39.screens;
 
 import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.equations.Bounce;
-import aurelienribon.tweenengine.equations.Quad;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
@@ -11,6 +9,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import lando.systems.ld39.objects.PlayerCar;
 import lando.systems.ld39.utils.Assets;
 import lando.systems.ld39.utils.Config;
 import lando.systems.ld39.utils.accessors.RectangleAccessor;
@@ -29,6 +28,8 @@ public class GameScreen extends BaseScreen {
     private Vector3 cameraTouchStart;
     private boolean cancelTouchUp;
 
+    private PlayerCar playerCar;
+
     private Rectangle testPixel;
     private Vector2 testPixelVel;
 
@@ -36,6 +37,8 @@ public class GameScreen extends BaseScreen {
         touchStart = new Vector3();
         cameraTouchStart = new Vector3();
         cancelTouchUp = false;
+
+        playerCar = new PlayerCar();
 
         testPixel = new Rectangle(camera.viewportWidth / 2f - 5f,
                                   camera.viewportHeight / 2f - 5f,
@@ -49,6 +52,7 @@ public class GameScreen extends BaseScreen {
             Gdx.app.exit();
         }
 
+        updateObjects(dt);
         updateWorld(dt);
         updateCamera(dt);
     }
@@ -64,6 +68,8 @@ public class GameScreen extends BaseScreen {
         {
             // world.render(batch);
             batch.draw(Assets.whitePixel, testPixel.x, testPixel.y, testPixel.width, testPixel.height);
+
+            playerCar.render(batch);
         }
         batch.end();
 
@@ -128,6 +134,10 @@ public class GameScreen extends BaseScreen {
     // ------------------------------------------------------------------------
     // Utility Methods
     // ------------------------------------------------------------------------
+
+    private void updateObjects(float dt) {
+        playerCar.update(dt);
+    }
 
     private void updateWorld(float dt) {
         testPixel.x += testPixelVel.x * dt;
