@@ -9,6 +9,8 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
+import lando.systems.ld39.objects.GameObject;
 import lando.systems.ld39.objects.PlayerCar;
 import lando.systems.ld39.road.Road;
 import lando.systems.ld39.utils.Assets;
@@ -27,15 +29,13 @@ public class GameScreen extends BaseScreen {
 
     public Road road;
 
+    public Array<GameObject> gameObjects = new Array<GameObject>();
+
+    public PlayerCar playerCar;
+
     private Vector3 touchStart;
     private Vector3 cameraTouchStart;
     private boolean cancelTouchUp;
-
-    private PlayerCar playerCar;
-
-    private Rectangle testPixel;
-    private Vector2 testPixelVel;
-
 
     public GameScreen() {
         road = new Road();
@@ -43,12 +43,12 @@ public class GameScreen extends BaseScreen {
         cameraTouchStart = new Vector3();
         cancelTouchUp = false;
 
-        playerCar = new PlayerCar();
+        createCar();
+    }
 
-        testPixel = new Rectangle(camera.viewportWidth / 2f - 5f,
-                                  camera.viewportHeight / 2f - 5f,
-                                  20f, 20f);
-        testPixelVel = new Vector2(120f, 120f);
+    private void createCar() {
+        playerCar = new PlayerCar();
+        gameObjects.add(playerCar);
     }
 
     @Override
@@ -61,10 +61,42 @@ public class GameScreen extends BaseScreen {
             camera.position.y += 10;
             camera.update();
         }
-        road.update(dt);
-        updateObjects(dt);
+
         updateWorld(dt);
+        updateObjects(dt);
         updateCamera(dt);
+    }
+
+    private void updateWorld(float dt) {
+        road.update(dt);
+    }
+
+    private void updateObjects(float dt) {
+        for(GameObject gameObject : gameObjects) {
+            gameObject.update(dt);
+        }
+    }
+
+    private void updateCamera(float dt) {
+        camera.zoom = MathUtils.clamp(camera.zoom, minZoom, maxZoom);
+
+        // Keep camera within world bounds
+//        float minY = world.bounds.y + camera.viewportHeight / 2 * camera.zoom;
+//        float maxY = world.bounds.height - camera.viewportHeight / 2 * camera.zoom;
+//        float minX = world.bounds.x + camera.viewportWidth / 2 * camera.zoom;
+//        float maxX = world.bounds.x + world.bounds.width - camera.viewportWidth / 2 * camera.zoom;
+//        if (camera.viewportHeight * camera.zoom > world.bounds.height) {
+//            camera.position.y = world.bounds.height / 2;
+//        } else {
+//            camera.position.y = MathUtils.clamp(camera.position.y, minY, maxY);
+//        }
+//        if (camera.viewportWidth * camera.zoom > world.bounds.width) {
+//            camera.position.x = world.bounds.x + world.bounds.width / 2;
+//        } else {
+//            camera.position.x = MathUtils.clamp(camera.position.x, minX, maxX);
+//        }
+
+        camera.update();
     }
 
     @Override
@@ -76,11 +108,8 @@ public class GameScreen extends BaseScreen {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         {
-            road.render(batch, camera);
-            // world.render(batch);
-            batch.draw(Assets.whitePixel, testPixel.x, testPixel.y, testPixel.width, testPixel.height);
-
-            playerCar.render(batch);
+            renderWorld(batch);
+            renderObjects(batch);
         }
         batch.end();
 
@@ -88,9 +117,23 @@ public class GameScreen extends BaseScreen {
         batch.setProjectionMatrix(hudCamera.combined);
         batch.begin();
         {
-//            hud.render(batch);
+            renderHud(batch);
         }
         batch.end();
+    }
+
+    private void renderWorld(SpriteBatch batch) {
+        road.render(batch, camera);
+    }
+
+    private void renderObjects(SpriteBatch batch) {
+        for (GameObject gameObject : gameObjects) {
+            gameObject.render(batch);
+        }
+    }
+
+    private void renderHud(SpriteBatch batch) {
+//            hud.render(batch);
     }
 
     // ------------------------------------------------------------------------
@@ -141,67 +184,4 @@ public class GameScreen extends BaseScreen {
 
         return true;
     }
-
-    // ------------------------------------------------------------------------
-    // Utility Methods
-    // ------------------------------------------------------------------------
-
-    private void updateObjects(float dt) {
-        playerCar.update(dt);
-    }
-
-    private void updateWorld(float dt) {
-        testPixel.x += testPixelVel.x * dt;
-        testPixel.y += testPixelVel.y * dt;
-
-        if (testPixel.x + testPixel.width >= camera.viewportWidth) {
-            testPixel.x = camera.viewportWidth - testPixel.width;
-            testPixelVel.x *= -1f;
-            startTestPixelSizeBounce();
-        } else if (testPixel.x <= 0f) {
-            testPixel.x = 0f;
-            testPixelVel.x *= -1f;
-            startTestPixelSizeBounce();
-        }
-
-        if (testPixel.y + testPixel.height >= camera.viewportHeight) {
-            testPixel.y = camera.viewportHeight - testPixel.height;
-            testPixelVel.y *= -1f;
-            startTestPixelSizeBounce();
-        } else if (testPixel.y <= 0f) {
-            testPixel.y = 0f;
-            testPixelVel.y *= -1f;
-            startTestPixelSizeBounce();
-        }
-    }
-
-    private void startTestPixelSizeBounce() {
-        Tween.to(testPixel, RectangleAccessor.WH, 0.05f)
-                .target(10f, 10f)
-                .repeatYoyo(1, 0f)
-                .start(Assets.tween);
-    }
-
-    private void updateCamera(float dt) {
-        camera.zoom = MathUtils.clamp(camera.zoom, minZoom, maxZoom);
-
-        // Keep camera within world bounds
-//        float minY = world.bounds.y + camera.viewportHeight / 2 * camera.zoom;
-//        float maxY = world.bounds.height - camera.viewportHeight / 2 * camera.zoom;
-//        float minX = world.bounds.x + camera.viewportWidth / 2 * camera.zoom;
-//        float maxX = world.bounds.x + world.bounds.width - camera.viewportWidth / 2 * camera.zoom;
-//        if (camera.viewportHeight * camera.zoom > world.bounds.height) {
-//            camera.position.y = world.bounds.height / 2;
-//        } else {
-//            camera.position.y = MathUtils.clamp(camera.position.y, minY, maxY);
-//        }
-//        if (camera.viewportWidth * camera.zoom > world.bounds.width) {
-//            camera.position.x = world.bounds.x + world.bounds.width / 2;
-//        } else {
-//            camera.position.x = MathUtils.clamp(camera.position.x, minX, maxX);
-//        }
-
-        camera.update();
-    }
-
 }
