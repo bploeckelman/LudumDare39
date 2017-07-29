@@ -3,7 +3,7 @@ package lando.systems.ld39;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import lando.systems.ld39.screens.BaseScreen;
-import lando.systems.ld39.screens.MapScreen;
+import lando.systems.ld39.screens.TitleScreen;
 import lando.systems.ld39.utils.Assets;
 
 /**
@@ -24,7 +24,7 @@ public class LudumDare39 extends ApplicationAdapter {
 		} while (progress != 1f);
 		game = this;
 
-		setScreen(new MapScreen());
+		setScreen(new TitleScreen());
 	}
 
 	@Override
