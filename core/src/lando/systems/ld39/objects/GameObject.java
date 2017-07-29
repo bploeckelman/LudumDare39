@@ -15,18 +15,12 @@ public abstract class GameObject {
     public GameObject() {
         this.position = new Vector2();
         this.bounds = new Rectangle();
-        this.keyframe = new TextureRegion(Assets.testTexture);
     }
 
-    public GameObject(Rectangle bounds) {
-        this();
-        this.bounds = bounds;
+    public void setPosition(Vector2 position) {
+        this.position = position;
     }
 
     public abstract void update(float dt);
-
-    public void render(SpriteBatch batch) {
-        batch.draw(keyframe, position.x, position.y);
-    }
-
+    public abstract void render(SpriteBatch batch);
 }
