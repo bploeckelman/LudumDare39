@@ -20,7 +20,7 @@ import java.util.Random;
 public class Road {
     public Random rand = new Random();
     public float segmentLength = 400;
-    public float shoulderWidth = 40;
+    public float shoulderWidth = 70;
     public Array<RoadDef> roadSegments;
     public ShapeRenderer shapes;
     public Texture fboTexture;
@@ -90,9 +90,13 @@ public class Road {
     public void render(SpriteBatch batch, OrthographicCamera camera){
         batch.setShader(Assets.roadShader);
 
+        Gdx.graphics.getGL20().glActiveTexture(GL20.GL_TEXTURE3);
+        Assets.gravelTexture.bind(3);
+        Assets.roadShader.setUniformi("u_texture4", 3);
+
+
         Gdx.graphics.getGL20().glActiveTexture(GL20.GL_TEXTURE2);
         Assets.roadTexture.bind(2);
-
         Assets.roadShader.setUniformi("u_texture3", 2);
 
 
@@ -144,7 +148,7 @@ public class Road {
         roadSegments.add(RoadDef.center);
         for (int i = 0; i < 100; i++){
             int type = rand.nextInt(4);
-            int count = rand.nextInt(4) + 1;
+            int count = rand.nextInt(10) + 1;
             for (int j = 0; j < count; j++){
                 switch (type) {
                     case 0:
