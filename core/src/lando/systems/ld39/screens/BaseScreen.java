@@ -1,5 +1,6 @@
 package lando.systems.ld39.screens;
 
+import aurelienribon.tweenengine.primitives.MutableFloat;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -11,6 +12,7 @@ import lando.systems.ld39.utils.Config;
  */
 public abstract class BaseScreen extends InputAdapter {
 
+    public MutableFloat alpha;
     public OrthographicCamera camera;
     public OrthographicCamera hudCamera;
 
@@ -24,6 +26,8 @@ public abstract class BaseScreen extends InputAdapter {
         hudCamera = new OrthographicCamera(Config.gameWidth, Config.gameWidth / aspect);
         hudCamera.translate(hudCamera.viewportWidth / 2, hudCamera.viewportHeight / 2, 0);
         hudCamera.update();
+        alpha = new MutableFloat(0f);
+
     }
 
     public abstract void update(float dt);
