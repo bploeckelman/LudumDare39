@@ -21,14 +21,6 @@ public class MapScreenHud {
     private static final float HUD_TEXT_STATS_FONT_HEIGHT = 18f;
 
 
-    private static final String HUD_STATS = "" +
-            "Iteration: %d\n" +
-            "Distance Traveled: %.1f km\n" +
-            "[MONEY] Collected: %d\n" +
-            "Powerups: %d\n" +
-            "Enemies scrapped: %d";
-
-
     private final Vector2 hudFrameOrigin;
     private final Vector2 hudFrameDimensions;
     private final float hudFrameThickness;
@@ -76,8 +68,8 @@ public class MapScreenHud {
 
     private static String getHudStats(int iteration, float distanceTraveled, int moneyCollected, int powerupsCollected, int enemiesScrapped) {
         return "Iteration: " + iteration + "\n"
-             + "Distance Traveled: " + (int) (distanceTraveled) + "  km\n"
-             + "[MONEY] Collected: " + moneyCollected + "\n"
+             + "Distance Traveled: " + (int) (distanceTraveled) + " km\n"
+             + "Money Collected: " + moneyCollected + "\n"
              + "Powerups: " + powerupsCollected + "\n"
              + "Enemies scrapped: " + enemiesScrapped;
 
@@ -98,23 +90,6 @@ public class MapScreenHud {
                 hudFrameOrigin.x, hudFrameOrigin.y, hudFrameDimensions.x, hudFrameDimensions.y);
         batch.setColor(HUD_FRAME_COLOR);
         Assets.defaultNinePatch.draw(batch, hudFrameOrigin.x, hudFrameOrigin.y, hudFrameDimensions.x, hudFrameDimensions.y);
-//        // Slap on the frame
-//        // Bottom:
-//        batch.draw(Assets.whitePixel,
-//                hudFrameOrigin.x, hudFrameOrigin.y,
-//                hudFrameDimensions.x, hudFrameThickness);
-//        // left:
-//        batch.draw(Assets.whitePixel,
-//                hudFrameOrigin.x, hudFrameOrigin.y + hudFrameThickness,
-//                hudFrameThickness, hudFrameDimensions.y - (hudFrameThickness * 2));
-//        // right:
-//        batch.draw(Assets.whitePixel,
-//                hudFrameOrigin.x + hudFrameDimensions.x - hudFrameThickness, hudFrameOrigin.y + hudFrameThickness,
-//                hudFrameThickness, hudFrameDimensions.y - (hudFrameThickness * 2));
-//        // top:
-//        batch.draw(Assets.whitePixel,
-//                hudFrameOrigin.x, hudFrameOrigin.y + hudFrameDimensions.y - hudFrameThickness,
-//                hudFrameDimensions.x, hudFrameThickness);
 
         // Let's draw some text!
         if (currentStage == MapScreen.Stage.ANIMATE_TRAVEL) {

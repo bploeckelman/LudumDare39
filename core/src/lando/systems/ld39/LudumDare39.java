@@ -2,6 +2,7 @@ package lando.systems.ld39;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import lando.systems.ld39.objects.Stats;
 import lando.systems.ld39.screens.BaseScreen;
 import lando.systems.ld39.screens.TitleScreen;
 import lando.systems.ld39.utils.Assets;
@@ -13,6 +14,8 @@ public class LudumDare39 extends ApplicationAdapter {
 
 	public static LudumDare39 game;
 
+	public Stats gameStats;
+
 	private BaseScreen screen;
 
 	@Override
@@ -23,6 +26,8 @@ public class LudumDare39 extends ApplicationAdapter {
 			progress = Assets.update();
 		} while (progress != 1f);
 		game = this;
+
+		gameStats = new Stats();
 
 		setScreen(new TitleScreen());
 	}
