@@ -1,6 +1,7 @@
 package lando.systems.ld39.objects;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool;
 import lando.systems.ld39.screens.GameScreen;
@@ -15,6 +16,7 @@ public class Bullet implements Pool.Poolable{
     public Vehicle owner;
     public float damage;
     public boolean alive;
+    private TextureRegion tex;
 
 
     public Bullet(){
@@ -22,11 +24,12 @@ public class Bullet implements Pool.Poolable{
         position = new Vector2();
     }
 
-    public void init(Vector2 pos, Vector2 spd, Vehicle owner){
+    public void init(Vector2 pos, Vector2 spd, Vehicle owner, TextureRegion tex, float damage){
         position.set(pos);
         speed.set(spd);
         this.owner = owner;
-        this.damage = owner.bulletDamage;
+        this.tex = tex;
+        this.damage = damage;
         alive = true;
     }
 
@@ -36,7 +39,7 @@ public class Bullet implements Pool.Poolable{
     }
 
     public void render(SpriteBatch batch){
-        batch.draw(Assets.whitePixel, position.x, position.y, 2, 2);
+        batch.draw(tex, position.x -16, position.y-16, 32, 32);
     }
 
     @Override
