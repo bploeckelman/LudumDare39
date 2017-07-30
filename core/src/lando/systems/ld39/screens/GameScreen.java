@@ -17,11 +17,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pools;
 import lando.systems.ld39.LudumDare39;
-import lando.systems.ld39.objects.EnemyCar2;
-import lando.systems.ld39.objects.Bullet;
-import lando.systems.ld39.objects.GameObject;
-import lando.systems.ld39.objects.PlayerCar;
-import lando.systems.ld39.objects.Vehicle;
+import lando.systems.ld39.objects.*;
 import lando.systems.ld39.particles.ParticleSystem;
 import lando.systems.ld39.road.Road;
 import lando.systems.ld39.utils.Assets;
@@ -96,7 +92,7 @@ public class GameScreen extends BaseScreen {
         hammerTime += dt;
         if (hammerTime > 5) {
             hammerTime = 0;
-            gameObjects.add(EnemyCar2.getEnemy(this));
+            gameObjects.add(EnemyCar.getEnemy(this));
         }
     }
 

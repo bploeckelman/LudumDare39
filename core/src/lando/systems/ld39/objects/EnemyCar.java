@@ -1,7 +1,7 @@
 package lando.systems.ld39.objects;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import lando.systems.ld39.screens.GameScreen;
 
@@ -9,17 +9,35 @@ import lando.systems.ld39.screens.GameScreen;
  * Created by Brian on 7/30/2017.
  */
 
-public class EnemyCar2 extends Vehicle {
+public class EnemyCar extends Vehicle {
 
     private int chassis;
+    public float relSpeed = 2f; // Relative speed
 
-    public EnemyCar2(GameScreen gameScreen) {
+    public EnemyCar(GameScreen gameScreen) {
         this(gameScreen, Item.EnemyChassis1);
     }
 
-    public EnemyCar2(GameScreen gameScreen, int enemyChassis) {
+    public EnemyCar(GameScreen gameScreen, int enemyChassis) {
         super(gameScreen, enemyChassis);
         chassis = enemyChassis;
+    }
+
+    @Override
+    public void update(float dt) {
+        Rectangle playerBounds = gameScreen.playerCar.bounds;
+        Vector2 playerPosition = gameScreen.playerCar.position;
+        if (bounds.overlaps(playerBounds)) {
+            // TODO: Collide
+        } else {
+            // Follow player
+            float distance = position.dst(playerPosition);
+            Vector2 direction = (new Vector2(position)).sub(playerPosition).nor();
+
+            position.add(- (direction.x * relSpeed), gameScreen.playerCar.speed - (direction.y * relSpeed));
+            bounds.x = position.x - bounds_offset_x;
+            bounds.y = position.y - bounds_offset_y;
+        }
     }
 
     @Override
@@ -44,12 +62,12 @@ public class EnemyCar2 extends Vehicle {
             testlevel = 0;
         }
 
-        Vehicle enemyCar = new EnemyCar2(gameScreen, chassis);
+        Vehicle enemyCar = new EnemyCar(gameScreen, chassis);
         enemyCar.setUpgrade(chassis, newLevel);
 
         Vector2 position = gameScreen.playerCar.position;
         // adjust initial starting point
-        enemyCar.setLocation(position.x, position.y);
+        enemyCar.setLocation(position.x, position.y - gameScreen.playerCar.bounds.height - 100);
 
         return enemyCar;
     }
