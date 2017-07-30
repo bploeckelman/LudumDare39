@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import lando.systems.ld39.screens.GameScreen;
+import lando.systems.ld39.utils.Assets;
 import lando.systems.ld39.utils.Config;
 
 public class PlayerCar extends Vehicle {
@@ -22,6 +23,8 @@ public class PlayerCar extends Vehicle {
     public float maxBattery;
 
     private Vector2 bulletVelocity;
+    private Vector2 bulletPosition;
+    private boolean alternateGun;
 
     // TODO: addon layers
 
@@ -33,12 +36,12 @@ public class PlayerCar extends Vehicle {
         batteryLevel = maxBattery;
         maxHealth = 100;
         health = maxHealth;
-        bulletDamage = 10;
-        reloadTime = .5f;
         maxSpeed = 1000f;
 
 
         bulletVelocity = new Vector2();
+        bulletPosition = new Vector2();
+        alternateGun = true;
         position.x = (Config.gameWidth  - bounds.width) / 2f;
         position.y = (Config.gameHeight - bounds.height) / 2f;
 
@@ -128,10 +131,22 @@ public class PlayerCar extends Vehicle {
             return;
         }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) && isWeaponEnabled()) {
-            bulletVelocity.set(0, speed + 700);
-            gameScreen.addBullet(this, bulletVelocity);
-            fireTime = reloadTime;
+        if (Gdx.input.isKeyPressed(Input.Keys.ENTER) && isWeaponEnabled()) {
+            bulletVelocity.set(0, speed + 1000);
+            if (upgrades.getLevel(Item.Weapons) == 1){
+                alternateGun = !alternateGun;
+                bulletPosition.set(position.x + 6, position.y + bounds_offset_y);
+                if (alternateGun){
+                    bulletPosition.add(-12, 0);
+                }
+                gameScreen.addBullet(this, bulletVelocity, bulletPosition, Assets.basicProjectileTex, 1);
+                fireTime = .1f;
+            } else if (upgrades.getLevel(Item.Weapons) == 2){
+                bulletPosition.set(position.x, position.y + bounds_offset_y);
+                gameScreen.addBullet(this, bulletVelocity, bulletPosition, Assets.zappaTex, 10);
+                fireTime = .5f;
+            }
+
         }
     }
 

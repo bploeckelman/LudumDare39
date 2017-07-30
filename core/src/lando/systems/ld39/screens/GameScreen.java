@@ -8,6 +8,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -139,7 +140,7 @@ public class GameScreen extends BaseScreen {
             b.update(dt);
             for (GameObject car : gameObjects){
                 if (!(car instanceof Vehicle)) continue;
-                if (car != b.owner && car.bounds.contains(b.position)) {
+                if (car != b.owner && car.bounds.contains(b.position) && !car.dead) {
                     ((Vehicle) car).health -= b.damage;
                     b.alive = false;
                     break;
@@ -328,9 +329,9 @@ public class GameScreen extends BaseScreen {
         activeBullets.clear();
     }
 
-    public void addBullet(Vehicle owner, Vector2 velocity){
+    public void addBullet(Vehicle owner, Vector2 velocity, Vector2 position, TextureRegion tex, float damage){
         Bullet b = bulletsPool.obtain();
-        b.init(owner.position, velocity, owner);
+        b.init(position, velocity, owner, tex, damage);
         activeBullets.add(b);
     }
 }
