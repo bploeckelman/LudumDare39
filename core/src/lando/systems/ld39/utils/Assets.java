@@ -56,6 +56,7 @@ public class Assets {
 
     public static ShaderProgram hudShader;
     public static TextureRegion lightningTexture;
+    public static TextureRegion healthTexture;
 
     public static boolean initialized;
 
@@ -124,6 +125,8 @@ public class Assets {
         upgradeIconHull = atlas.findRegion("upgrade-icon-hull");
         upgradeIconTire = atlas.findRegion("upgrade-icon-tire");
         lightningTexture = atlas.findRegion("lightning");
+        healthTexture = atlas.findRegion("health");
+
 
         map = mgr.get("images/usa-map-v1.png", Texture.class);
 

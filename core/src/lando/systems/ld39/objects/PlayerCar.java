@@ -217,4 +217,14 @@ public class PlayerCar extends Vehicle {
     public float getBatteryPercent(){
         return batteryLevel/maxBattery;
     }
+
+    public float getHealthPercent(){
+        return .5f;
+    }
+
+    private void renderWeapons(SpriteBatch batch) {
+
+    }
+
+
 }
