@@ -1,15 +1,40 @@
 package lando.systems.ld39.ui;
 
+import aurelienribon.tweenengine.*;
+import aurelienribon.tweenengine.primitives.MutableFloat;
+import aurelienribon.tweenengine.primitives.MutableInteger;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Align;
+import lando.systems.ld39.LudumDare39;
 import lando.systems.ld39.objects.Stats;
 import lando.systems.ld39.screens.MapScreen;
 import lando.systems.ld39.utils.Assets;
 import lando.systems.ld39.utils.Config;
 
+import static lando.systems.ld39.ui.MapScreenHud.Stage.*;
+
 public class MapScreenHud {
+
+    public enum Stage {
+        WAITING,
+        CASH_IN_DISTANCE,
+        CASH_IN_MONEY,
+        CASH_IN_POWERUPS,
+        CASH_IN_ENEMIES_SCRAPPED,
+        COMPLETE
+    }
+
+    private static final float TIME_CASH_IN_PAUSE = 0.5f;
+    private static final float TIME_CASH_IN_DISTANCE = 2f;
+    private static final float TIME_CASH_IN_MONEY_COLLECTED = 2f;
+    private static final float TIME_CASH_IN_POWERUPS = 2f;
+    private static final float TIME_CASH_IN_ENEMIES_SCRAPPED = 2f;
+
+    private static final float MONEY_PER_KM = 0.1f;
+    private static final int MONEY_PER_POWERUP = 8;
+    private static final int MONEY_PER_ENEMY = 16;
 
     private static final Vector2 HUD_FRAME_ORIGIN = new Vector2(0.1f, 0.08f); // % of w!
     private static final Vector2 HUD_FRAME_DIMENSIONS = new Vector2(0.8f, 0.3f); // % of w & h;
@@ -21,7 +46,6 @@ public class MapScreenHud {
     private static final float HUD_TEXT_MONEY_WIDTH = 0.4f; // % of width within the frame & text padding.
     private static final float HUD_TEXT_STATS_FONT_HEIGHT = 18f;
 
-
     private final Vector2 hudFrameOrigin;
     private final Vector2 hudFrameDimensions;
     private final float hudFrameThickness;
@@ -31,19 +55,57 @@ public class MapScreenHud {
     private final float hudTextStatsWidth;
     private final float hudTextMoneyWidth;
 
-    private MapScreen.Stage currentStage;
-    private float stagePercent;
+    private float mapScreenStagePercent;
     private float distanceTraveled;
-    private float dispDistanceTraveled = 0; // we'll animate this one and show it off
 
+//    private float dispDistanceTraveled = 0; // we'll animate this one and show it off
+
+    private MutableFloat displayDistanceTraveled;
+    private MutableInteger displayMoneyCollected;
+    private MutableInteger displayPowerupsCollected;
+    private MutableInteger displayEnemiesScrapped;
+    private MutableInteger displayCurrentFunds;
+
+    private final int fundsMoneyAfterDistance;
+    private final int fundsMoneyAfterMoneyCollected;
+    private final int fundsMoneyAfterPowerups;
+    private final int fundsMoneyAfterEnemies;
+
+    private final MapScreen mapScreen;
+    private final Stats roundStats;
+
+    private MapScreen.Stage currentMapScreenStage;
+    private MapScreenHud.Stage currentStage;
+    private float currentStagePercent = 0;
+    private float currentStageTime = 0;
+
+    private final int totalFunds;
 
     /**
      *
      * @param roundStats
      */
-    public MapScreenHud(Stats roundStats) {
+    public MapScreenHud(MapScreen mapScreen, Stats roundStats) {
 
-        this.distanceTraveled = roundStats.distanceTraveledPercent * MapScreen.DISP_ROUTE_KM;
+        this.mapScreen = mapScreen;
+        this.roundStats = roundStats;
+
+        distanceTraveled = roundStats.distanceTraveledPercent * MapScreen.DISP_ROUTE_KM;
+
+        displayDistanceTraveled = new MutableFloat(0);  // Start at zero, as we animate this up.
+        displayCurrentFunds = new MutableInteger(LudumDare39.game.gameStats.currentMoney);
+        displayMoneyCollected = new MutableInteger(roundStats.moneyCollected);
+        displayPowerupsCollected = new MutableInteger(roundStats.powerupsCollected);
+        displayEnemiesScrapped = new MutableInteger(roundStats.enemiesScrapped);
+
+        // Funds calculations
+        fundsMoneyAfterDistance = LudumDare39.game.gameStats.currentMoney +
+                ((int) (distanceTraveled * MONEY_PER_KM));
+        fundsMoneyAfterMoneyCollected = fundsMoneyAfterDistance + roundStats.moneyCollected;
+        fundsMoneyAfterPowerups = fundsMoneyAfterMoneyCollected + (roundStats.powerupsCollected * MONEY_PER_POWERUP);
+        fundsMoneyAfterEnemies = fundsMoneyAfterPowerups + (roundStats.enemiesScrapped * MONEY_PER_ENEMY);
+        // Calculate the final total funds after this round.
+        totalFunds = fundsMoneyAfterEnemies;
 
         // Process the % based layouts
         hudFrameOrigin = new Vector2(
@@ -64,6 +126,8 @@ public class MapScreenHud {
         hudTextMoneyOrigin = new Vector2(
                 hudFrameOrigin.x + hudFrameDimensions.x - hudFrameThickness - hudTextPadding - hudTextMoneyWidth,
                 hudTextStatsOrigin.y);
+
+        setCurrentStage(WAITING);
     }
 
 
@@ -73,14 +137,98 @@ public class MapScreenHud {
              + "Money Collected: " + moneyCollected + "\n"
              + "Powerups: " + powerupsCollected + "\n"
              + "Enemies scrapped: " + enemiesScrapped;
+    }
 
-        // NOTE: String.format() isn't supported in GWT
-//        return String.format(java.util.Locale.US, HUD_STATS, iteration, distanceTraveledPercent, moneyCollected, powerupsCollected, enemiesScrapped);
+    /**
+     * It's the hud's turn to animate stuff.  Return control to the MapScreen when done.
+     */
+    public void takeControl() {
+        Timeline.createSequence()
+                .pushPause(TIME_CASH_IN_PAUSE)
+                .push(Tween.call(new TweenCallback() {
+                    @Override
+                    public void onEvent(int i, BaseTween<?> baseTween) {
+                        setCurrentStage(CASH_IN_DISTANCE);
+                    }
+                }))
+                .push(Timeline.createParallel()
+                        .push(Tween.to(displayDistanceTraveled, 1, TIME_CASH_IN_DISTANCE)
+                                .ease(TweenEquations.easeInOutSine)
+                                .target(0))
+                        .push(Tween.to(displayCurrentFunds, 1, TIME_CASH_IN_DISTANCE)
+                                .ease(TweenEquations.easeInOutSine)
+                                .target(fundsMoneyAfterDistance))
+                )
+                .pushPause(TIME_CASH_IN_PAUSE)
+                .push(Tween.call(new TweenCallback() {
+                    @Override
+                    public void onEvent(int i, BaseTween<?> baseTween) {
+                        setCurrentStage(CASH_IN_MONEY);
+                    }
+                }))
+                .push(Timeline.createParallel()
+                        .push(Tween.to(displayMoneyCollected, 1, TIME_CASH_IN_MONEY_COLLECTED)
+                                .ease(TweenEquations.easeInOutSine)
+                                .target(0))
+                        .push(Tween.to(displayCurrentFunds, 1, TIME_CASH_IN_MONEY_COLLECTED)
+                                .ease(TweenEquations.easeInOutSine)
+                                .target(fundsMoneyAfterMoneyCollected))
+                )
+                .pushPause(TIME_CASH_IN_PAUSE)
+                .push(Tween.call(new TweenCallback() {
+                    @Override
+                    public void onEvent(int i, BaseTween<?> baseTween) {
+                        setCurrentStage(CASH_IN_POWERUPS);
+                    }
+                }))
+                .push(Timeline.createParallel()
+                        .push(Tween.to(displayPowerupsCollected, 1, TIME_CASH_IN_POWERUPS)
+                                .ease(TweenEquations.easeInOutSine)
+                                .target(0))
+                        .push(Tween.to(displayCurrentFunds, 1, TIME_CASH_IN_POWERUPS)
+                                .ease(TweenEquations.easeInOutSine)
+                                .target(fundsMoneyAfterPowerups))
+                )
+                .pushPause(TIME_CASH_IN_PAUSE)
+                .push(Tween.call(new TweenCallback() {
+                    @Override
+                    public void onEvent(int i, BaseTween<?> baseTween) {
+                        setCurrentStage(CASH_IN_ENEMIES_SCRAPPED);
+                    }
+                }))
+                .push(Timeline.createParallel()
+                        .push(Tween.to(displayEnemiesScrapped, 1, TIME_CASH_IN_ENEMIES_SCRAPPED)
+                                .ease(TweenEquations.easeInOutSine)
+                                .target(0))
+                        .push(Tween.to(displayCurrentFunds, 1, TIME_CASH_IN_ENEMIES_SCRAPPED)
+                                .ease(TweenEquations.easeInOutSine)
+                                .target(fundsMoneyAfterEnemies))
+                )
+                .pushPause(TIME_CASH_IN_PAUSE)
+                .push(Tween.call(new TweenCallback() {
+                    @Override
+                    public void onEvent(int i, BaseTween<?> baseTween) {
+                        setCurrentStage(MapScreenHud.Stage.COMPLETE);
+                        // Update the game stats!
+                        LudumDare39.game.gameStats.addRoundStats(roundStats, totalFunds);
+                        // Return control back to the MapScreen
+                        mapScreen.setCurrentStage(MapScreen.Stage.HUD_COMPLETE);
+                    }
+                }))
+                .start(Assets.tween);
+    }
+
+    private void setCurrentStage(MapScreenHud.Stage newStage) {
+        System.out.println("setCurrentStage, newStage=" + newStage.toString());
+        this.currentStage = newStage;
+        this.currentStagePercent = 0f;
+        this.currentStageTime = 0f;
     }
 
     public void update(float dt, MapScreen.Stage stage, float stagePercent) {
-        this.currentStage = stage;
-        this.stagePercent = stagePercent;
+        this.currentStageTime += dt;
+        this.currentMapScreenStage = stage;
+        this.mapScreenStagePercent = stagePercent;
     }
 
     public void draw(SpriteBatch batch) {
@@ -93,13 +241,25 @@ public class MapScreenHud {
         Assets.defaultNinePatch.draw(batch, hudFrameOrigin.x, hudFrameOrigin.y, hudFrameDimensions.x, hudFrameDimensions.y);
 
         // Let's draw some text!
-        if (currentStage == MapScreen.Stage.ANIMATE_TRAVEL) {
-            dispDistanceTraveled = distanceTraveled * stagePercent;
+        if (currentMapScreenStage == MapScreen.Stage.ANIMATE_TRAVEL) {
+            displayDistanceTraveled.setValue(distanceTraveled * mapScreenStagePercent);
         }
-        String stats = getHudStats(3, dispDistanceTraveled, 142, 12, 11);
+        String stats = getHudStats(
+                LudumDare39.game.roundNumber,
+                displayDistanceTraveled.floatValue(),
+                displayMoneyCollected.intValue(),
+                displayPowerupsCollected.intValue(),
+                displayEnemiesScrapped.intValue());
         Assets.drawString(batch, stats,
                 hudTextStatsOrigin.x, hudTextStatsOrigin.y,
                 Color.WHITE, 0.38f, Assets.font, hudTextStatsWidth, Align.left);
+
+        Assets.drawString(batch, "CURRENT FUNDS:",
+                hudTextMoneyOrigin.x, hudTextMoneyOrigin.y,
+                Color.WHITE, 0.4f, Assets.font, hudTextMoneyWidth, Align.center);
+        Assets.drawString(batch, "$" + displayCurrentFunds.intValue(),
+                hudTextMoneyOrigin.x, hudTextMoneyOrigin.y - (hudFrameDimensions.y * 0.3f),
+                Color.GOLDENROD, 0.6f, Assets.font, hudTextMoneyWidth, Align.center);
     }
 
 }
