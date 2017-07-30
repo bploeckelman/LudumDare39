@@ -24,6 +24,9 @@ public class Vehicle extends GameObject {
 
     protected float bounds_offset_x;
     protected float bounds_offset_y;
+    public float bulletDamage = 4;
+    public float reloadTime = 2;
+
 
     // TODO: addon layers
 
@@ -84,6 +87,9 @@ public class Vehicle extends GameObject {
     @Override
     public void update(float dt) {
         animStateTime += dt;
+        if (health <= 0 ){
+            dead = true;
+        }
     }
 
     public boolean isRunning() {

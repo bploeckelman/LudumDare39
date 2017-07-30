@@ -3,34 +3,42 @@ package lando.systems.ld39.objects;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import lando.systems.ld39.screens.GameScreen;
 import lando.systems.ld39.utils.Config;
 
 public class PlayerCar extends Vehicle {
 
-    public static float minSpeed = 2;
+    public static float minSpeed = 20;
 
     // this is the bounds the car can move around
     public Rectangle constraintBounds;
 
     public float speed = 0;
-    public float maxSpeed = 15;
+    public float maxSpeed = 500;
 
     public float batteryLevel;
     public float maxBattery;
 
-    public boolean dead = false;
+    private Vector2 bulletVelocity;
 
     // TODO: addon layers
 
     public PlayerCar(GameScreen gameScreen) {
         super(gameScreen, Item.Chassis);
 
-        // TODO: make this based on battery upgrade
+        // TODO: make this based on upgrades
         maxBattery = 10;
         batteryLevel = maxBattery;
+        maxHealth = 100;
+        health = maxHealth;
+        bulletDamage = 10;
+        reloadTime = .5f;
+        maxSpeed = 1000f;
 
+
+        bulletVelocity = new Vector2();
         position.x = (Config.gameWidth  - bounds.width) / 2f;
         position.y = (Config.gameHeight - bounds.height) / 2f;
 
@@ -78,7 +86,7 @@ public class PlayerCar extends Vehicle {
         bounds.x = position.x - bounds_offset_x;
         bounds.y = position.y - bounds_offset_y;
 
-        float offset = 10;
+        float offset = 200 * dt;
         if (isUp()) {
             bounds.y += offset;
         } else if (isDown()) {
@@ -121,7 +129,9 @@ public class PlayerCar extends Vehicle {
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-            fireTime = 2;
+            bulletVelocity.set(0, speed + 700);
+            gameScreen.addBullet(this, bulletVelocity);
+            fireTime = reloadTime;
         }
     }
 
@@ -208,7 +218,4 @@ public class PlayerCar extends Vehicle {
         return batteryLevel/maxBattery;
     }
 
-    public float getHealthPercent(){
-        return .5f;
-    }
 }

@@ -124,7 +124,15 @@ public class GameScreen extends BaseScreen {
         for(int i = activeBullets.size - 1; i >= 0; i--){
             Bullet b = activeBullets.get(i);
             b.update(dt);
-            //TODO: make this hit things
+            for (GameObject car : gameObjects){
+                if (!(car instanceof Vehicle)) continue;
+                if (car != b.owner && car.bounds.contains(b.position)) {
+                    ((Vehicle) car).health -= b.damage;
+                    b.alive = false;
+                    break;
+                }
+            }
+
             if (!viewBounds.contains(b.position)){ b.alive = false; }
             if (!b.alive){
                 activeBullets.removeIndex(i);
@@ -132,6 +140,13 @@ public class GameScreen extends BaseScreen {
             }
         }
         playerCar.constraintBounds = constraintBounds;
+        for (int i = gameObjects.size -1; i >= 0; i--){
+            GameObject o = gameObjects.get(i);
+            o.update(dt);
+            if (o.dead) {
+                gameObjects.removeIndex(i);
+            }
+        }
         for(GameObject gameObject : gameObjects) {
             gameObject.update(dt);
         }
@@ -155,7 +170,7 @@ public class GameScreen extends BaseScreen {
     private void updateCamera(float dt) {
         camera.zoom = MathUtils.clamp(camera.zoom, minZoom, maxZoom);
 
-        float deltaY = playerCar.speed;
+        float deltaY = playerCar.speed * dt;
         // move camera based on car speed - update position of car in so it doesn't drop
         playerCar.position.y += deltaY;
         camera.position.y += deltaY;
@@ -196,6 +211,9 @@ public class GameScreen extends BaseScreen {
             renderWorld(batch);
             particleSystem.render(batch);
             renderObjects(batch);
+            for (Bullet b : activeBullets){
+                b.render(batch);
+            }
         }
         batch.end();
 
