@@ -28,8 +28,11 @@ public class Road {
     public ShapeRenderer shapes;
     public Texture fboTexture;
     public FrameBuffer fbo;
+    public boolean atDesert;
+    public Vector2 tempVector;
 
     public Road(){
+        tempVector = new Vector2();
         fbo = new FrameBuffer(Pixmap.Format.RGB888, Config.gameWidth, Config.gameHeight, false);
         fboTexture = fbo.getColorBufferTexture();
         shapes = new ShapeRenderer();
@@ -37,6 +40,7 @@ public class Road {
         roadSegments = new Array<RoadDef>();
         generateRoad();
         distanceTraveled = 0;
+        atDesert = false;
     }
 
     public void update(float dt) {
@@ -105,8 +109,11 @@ public class Road {
 
 
         Gdx.graphics.getGL20().glActiveTexture(GL20.GL_TEXTURE1);
-        Assets.grassTexture.bind(1);
-
+        if (atDesert){
+            Assets.desertTexture.bind(1);
+        } else {
+            Assets.grassTexture.bind(1);
+        }
         Assets.roadShader.setUniformi("u_texture2", 1);
 
         Gdx.graphics.getGL20().glActiveTexture(GL20.GL_TEXTURE0);
@@ -117,6 +124,24 @@ public class Road {
 
         batch.draw(fboTexture, 0, camera.position.y + camera.viewportHeight/2f, camera.viewportWidth, - camera.viewportHeight);
         batch.setShader(null);
+
+        float cameraBottom = camera.position.y - camera.viewportHeight/2f;
+        for (int i = 0; i < (camera.viewportHeight / segmentLength) +1; i++) {
+            int roadIndex = (int) (cameraBottom / segmentLength) + i;
+            RoadDef current = getRoadDef(roadIndex);
+            RoadDef next = getRoadDef(roadIndex + 1);
+            int dashesPerSegment = 4;
+            float dashLength = segmentLength / dashesPerSegment;
+            float startX = current.leftSide + current.width/2;
+            float endX = next.leftSide + next.width /2;
+            float rotation = tempVector.set(startX, roadIndex * segmentLength).sub(endX, (roadIndex+1) * segmentLength).angle();
+            rotation += 90;
+            for (int j = 0; j < dashesPerSegment; j++){
+                batch.draw(Assets.whitePixel, MathUtils.lerp(startX, endX, (.5f + j) / dashesPerSegment),
+                        roadIndex * segmentLength + (.5f + j) * dashLength, 2, (dashLength - 60) /2f,
+                        4f, dashLength - 60, 1, 1, rotation);
+            }
+        }
     }
 
     /**
