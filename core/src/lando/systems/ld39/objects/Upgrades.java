@@ -24,7 +24,11 @@ public class Upgrades {
     }
 
     public void setUpgrades(IntIntMap upgrades) {
-        upgrades = new IntIntMap(upgrades);
+        this.upgrades = new IntIntMap(upgrades);
+    }
+
+    public int getLevel(int type) {
+        return upgrades.get(type, -1);
     }
 
     public void setLevel(int type, int level) {

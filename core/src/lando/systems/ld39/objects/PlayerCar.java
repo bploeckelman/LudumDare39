@@ -128,11 +128,15 @@ public class PlayerCar extends Vehicle {
             return;
         }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) && isWeaponEnabled()) {
             bulletVelocity.set(0, speed + 700);
             gameScreen.addBullet(this, bulletVelocity);
             fireTime = reloadTime;
         }
+    }
+
+    private boolean isWeaponEnabled() {
+        return upgrades.getLevel(Item.Weapons) > 0;
     }
 
     private void testSetUpgradesAndRemoveThisMethod() {
