@@ -19,7 +19,7 @@ public class MapScreen extends BaseScreen {
     private static final float TIME_MAP_FADE_IN = 1;
     private static final float TIME_DRAW_ROUTE_TRAVELED = 3;
 
-    private static final Color ROUTE_TRAVELED_COLOR = Color.RED;
+    private static final Color ROUTE_TRAVELED_COLOR = Color.BLUE;
     private static final Color ROUTE_UNTRAVELED_COLOR = Color.WHITE;
     private static final float ROUTE_WIDTH = 4;
 
@@ -30,9 +30,14 @@ public class MapScreen extends BaseScreen {
 
     private MutableFloat animationPercent = new MutableFloat(0);
     private MutableFloat mapAlpha = new MutableFloat(0);
-
+    private Stage currentStage;
 
     private float distanceTraveled = 0;
+
+    private enum Stage {
+        MAP_FADE_IN,
+        ANIMATE_TRAVEL
+    }
 
 
     /**
@@ -42,6 +47,7 @@ public class MapScreen extends BaseScreen {
     public MapScreen(float distanceTraveled) {
 
         this.distanceTraveled = distanceTraveled;
+        currentStage = Stage.MAP_FADE_IN;
 
         routeSpline = new CatmullRomSpline<Vector2>(Map.ROUTE_POINTS, false);
         routePoints = new Vector2[Map.ROUTE_RASTER_COUNT];
@@ -50,10 +56,10 @@ public class MapScreen extends BaseScreen {
             routeSpline.valueAt(routePoints[i], ((float)i) / ((float) Map.ROUTE_RASTER_COUNT-1));
         }
 
-        TweenCallback tweenCallback = new TweenCallback() {
+        TweenCallback onMapFadeInComplete = new TweenCallback() {
             @Override
             public void onEvent(int i, BaseTween<?> baseTween) {
-
+                currentStage = Stage.ANIMATE_TRAVEL;
             }
         };
 
@@ -61,7 +67,7 @@ public class MapScreen extends BaseScreen {
                 .push(Tween.to(mapAlpha, 1, TIME_MAP_FADE_IN)
                         .ease(TweenEquations.easeOutSine)
                         .target(1))
-                .push(Tween.call(tweenCallback))
+                .push(Tween.call(onMapFadeInComplete))
                 .push(Tween.to(animationPercent, 1, TIME_DRAW_ROUTE_TRAVELED)
                         .ease(TweenEquations.easeInOutQuad)
                         .target(1))
@@ -118,16 +124,20 @@ public class MapScreen extends BaseScreen {
             Assets.shapes.circle(lastTraveledRasterPoint.x, lastTraveledRasterPoint.y, ROUTE_WIDTH/2);
         }
         // Draw the player
-        Assets.shapes.setColor(Color.BLACK);
-        Assets.shapes.circle(loc.x, loc.y, 4);
+        Assets.shapes.setColor(Color.WHITE);
+        Assets.shapes.circle(loc.x, loc.y, 8);
+        Assets.shapes.setColor(Color.RED);
+        Assets.shapes.circle(loc.x, loc.y, 6);
         Assets.shapes.end();
 
-        // On top of everything, "fade in" the map by drawing black on top of it.
-        batch.begin();
-        batch.setColor(0,0,0,(1 - mapAlpha.floatValue()));
-        batch.draw(Assets.whitePixel, 0, 0, Config.gameWidth, Config.gameHeight);
-        batch.setColor(Color.WHITE);
-        batch.end();
+        if (currentStage == Stage.MAP_FADE_IN) {
+            // On top of everything, "fade in" the map by drawing black on top of it.
+            batch.begin();
+            batch.setColor(0,0,0,(1 - mapAlpha.floatValue()));
+            batch.draw(Assets.whitePixel, 0, 0, Config.gameWidth, Config.gameHeight);
+            batch.setColor(Color.WHITE);
+            batch.end();
+        }
 
     }
 
