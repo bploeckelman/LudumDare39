@@ -43,11 +43,7 @@ public class Assets {
     public static TextureRegion whitePixel;
 
     public static TextureRegion carBase;
-    public static TextureRegion mediumBattery;
-    public static TextureRegion largeBattery;
-    public static TextureRegion smallBooster;
-    public static TextureRegion largeBooster;
-    public static TextureRegion megaEngine;
+
     public static TextureRegion garageBackground;
     public static TextureRegion upgradeIconBattery;
     public static TextureRegion upgradeIconMotor;
@@ -115,14 +111,11 @@ public class Assets {
         testTexture = atlas.findRegion("badlogic");
         whitePixel = atlas.findRegion("white-pixel");
 
+        // loads images in updates
         new Upgrades();
 
         carBase = atlas.findRegion("car-base");
-        mediumBattery = atlas.findRegion("MediumBattery");
-        largeBattery = atlas.findRegion("LargeBattery");
-        smallBooster = atlas.findRegion("BoostersSmall");
-        largeBooster = atlas.findRegion("BoostersLarge");
-        megaEngine = atlas.findRegion("MegaEngine");
+
         garageBackground = atlas.findRegion("upgrade-garage-bg");
         upgradeIconBattery = atlas.findRegion("upgrade-icon-battery");
         upgradeIconMotor = atlas.findRegion("upgrade-icon-motor");

@@ -85,7 +85,7 @@ public class GameScreen extends BaseScreen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             Gdx.app.exit();
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.G)) {
             LudumDare39.game.setScreen(new UpgradeScreen());
         }
 

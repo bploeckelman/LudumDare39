@@ -71,6 +71,8 @@ public class PlayerCar extends Vehicle {
             return;
         }
 
+        isBoosting = isPressed(Input.Keys.SPACE);
+
         bounds.x = position.x - bounds_offset_x;
         bounds.y = position.y - bounds_offset_y;
 
@@ -103,14 +105,7 @@ public class PlayerCar extends Vehicle {
     private void testSetUpgradesAndRemoveThisMethod() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.U)) {
             upgrades.setNext(Upgrades.Battery);
-
-            if (!isBoosting) {
-                isBoosting = true;
-            } else {
-                isBoosting = false;
-                upgrades.setNext(Upgrades.Booster);
-            }
-
+            upgrades.setNext(Upgrades.Booster);
             upgrades.setNext(Upgrades.Engine);
             upgrades.setNext(Upgrades.Wheels);
             upgrades.setNext(Upgrades.Chassis);
@@ -192,11 +187,15 @@ public class PlayerCar extends Vehicle {
     public void render(SpriteBatch batch) {
         bounds.x = position.x - bounds_offset_x;
         bounds.y = position.y - bounds_offset_y;
-        render(batch, Upgrades.Wheels, batteryLevel > 0);
+
+        boolean isRunning = batteryLevel > 0;
+
+        render(batch, Upgrades.Wheels, isRunning);
         render(batch, Upgrades.Chassis, false);
         render(batch, Upgrades.Damage, false);
-        render(batch, Upgrades.Battery, batteryLevel > 4);
-        render(batch, Upgrades.Booster, isBoosting);
+        render(batch, Upgrades.Battery, isRunning);
+        render(batch, Upgrades.Engine, isRunning);
+        render(batch, Upgrades.Booster, isBoosting && isRunning);
     }
 
     private void render(SpriteBatch batch, int item, boolean animate) {
