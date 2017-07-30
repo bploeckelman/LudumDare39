@@ -75,7 +75,14 @@ public class MapScreenHud {
 
 
     private static String getHudStats(int iteration, float distanceTraveled, int moneyCollected, int powerupsCollected, int enemiesScrapped) {
-        return String.format(java.util.Locale.US, HUD_STATS, iteration, distanceTraveled, moneyCollected, powerupsCollected, enemiesScrapped);
+        return "Iteration: " + iteration + "\n"
+             + "Distance Traveled: " + (int) (distanceTraveled) + "  km\n"
+             + "[MONEY] Collected: " + moneyCollected + "\n"
+             + "Powerups: " + powerupsCollected + "\n"
+             + "Enemies scrapped: " + enemiesScrapped;
+
+        // NOTE: String.format() isn't supported in GWT
+//        return String.format(java.util.Locale.US, HUD_STATS, iteration, distanceTraveled, moneyCollected, powerupsCollected, enemiesScrapped);
     }
 
     public void update(float dt, MapScreen.Stage stage, float stagePercent) {
