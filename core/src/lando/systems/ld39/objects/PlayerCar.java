@@ -57,11 +57,6 @@ public class PlayerCar extends Vehicle {
         upgrades.setLevel(Item.Axes, 0);
     }
 
-    @Override
-    public boolean isBoosting() {
-        return isPressed(Input.Keys.SPACE);
-    }
-
     private int axeHits = 0;
     public void pickupAxe() {
         axeHits = 0;
@@ -85,6 +80,7 @@ public class PlayerCar extends Vehicle {
         }
 
         updateFire(dt);
+        UpdateBoost(dt);
 
         bounds.x = position.x - bounds_offset_x;
         bounds.y = position.y - bounds_offset_y;
@@ -147,6 +143,27 @@ public class PlayerCar extends Vehicle {
                 fireTime = .5f;
             }
 
+        }
+    }
+
+
+    private float boostTime = -100;
+
+    @Override
+    public boolean isBoosting() {
+        return boostTime > 0;
+    }
+
+    private void UpdateBoost(float dt) {
+        boostTime -= dt;
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)){
+            int boostLevel = upgrades.getLevel(Item.Booster);
+
+            // five second cool down
+            if (boostTime < -5) {
+                boostTime = boostLevel * 3;
+            }
         }
     }
 
