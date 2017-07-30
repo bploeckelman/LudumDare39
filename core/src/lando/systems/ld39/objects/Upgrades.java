@@ -19,6 +19,14 @@ public class Upgrades {
         return Item.items.get(type).getImageAt(level, animTimer, animate);
     }
 
+    public IntIntMap getUpgrades() {
+        return new IntIntMap(upgrades);
+    }
+
+    public void setUpgrades(IntIntMap upgrades) {
+        upgrades = new IntIntMap(upgrades);
+    }
+
     public void setLevel(int type, int level) {
         int max = getMaxLevel(type);
         if (max != -1) {

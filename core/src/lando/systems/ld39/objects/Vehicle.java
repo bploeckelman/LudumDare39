@@ -2,6 +2,7 @@ package lando.systems.ld39.objects;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.IntIntMap;
 import lando.systems.ld39.screens.GameScreen;
 import lando.systems.ld39.utils.Config;
 
@@ -55,6 +56,14 @@ public class Vehicle extends GameObject {
 
     public void setBoundsLocation(float x, float y) {
         setLocation(x + bounds_offset_x, y + bounds_offset_y);
+    }
+
+    public IntIntMap getUpgrades() {
+        return upgrades.getUpgrades();
+    }
+
+    public void setUpgrades(IntIntMap upgradeItems) {
+        upgrades.setUpgrades(upgradeItems);
     }
 
     @Override
