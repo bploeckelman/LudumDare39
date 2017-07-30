@@ -144,6 +144,7 @@ public class MapScreen extends BaseScreen {
 
         }
 
+        // TODO: Remove this when done developing
         if (Gdx.input.isKeyJustPressed(Input.Keys.ANY_KEY)) {
             LudumDare39.game.setScreen(new MapScreen(1));
         }
