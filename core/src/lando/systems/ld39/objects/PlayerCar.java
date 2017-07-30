@@ -143,8 +143,13 @@ public class PlayerCar extends Vehicle {
                 fireTime = .1f;
             } else if (upgrades.getLevel(Item.Weapons) == 2){
                 bulletPosition.set(position.x, position.y + bounds_offset_y);
-                gameScreen.addBullet(this, bulletVelocity, bulletPosition, Assets.zappaTex, 10);
+                gameScreen.addBullet(this, bulletVelocity, bulletPosition, Assets.zappaTex, 5);
+                fireTime = .3f;
+            } else if (upgrades.getLevel(Item.Weapons) == 3){
+                bulletPosition.set(position.x, position.y + bounds_offset_y);
+                gameScreen.addBullet(this, bulletVelocity, bulletPosition, Assets.missileTex, 10);
                 fireTime = .5f;
+
             }
 
         }

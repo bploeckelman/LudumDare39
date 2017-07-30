@@ -57,7 +57,7 @@ public class Assets {
 
     public static TextureRegion basicProjectileTex;
     public static TextureRegion zappaTex;
-    public static TextureRegion missleTex;
+    public static TextureRegion missileTex;
 
     public static ShaderProgram hudShader;
     public static TextureRegion lightningTexture;
@@ -134,6 +134,7 @@ public class Assets {
 
         basicProjectileTex = atlas.findRegion("basicProjectile");
         zappaTex = atlas.findRegion("ZappaProjectile1");
+        missileTex = atlas.findRegion("rocket");
 
         map = mgr.get("images/usa-map-v1.png", Texture.class);
 
