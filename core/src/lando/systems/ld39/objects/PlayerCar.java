@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.IntIntMap;
 import lando.systems.ld39.screens.GameScreen;
 import lando.systems.ld39.utils.Assets;
 import lando.systems.ld39.utils.Config;
@@ -14,6 +15,8 @@ import lando.systems.ld39.utils.Config;
 public class PlayerCar extends Vehicle {
 
     public static float minSpeed = 2;
+
+    public Upgrades upgrades = new Upgrades();
 
     // this is the bounds the car can move around
     public Rectangle constraintBounds;
@@ -84,9 +87,23 @@ public class PlayerCar extends Vehicle {
         position.x = bounds.x + bounds_offset_x;
         position.y = bounds.y + bounds_offset_y;
 
-        setSpeed();
+        testSetUpgradesAndRemoveThisMethod();
+
         updateBattery(dt);
         offroadSlowdown();
+    }
+
+    private void testSetUpgradesAndRemoveThisMethod() {
+        if (Gdx.input.isKeyPressed(Input.Keys.U)) {
+            upgrades.setNext(Upgrades.Battery);
+            upgrades.setNext(Upgrades.Booster);
+            upgrades.setNext(Upgrades.Engine);
+            upgrades.setNext(Upgrades.Wheels);
+        }
+    }
+
+    public void setUpgrade(int type, int level) {
+        upgrades.setLevel(type, level);
     }
 
     private void updateBattery(float dt){
@@ -175,7 +192,24 @@ public class PlayerCar extends Vehicle {
     }
 
     private void renderBattery(SpriteBatch batch) {
+        TextureRegion battery = null;
+        switch (upgrades.getLevel(Upgrades.Battery)) {
+            case 1:
+                battery = Assets.mediumBattery;
+                break;
+            case 2:
+                battery = Assets.largeBattery;
+                break;
+            case 3:
+                battery = (batteryLevel > 1)
+                    ? coil.getKeyFrame(animStateTime)
+                    : coil.getKeyFrames()[0];
+                break;
+        }
 
+        if (battery != null) {
+            batch.draw(battery, bounds.x, bounds.y, bounds.width, bounds.height);
+        }
     }
 
     private void renderBoosters(SpriteBatch batch) {
