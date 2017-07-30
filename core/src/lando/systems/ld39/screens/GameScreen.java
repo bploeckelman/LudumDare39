@@ -3,7 +3,6 @@ package lando.systems.ld39.screens;
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
-import aurelienribon.tweenengine.primitives.MutableFloat;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
@@ -15,11 +14,14 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
-import com.sun.javafx.binding.SelectBinding;
+import com.badlogic.gdx.utils.Pool;
+import com.badlogic.gdx.utils.Pools;
 import lando.systems.ld39.LudumDare39;
 import lando.systems.ld39.objects.EnemyCar2;
+import lando.systems.ld39.objects.Bullet;
 import lando.systems.ld39.objects.GameObject;
 import lando.systems.ld39.objects.PlayerCar;
+import lando.systems.ld39.objects.Vehicle;
 import lando.systems.ld39.particles.ParticleSystem;
 import lando.systems.ld39.road.Road;
 import lando.systems.ld39.utils.Assets;
@@ -35,6 +37,9 @@ public class GameScreen extends BaseScreen {
     public static float minZoom = 0.2f;
     public static float DRAG_DELTA = 10f;
 
+    public static final Array<Bullet> activeBullets = new Array<Bullet>();
+    public static final Pool<Bullet> bulletsPool = Pools.get(Bullet.class, 500);
+
     public Road road;
 
     public Array<GameObject> gameObjects = new Array<GameObject>();
@@ -44,6 +49,7 @@ public class GameScreen extends BaseScreen {
 
     public Rectangle constraintBounds;
     private Vector2 constraintOffset;
+    public Rectangle viewBounds;
 
     private Vector3 touchStart;
     private Vector3 cameraTouchStart;
@@ -62,6 +68,7 @@ public class GameScreen extends BaseScreen {
         constraintOffset = new Vector2((camera.viewportWidth /2) - 10, camera.viewportHeight /2);
         pause = true;
         bossActive = false;
+        viewBounds = new Rectangle(0,0,camera.viewportWidth, camera.viewportHeight);
         createCar();
         Tween.to(alpha, 1, 1)
                 .target(0)
@@ -117,6 +124,17 @@ public class GameScreen extends BaseScreen {
     }
 
     private void updateObjects(float dt) {
+        viewBounds.y = camera.position.y - camera.viewportHeight/2f;
+        for(int i = activeBullets.size - 1; i >= 0; i--){
+            Bullet b = activeBullets.get(i);
+            b.update(dt);
+            //TODO: make this hit things
+            if (!viewBounds.contains(b.position)){ b.alive = false; }
+            if (!b.alive){
+                activeBullets.removeIndex(i);
+                bulletsPool.free(b);
+            }
+        }
         playerCar.constraintBounds = constraintBounds;
         for(GameObject gameObject : gameObjects) {
             gameObject.update(dt);
@@ -124,6 +142,7 @@ public class GameScreen extends BaseScreen {
         if (playerCar.dead){
             // TODO make this move to MapScreen
             pause = true;
+            removeAllBullets();
             Tween.to(alpha, 1, 1)
                     .target(1)
                     .setCallback(new TweenCallback() {
@@ -276,5 +295,16 @@ public class GameScreen extends BaseScreen {
         camera.update();
 
         return true;
+    }
+
+    public void removeAllBullets(){
+        bulletsPool.freeAll(activeBullets);
+        activeBullets.clear();
+    }
+
+    public void addBullet(Vehicle owner, Vector2 velocity){
+        Bullet b = bulletsPool.obtain();
+        b.init(owner.position, velocity, owner);
+        activeBullets.add(b);
     }
 }

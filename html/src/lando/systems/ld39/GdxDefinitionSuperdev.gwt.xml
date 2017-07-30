@@ -7,6 +7,7 @@
     <inherits name='lando.systems.ld39.GdxDefinition' />
 
 	<extend-configuration-property name="gdx.reflect.include" value="lando.systems.ld39.particles.Particle" />
+	<extend-configuration-property name="gdx.reflect.include" value="lando.systems.ld39.objects.Bullet" />
 
 	<collapse-all-properties />
     

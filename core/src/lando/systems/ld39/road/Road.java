@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import lando.systems.ld39.utils.Assets;
@@ -116,6 +117,32 @@ public class Road {
 
         batch.draw(fboTexture, 0, camera.position.y + camera.viewportHeight/2f, camera.viewportWidth, - camera.viewportHeight);
         batch.setShader(null);
+    }
+
+    /**
+     * Get the left edge of the road for a y position
+     * @param yPosition
+     * @return
+     */
+    public float getLeftEdge(float yPosition){
+        int roadIndex = (int)(yPosition / segmentLength);
+        RoadDef current = getRoadDef(roadIndex);
+        RoadDef next = getRoadDef(roadIndex + 1);
+        float percent = yPosition % segmentLength;
+        return MathUtils.lerp(current.leftSide, next.leftSide, percent);
+    }
+
+    /**
+     * Get the right edge of the road for a y position
+     * @param yPosition
+     * @return
+     */
+    public float getRightEdge(float yPosition){
+        int roadIndex = (int)(yPosition / segmentLength);
+        RoadDef current = getRoadDef(roadIndex);
+        RoadDef next = getRoadDef(roadIndex + 1);
+        float percent = yPosition % segmentLength;
+        return MathUtils.lerp(current.leftSide + current.width, next.leftSide + next.width, percent);
     }
 
     public boolean isOnRoad(float pnt_x, float pnt_y){
