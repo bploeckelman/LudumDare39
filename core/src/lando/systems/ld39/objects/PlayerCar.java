@@ -111,7 +111,7 @@ public class PlayerCar extends Vehicle {
 
         setSpeed();
         updateBattery(dt);
-        offroadSlowdown();
+        offRoadSlowdown(dt);
     }
 
     private float fireTime = 0;
@@ -139,8 +139,13 @@ public class PlayerCar extends Vehicle {
                 fireTime = .1f;
             } else if (upgrades.getLevel(Item.Weapons) == 2){
                 bulletPosition.set(position.x, position.y + bounds_offset_y);
-                gameScreen.addBullet(this, bulletVelocity, bulletPosition, Assets.zappaTex, 10);
+                gameScreen.addBullet(this, bulletVelocity, bulletPosition, Assets.zappaTex, 5);
+                fireTime = .3f;
+            } else if (upgrades.getLevel(Item.Weapons) == 3){
+                bulletPosition.set(position.x, position.y + bounds_offset_y);
+                gameScreen.addBullet(this, bulletVelocity, bulletPosition, Assets.missileTex, 10);
                 fireTime = .5f;
+
             }
 
         }
@@ -194,8 +199,8 @@ public class PlayerCar extends Vehicle {
     }
 
     // Moved this after the battery, so we still use the full speed to reduce the battery
-    private void offroadSlowdown(){
-        int tires = tiresOffRoad();
+    private void offRoadSlowdown(float dt){
+        int tires = tiresOffRoad(dt);
         speed *= .5f + (.125 * ( 4 - tires));
     }
 
