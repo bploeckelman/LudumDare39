@@ -11,19 +11,24 @@ import com.badlogic.gdx.math.CatmullRomSpline;
 import com.badlogic.gdx.math.Vector2;
 import lando.systems.ld39.LudumDare39;
 import lando.systems.ld39.objects.Map;
+import lando.systems.ld39.ui.MapScreenHud;
 import lando.systems.ld39.utils.Assets;
 import lando.systems.ld39.utils.Config;
+
+import static lando.systems.ld39.screens.MapScreen.Stage.ANIMATE_TRAVEL;
+import static lando.systems.ld39.screens.MapScreen.Stage.FADE_OUT;
 
 public class MapScreen extends BaseScreen {
 
     private static final float TIME_MAP_FADE_IN = 1;
+    private static final float TIME_MAP_FADE_OUT = 1;
     private static final float TIME_DRAW_ROUTE_TRAVELED = 3;
 
     private static final Color ROUTE_TRAVELED_COLOR = Color.BLUE;
     private static final Color ROUTE_UNTRAVELED_COLOR = Color.WHITE;
     private static final float ROUTE_WIDTH = 4;
 
-    private static final float DISP_ROUTE_KM = 4174;
+    private static final float DISP_ROUTE_KM = 4174f;
 
     private Vector2[] routePoints;
     private CatmullRomSpline<Vector2> routeSpline;
@@ -31,12 +36,16 @@ public class MapScreen extends BaseScreen {
     private MutableFloat animationPercent = new MutableFloat(0);
     private MutableFloat mapAlpha = new MutableFloat(0);
     private Stage currentStage;
+    private float currentStagePercent = 0;
+    private float currentStageTime = 0;
+    private MapScreenHud mapScreenHud;
 
     private float distanceTraveled = 0;
 
-    private enum Stage {
-        MAP_FADE_IN,
-        ANIMATE_TRAVEL
+    public enum Stage {
+        FADE_IN,
+        ANIMATE_TRAVEL,
+        FADE_OUT
     }
 
 
@@ -47,7 +56,8 @@ public class MapScreen extends BaseScreen {
     public MapScreen(float distanceTraveled) {
 
         this.distanceTraveled = distanceTraveled;
-        currentStage = Stage.MAP_FADE_IN;
+        currentStage = Stage.FADE_IN;
+        mapScreenHud = new MapScreenHud(DISP_ROUTE_KM * distanceTraveled);
 
         routeSpline = new CatmullRomSpline<Vector2>(Map.ROUTE_POINTS, false);
         routePoints = new Vector2[Map.ROUTE_RASTER_COUNT];
@@ -56,23 +66,44 @@ public class MapScreen extends BaseScreen {
             routeSpline.valueAt(routePoints[i], ((float)i) / ((float) Map.ROUTE_RASTER_COUNT-1));
         }
 
-        TweenCallback onMapFadeInComplete = new TweenCallback() {
-            @Override
-            public void onEvent(int i, BaseTween<?> baseTween) {
-                currentStage = Stage.ANIMATE_TRAVEL;
-            }
-        };
-
         Timeline.createSequence()
                 .push(Tween.to(mapAlpha, 1, TIME_MAP_FADE_IN)
                         .ease(TweenEquations.easeOutSine)
                         .target(1))
-                .push(Tween.call(onMapFadeInComplete))
-                .push(Tween.to(animationPercent, 1, TIME_DRAW_ROUTE_TRAVELED)
+                .pushPause(1)
+                .push(Tween.call(new TweenCallback() {
+                    @Override
+                    public void onEvent(int i, BaseTween<?> baseTween) {
+                        setCurrentStage(ANIMATE_TRAVEL);
+                    }
+                }))
+                .push(Tween.to(animationPercent, 1, TIME_DRAW_ROUTE_TRAVELED * Math.max(distanceTraveled, 0.2f))
                         .ease(TweenEquations.easeInOutQuad)
                         .target(1))
+                .pushPause(1)
+                .push(Tween.call(new TweenCallback() {
+                    @Override
+                    public void onEvent(int i, BaseTween<?> baseTween) {
+                        setCurrentStage(FADE_OUT);
+                    }
+                }))
+                .push(Tween.to(alpha, 1, TIME_MAP_FADE_OUT)
+                        .ease(TweenEquations.easeOutSine)
+                        .target(0))
+                .push(Tween.call(new TweenCallback() {
+                    @Override
+                    public void onEvent(int i, BaseTween<?> baseTween) {
+                        LudumDare39.game.setScreen(new UpgradeScreen());
+                    }
+                }))
                 .start(Assets.tween);
 
+    }
+
+    private void setCurrentStage(Stage stage) {
+        this.currentStage = stage;
+        this.currentStagePercent = 0f;
+        this.currentStageTime = 0f;
     }
 
     @Override
@@ -81,6 +112,55 @@ public class MapScreen extends BaseScreen {
         if (Gdx.input.justTouched()) {
             // TODO: speed up the route animation
         }
+        currentStageTime += dt;
+
+        // Update the currentStagePercent
+        if (currentStagePercent < 1) {
+            switch (currentStage) {
+                case ANIMATE_TRAVEL:
+                    // We want the percentage to reflect the ease, so pass that % through instead.
+                    currentStagePercent = animationPercent.floatValue();
+                    break;
+                case FADE_IN:
+                case FADE_OUT:
+                    float thisStageTotalTime;
+                    switch (currentStage) {
+                        case FADE_IN:
+                            thisStageTotalTime = TIME_MAP_FADE_IN;
+                            break;
+                        case FADE_OUT:
+                            thisStageTotalTime = TIME_MAP_FADE_OUT;
+                            break;
+                        default:
+                            throw new RuntimeException("Invalid stage!");
+                    }
+                    currentStagePercent = Math.min(1f, currentStageTime / thisStageTotalTime);
+                    break;
+                default:
+                    throw new RuntimeException("Invalid stage!");
+            }
+
+
+
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ANY_KEY)) {
+            LudumDare39.game.setScreen(new MapScreen(1));
+        }
+//        if (Gdx.input.justTouched()) {
+//            Tween.to(alpha, 1, 1)
+//                    .target(1)
+//                    .setCallback(new TweenCallback() {
+//                        @Override
+//                        public void onEvent(int i, BaseTween<?> baseTween) {
+//                            LudumDare39.game.setScreen(new UpgradeScreen());
+//
+//                        }
+//                    })
+//                    .start(Assets.tween);
+//        }
+
+        mapScreenHud.update(dt, currentStage, currentStagePercent);
     }
 
     @Override
@@ -130,8 +210,8 @@ public class MapScreen extends BaseScreen {
         Assets.shapes.circle(loc.x, loc.y, 6);
         Assets.shapes.end();
 
-        if (currentStage == Stage.MAP_FADE_IN) {
-            // On top of everything, "fade in" the map by drawing black on top of it.
+        if (currentStage == Stage.FADE_IN || currentStage == Stage.FADE_OUT) {
+            // On top of everything, "fade" in/out by drawing black on top of it.
             batch.begin();
             batch.setColor(0,0,0,(1 - mapAlpha.floatValue()));
             batch.draw(Assets.whitePixel, 0, 0, Config.gameWidth, Config.gameHeight);
