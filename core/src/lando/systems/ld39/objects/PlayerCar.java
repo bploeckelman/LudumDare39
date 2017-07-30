@@ -51,6 +51,18 @@ public class PlayerCar extends Vehicle {
         return isPressed(Input.Keys.SPACE);
     }
 
+    private int axeHits = 0;
+    public void pickupAxe() {
+        axeHits = 0;
+        setUpgrade(Item.Axes, 1);
+    }
+
+    public void hitAxe() {
+        if (++axeHits == 3) {
+            setUpgrade(Item.Axes, 0);
+        }
+    }
+
     @Override
     public void update(float dt) {
         super.update(dt);
