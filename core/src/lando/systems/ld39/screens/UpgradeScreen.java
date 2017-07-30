@@ -53,6 +53,9 @@ public class UpgradeScreen extends BaseScreen {
     int cost = 1000;
 
     public UpgradeScreen(IntIntMap currentUpgrades) {
+        // reset damage
+        currentUpgrades.put(Item.Damage, 0);
+
         this.currentUpgrades = currentUpgrades;
         playerCar = new PlayerCar(null);
 
@@ -117,7 +120,8 @@ public class UpgradeScreen extends BaseScreen {
                         .start(Assets.tween);
             }
 
-            if (selectedUpgrade.currentLevel != selectedUpgrade.maxLevel && purchaseButton.checkForTouch(touchX, touchY)) {
+            // added 2 null checks - if you don't select anything these are null.
+            if (selectedUpgrade != null && selectedUpgrade.currentLevel != selectedUpgrade.maxLevel && purchaseButton != null &&  purchaseButton.checkForTouch(touchX, touchY)) {
                 handleUpgrade();
             }
         }
