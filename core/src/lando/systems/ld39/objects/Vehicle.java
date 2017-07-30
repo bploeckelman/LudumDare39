@@ -27,16 +27,8 @@ public class Vehicle extends GameObject {
         upgrades.setLevel(chassisType, 0);
         keyframe = upgrades.getCurrentImage(chassisType, 0, false);
 
-        bounds.width = keyframe.getRegionWidth();
-        bounds_offset_x = bounds.width / 2;
-
-        bounds.height = keyframe.getRegionHeight();
-        bounds_offset_y = bounds.height / 2;
-
+        setSize(keyframe.getRegionWidth(), keyframe.getRegionHeight());
         setLocation((Config.gameWidth - bounds.width) / 2f, (Config.gameHeight - bounds.height) / 2f);
-
-        bounds.x = position.x - bounds_offset_x;
-        bounds.y = position.y - bounds_offset_y;
     }
 
     public void setX(float x) {
@@ -52,6 +44,17 @@ public class Vehicle extends GameObject {
     public void setLocation(float x, float y) {
         setX(x);
         setY(y);
+    }
+
+    public void setSize(float width, float height) {
+        bounds.width = width;
+        bounds.height = height;
+        bounds_offset_x = width / 2;
+        bounds_offset_y = height /2;
+    }
+
+    public void setBoundsLocation(float x, float y) {
+        setLocation(x + bounds_offset_x, y + bounds_offset_y);
     }
 
     @Override
