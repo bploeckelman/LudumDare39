@@ -146,6 +146,7 @@ public class Vehicle extends GameObject {
             gameScreen.particleSystem.addDirtParticles(position.x + tireOffset_x, position.y + tireOffset_y);
             count++;
         }
+        health -= count * .01f;
         return count;
     }
 
