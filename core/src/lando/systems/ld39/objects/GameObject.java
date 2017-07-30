@@ -13,6 +13,9 @@ public abstract class GameObject {
     public Rectangle bounds;
     public TextureRegion keyframe;
     public GameScreen gameScreen;
+    public boolean dead = false;
+    public boolean remove = false;
+
 
     public GameObject(GameScreen gameScreen) {
         this.gameScreen = gameScreen;
