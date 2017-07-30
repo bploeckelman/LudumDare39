@@ -177,6 +177,7 @@ public class UpgradeScreen extends BaseScreen {
             if (selectedUpgrade != null) {
                 selectedUpgrade.currentLevel = currentUpgrades.get(selectedUpgrade.type, 0);
 
+                // upgrade type icon
                 final float margin_top = 10f;
                 final float margin_left = 10f;
                 final float icon_size = 64f;
@@ -184,11 +185,13 @@ public class UpgradeScreen extends BaseScreen {
                 final float icon_pos_y = infoRegion.y + infoRegion.height - icon_size - margin_top;
                 batch.draw(selectedUpgrade.buttonTexture, icon_pos_x, icon_pos_y, icon_size, icon_size);
 
+                // upgrade type text
                 final float type_pos_y = icon_pos_y - textHeight;
                 Assets.drawString(batch, Item.getName(selectedUpgrade.type),
                         infoRegion.x, icon_pos_y - textHeight,
                         Color.GOLD, 0.5f, Assets.font, infoRegion.width, Align.center);
 
+                // upgrade description text
                 final float description_pos_y = type_pos_y - 1.5f * margin_top - textHeight;
                 Assets.drawString(batch, selectedUpgrade.description,
                         infoRegion.x + margin_left, description_pos_y,
@@ -196,10 +199,13 @@ public class UpgradeScreen extends BaseScreen {
 
                 final float upgrade_height = 20f;
 
-                // TODO: determine cost text based on upgrade level
-                final float cost_pos_y = purchaseButton.bounds.y + purchaseButton.bounds.height + 2f * margin_top + upgrade_height + 2f * textHeight;
-                Assets.drawString(batch, "$" + cost, infoRegion.x, cost_pos_y,
-                        Color.GOLDENROD, 0.55f, Assets.font, infoRegion.width, Align.center);
+                // cost text
+                if (selectedUpgrade.currentLevel != selectedUpgrade.maxLevel) {
+                    final int cost = PlayerCar.upgradesMeta.get(selectedUpgrade.type).get(selectedUpgrade.currentLevel + 1).cost;
+                    final float cost_pos_y = purchaseButton.bounds.y + purchaseButton.bounds.height + 2f * margin_top + upgrade_height + 2f * textHeight;
+                    Assets.drawString(batch, "$" + cost, infoRegion.x, cost_pos_y,
+                            Color.GOLDENROD, 0.55f, Assets.font, infoRegion.width, Align.center);
+                }
 
                 // current upgrade level / max upgrade levels
                 final float upgrade_level_pos_y = purchaseButton.bounds.y + purchaseButton.bounds.height + margin_top;
@@ -253,7 +259,7 @@ public class UpgradeScreen extends BaseScreen {
 
         UpgradeItem upgradeBooster = new UpgradeItem();
         upgradeBooster.type = Item.Booster;
-        upgradeBooster.description = "Increased number of turbo boosts";
+        upgradeBooster.description = "Increased duration of turbo boosts";
         upgradeBooster.buttonTexture = Assets.upgradeIconBooster;
         upgradeBooster.upgradeTexture = Assets.carBase;
         upgradeBooster.currentLevel = currentUpgrades.get(Item.Booster, 0);

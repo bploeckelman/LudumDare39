@@ -30,6 +30,8 @@ import lando.systems.ld39.utils.Config;
  */
 public class GameScreen extends BaseScreen {
 
+    public static boolean DEBUG = true;
+
     public static float zoomScale = 0.15f;
     public static float maxZoom = 1.6f;
     public static float minZoom = 0.2f;
@@ -193,22 +195,6 @@ public class GameScreen extends BaseScreen {
             road.distanceTraveled += ( deltaY / road.segmentLength);
         }
 
-        // Keep camera within world bounds
-//        float minY = world.bounds.y + camera.viewportHeight / 2 * camera.zoom;
-//        float maxY = world.bounds.height - camera.viewportHeight / 2 * camera.zoom;
-//        float minX = world.bounds.x + camera.viewportWidth / 2 * camera.zoom;
-//        float maxX = world.bounds.x + world.bounds.width - camera.viewportWidth / 2 * camera.zoom;
-//        if (camera.viewportHeight * camera.zoom > world.bounds.height) {
-//            camera.position.y = world.bounds.height / 2;
-//        } else {
-//            camera.position.y = MathUtils.clamp(camera.position.y, minY, maxY);
-//        }
-//        if (camera.viewportWidth * camera.zoom > world.bounds.width) {
-//            camera.position.x = world.bounds.x + world.bounds.width / 2;
-//        } else {
-//            camera.position.x = MathUtils.clamp(camera.position.x, minX, maxX);
-//        }
-
         camera.update();
     }
 
@@ -239,6 +225,17 @@ public class GameScreen extends BaseScreen {
             batch.setColor(0, 0, 0, alpha.floatValue());
             batch.draw(Assets.whitePixel, 0, 0, hudCamera.viewportWidth, hudCamera.viewportHeight);
             batch.setColor(Color.WHITE);
+
+            if (DEBUG) {
+                Assets.drawString(batch, "Now Battery: " + (int) playerCar.batteryLevel, 10f, 20f, Color.WHITE, 0.3f, Assets.font);
+                Assets.drawString(batch, "Max Battery: " + (int) playerCar.maxBattery, 10f, 40f, Color.WHITE, 0.3f, Assets.font);
+
+                Assets.drawString(batch, "Now Health : " + (int) playerCar.health, 10f, 70f, Color.WHITE, 0.3f, Assets.font);
+                Assets.drawString(batch, "Max Health : " + (int) playerCar.maxHealth, 10f, 90f, Color.WHITE, 0.3f, Assets.font);
+
+                Assets.drawString(batch, "Now Speed  : " + (int) playerCar.speed, 10f, 120f, Color.WHITE, 0.3f, Assets.font);
+                Assets.drawString(batch, "Max Speed  : " + (int) playerCar.maxSpeed, 10f, 140f, Color.WHITE, 0.3f, Assets.font);
+            }
         }
         batch.end();
     }
