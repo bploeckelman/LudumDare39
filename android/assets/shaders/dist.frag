@@ -13,7 +13,7 @@ varying vec2 v_texCoord;
 //const float outlineWidth = 6.0/16.0;
 //const float outerEdgeCenter = 0.5 - outlineWidth;
 
-const vec2 shadowOffset = vec2(.004, .002); // Between 0 and spread / textureSize
+const vec2 shadowOffset = vec2(.004, .003); // Between 0 and spread / textureSize
 const float shadowSmoothing = .5; // Between 0 and 0.5
 const vec4 shadowColor = vec4(0,0,0,1.);
 
