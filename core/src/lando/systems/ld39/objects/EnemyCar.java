@@ -1,9 +1,14 @@
 package lando.systems.ld39.objects;
 
+import aurelienribon.tweenengine.BaseTween;
+import aurelienribon.tweenengine.Timeline;
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenCallback;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import lando.systems.ld39.screens.GameScreen;
+import lando.systems.ld39.utils.Assets;
 
 /**
  * Created by Brian on 7/30/2017.
@@ -13,6 +18,7 @@ public class EnemyCar extends Vehicle {
 
     private int chassis;
     public float relSpeed = 2f; // Relative speed
+    private float deadTimer;
 
     public EnemyCar(GameScreen gameScreen) {
         this(gameScreen, Item.EnemyChassis1);
@@ -21,11 +27,20 @@ public class EnemyCar extends Vehicle {
     public EnemyCar(GameScreen gameScreen, int enemyChassis) {
         super(gameScreen, enemyChassis);
         chassis = enemyChassis;
+        deadTimer = 1;
     }
 
     @Override
     public void update(float dt) {
         super.update(dt);
+        if (dead){
+            // TODO: use explosion textures instead
+            deadTimer -= dt;
+            if (deadTimer < 0){
+                remove = true;
+            }
+            return;
+        }
         Rectangle playerBounds = gameScreen.playerCar.bounds;
         Vector2 playerPosition = gameScreen.playerCar.position;
         if (collisionBounds.overlaps(gameScreen.playerCar.collisionBounds)) {

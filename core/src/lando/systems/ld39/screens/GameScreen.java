@@ -143,7 +143,7 @@ public class GameScreen extends BaseScreen {
         for (int i = gameObjects.size -1; i >= 0; i--){
             GameObject o = gameObjects.get(i);
             o.update(dt);
-            if (o.dead) {
+            if (o.remove) {
                 gameObjects.removeIndex(i);
             }
         }
