@@ -111,7 +111,7 @@ public class GameScreen extends BaseScreen {
                     .setCallback(new TweenCallback() {
                         @Override
                         public void onEvent(int i, BaseTween<?> baseTween) {
-                            LudumDare39.game.setScreen(new GameScreen());
+                            LudumDare39.game.setScreen(new MapScreen((camera.position.y / road.segmentLength)/road.endRoad));
 
                         }
                     })
