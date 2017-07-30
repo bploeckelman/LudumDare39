@@ -4,7 +4,7 @@
 	<inherits name='com.badlogic.gdx.backends.gdx_backends_gwt' />
 	<inherits name='aurelienribon.tweenengine' />
 
-	<!-- <extend-configuration-property name="gdx.reflect.include" value="lando.systems.ld39.something.using.reflection" /> -->
+	 <extend-configuration-property name="gdx.reflect.include" value="lando.systems.ld39.particles.Particle" />
 
 	<inherits name='LudumDare39' />
 	<entry-point class='lando.systems.ld39.client.HtmlLauncher' />

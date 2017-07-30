@@ -6,9 +6,9 @@
 
     <inherits name='lando.systems.ld39.GdxDefinition' />
 
-	<!-- <extend-configuration-property name="gdx.reflect.include" value="lando.systems.ld39.something.using.reflection" /> -->
+	<extend-configuration-property name="gdx.reflect.include" value="lando.systems.ld39.particles.Particle" />
 
-    <collapse-all-properties />
+	<collapse-all-properties />
     
 	<add-linker name="xsiframe"/>	
 	<set-configuration-property name="devModeRedirectEnabled" value="true"/>
