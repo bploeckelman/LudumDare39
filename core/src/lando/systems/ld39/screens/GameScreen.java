@@ -21,7 +21,6 @@ import lando.systems.ld39.particles.ParticleSystem;
 import lando.systems.ld39.road.Road;
 import lando.systems.ld39.utils.Assets;
 import lando.systems.ld39.utils.Config;
-import lando.systems.ld39.utils.accessors.RectangleAccessor;
 
 /**
  * Created by Brian on 7/25/2017
@@ -69,7 +68,6 @@ public class GameScreen extends BaseScreen {
                     }
                 })
                 .start(Assets.tween);
-
     }
 
     private void createCar() {
@@ -83,6 +81,9 @@ public class GameScreen extends BaseScreen {
     public void update(float dt) {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             Gdx.app.exit();
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            LudumDare39.game.setScreen(new UpgradeScreen());
         }
 
         particleSystem.update(dt);
@@ -180,10 +181,6 @@ public class GameScreen extends BaseScreen {
     }
 
     private void renderObjects(SpriteBatch batch) {
-//        batch.setColor(Color.RED);
-//        batch.draw(Assets.whitePixel, constraintBounds.x, constraintBounds.y, constraintBounds.width, constraintBounds.height);
-//        batch.setColor(Color.WHITE);
-
         for (GameObject gameObject : gameObjects) {
             gameObject.render(batch);
         }

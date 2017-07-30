@@ -17,8 +17,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import lando.systems.ld39.utils.accessors.*;
 
-import javax.xml.soap.Text;
-
 /**
  * Created by Brian on 7/25/2017.
  */
@@ -38,6 +36,7 @@ public class Assets {
     public static Texture gravelTexture;
 
     public static TextureAtlas atlas;
+    public static NinePatch defaultNinePatch;
 
     public static TextureRegion testTexture;
     public static TextureRegion whitePixel;
@@ -48,6 +47,13 @@ public class Assets {
     public static TextureRegion smallBooster;
     public static TextureRegion largeBooster;
     public static TextureRegion megaEngine;
+    public static TextureRegion garageBackground;
+    public static TextureRegion upgradeIconBattery;
+    public static TextureRegion upgradeIconMotor;
+    public static TextureRegion upgradeIconBooster;
+    public static TextureRegion upgradeIconWeapon;
+    public static TextureRegion upgradeIconHull;
+    public static TextureRegion upgradeIconTire;
 
     public static Texture map;
 
@@ -111,8 +117,17 @@ public class Assets {
         smallBooster = atlas.findRegion("BoostersSmall");
         largeBooster = atlas.findRegion("BoostersLarge");
         megaEngine = atlas.findRegion("MegaEngine");
+        garageBackground = atlas.findRegion("upgrade-garage-bg");
+        upgradeIconBattery = atlas.findRegion("upgrade-icon-battery");
+        upgradeIconMotor = atlas.findRegion("upgrade-icon-motor");
+        upgradeIconBooster = atlas.findRegion("upgrade-icon-booster");
+        upgradeIconWeapon = atlas.findRegion("upgrade-icon-weapon");
+        upgradeIconHull = atlas.findRegion("upgrade-icon-hull");
+        upgradeIconTire = atlas.findRegion("upgrade-icon-tire");
 
         map = mgr.get("images/usa-map-v1.png", Texture.class);
+
+        defaultNinePatch = new NinePatch(atlas.findRegion("ninepatch"), 6,6,6,6);
 
         final Texture distText = new Texture(Gdx.files.internal("fonts/ubuntu.png"), true);
         distText.setFilter(Texture.TextureFilter.MipMapLinearNearest, Texture.TextureFilter.Linear);
