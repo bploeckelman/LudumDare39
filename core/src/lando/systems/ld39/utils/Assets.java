@@ -15,6 +15,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import lando.systems.ld39.objects.Upgrades;
 import lando.systems.ld39.utils.accessors.*;
 
 /**
@@ -110,6 +111,8 @@ public class Assets {
 
         testTexture = atlas.findRegion("badlogic");
         whitePixel = atlas.findRegion("white-pixel");
+
+        new Upgrades();
 
         carBase = atlas.findRegion("car-base");
         mediumBattery = atlas.findRegion("MediumBattery");

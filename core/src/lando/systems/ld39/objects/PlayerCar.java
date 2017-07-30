@@ -113,6 +113,8 @@ public class PlayerCar extends Vehicle {
 
             upgrades.setNext(Upgrades.Engine);
             upgrades.setNext(Upgrades.Wheels);
+            upgrades.setNext(Upgrades.Chassis);
+            upgrades.setNext(Upgrades.Damage);
         }
     }
 
@@ -190,70 +192,21 @@ public class PlayerCar extends Vehicle {
     public void render(SpriteBatch batch) {
         bounds.x = position.x - bounds_offset_x;
         bounds.y = position.y - bounds_offset_y;
-        renderTires(batch);
+        render(batch, Upgrades.Wheels, batteryLevel > 0);
         renderChassis(batch);
-        renderPower(batch);
-        renderWeapons(batch);
+        render(batch, Upgrades.Battery, batteryLevel > 4);
+        render(batch, Upgrades.Booster, isBoosting);
     }
 
-    private void renderTires(SpriteBatch batch) {
-
+    private void render(SpriteBatch batch, int item, boolean animate) {
+        TextureRegion image = upgrades.getCurrentImage(item, animStateTime, animate);
+        if (image != null) {
+            batch.draw(image, bounds.x, bounds.y, bounds.width, bounds.height);
+        }
     }
 
     private void renderChassis(SpriteBatch batch) {
-        batch.draw(keyframe, bounds.x, bounds.y);
-        // draw damage
+        render(batch, Upgrades.Chassis, false);
+        render(batch, Upgrades.Damage, false);
     }
-
-    private void renderPower(SpriteBatch batch) {
-        renderBattery(batch);
-        renderBoosters(batch);
-    }
-
-    private void renderBattery(SpriteBatch batch) {
-        TextureRegion battery = null;
-        switch (upgrades.getLevel(Upgrades.Battery)) {
-            case 1:
-                battery = Assets.mediumBattery;
-                break;
-            case 2:
-                battery = Assets.largeBattery;
-                break;
-            case 3:
-                battery = (batteryLevel > 1)
-                    ? coil.getKeyFrame(animStateTime)
-                    : coil.getKeyFrame(0);
-                break;
-        }
-
-        if (battery != null) {
-            batch.draw(battery, bounds.x, bounds.y, bounds.width, bounds.height);
-        }
-    }
-
-    private void renderBoosters(SpriteBatch batch) {
-        TextureRegion boosters = null;
-        switch (upgrades.getLevel(Upgrades.Booster)) {
-            case 1:
-                boosters = isBoosting
-                        ? smallBooster.getKeyFrame(animStateTime)
-                        : Assets.smallBooster;
-                break;
-            case 2:
-                boosters = isBoosting
-                        ? largeBooster.getKeyFrame(animStateTime)
-                        : Assets.largeBooster;
-                break;
-        }
-
-        if (boosters != null) {
-            batch.draw(boosters, bounds.x, bounds.y, bounds.width, bounds.height);
-        }
-    }
-
-    private void renderWeapons(SpriteBatch batch) {
-
-    }
-
-
 }
