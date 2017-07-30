@@ -1,15 +1,11 @@
 package lando.systems.ld39.objects;
 
-import aurelienribon.tweenengine.BaseTween;
-import aurelienribon.tweenengine.Timeline;
-import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.TweenCallback;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import lando.systems.ld39.screens.GameScreen;
-import lando.systems.ld39.utils.Assets;
 
 /**
  * Created by Brian on 7/30/2017.
@@ -18,8 +14,12 @@ import lando.systems.ld39.utils.Assets;
 public class EnemyCar extends Vehicle {
 
     private int chassis;
-    public float relSpeed = 2f; // Relative speed
+    public float relSpeed = 3f; // Relative speed
     private float deadTimer;
+    private boolean collidedWithPlayer = false;
+    private float collidedWithPlayerTimer;
+    private static float collidedWithPlayerTimerDefault = 1f;
+    private Vector2 collisionDirection;
 
     public EnemyCar(GameScreen gameScreen) {
         this(gameScreen, Item.EnemyChassis1);
@@ -29,6 +29,8 @@ public class EnemyCar extends Vehicle {
         super(gameScreen, enemyChassis);
         chassis = enemyChassis;
         deadTimer = 4;
+        collisionDirection = new Vector2();
+        collidedWithPlayerTimer = collidedWithPlayerTimerDefault;
 
         setRandom(Item.Explosions);
         setRandom(Item.Engine);
@@ -53,16 +55,54 @@ public class EnemyCar extends Vehicle {
             return;
         }
         tiresOffRoad(dt);
+
         Rectangle playerBounds = gameScreen.playerCar.bounds;
         Vector2 playerPosition = gameScreen.playerCar.position;
-        if (collisionBounds.overlaps(gameScreen.playerCar.collisionBounds)) {
+
+        if (collidedWithPlayer) {
+            collidedWithPlayerTimer -= dt;
+            if (collidedWithPlayerTimer < 0) {
+                collidedWithPlayer = false;
+                collidedWithPlayerTimer = collidedWithPlayerTimerDefault;
+            } else {
+                if (collisionDirection.x != 0) {
+                    position.add(-(collisionDirection.x * relSpeed), gameScreen.playerCar.speed * dt);
+                } else {
+                    position.add(0, (gameScreen.playerCar.speed * dt) - (collisionDirection.y * relSpeed));
+                }
+                setLocation(position.x, position.y);
+            }
+        } else if (collisionBounds.overlaps(gameScreen.playerCar.collisionBounds)) {
             // TODO: Collide
+            if (!collidedWithPlayer) {
+                Rectangle intersection = new Rectangle();
+                Intersector.intersectRectangles(collisionBounds, gameScreen.playerCar.collisionBounds, intersection);
+                if (intersection.width > intersection.height) {
+                    if (intersection.y > collisionBounds.y) {
+                        // Intersects with top
+                        collisionDirection.set(0, 1);
+                    } else {
+                        // Intersects with bottom
+                        collisionDirection.set(0, -1);
+                    }
+                } else {
+                    if(intersection.x > collisionBounds.x) {
+                        // Intersects with right
+                        collisionDirection.set(1, 0);
+                    } else {
+                        // Intersects with left
+                        collisionDirection.set(-1, 0);
+                    }
+                }
+
+                collidedWithPlayer = true;
+            }
         } else {
             // Follow player
             float distance = position.dst(playerPosition);
             Vector2 direction = (new Vector2(position)).sub(playerPosition).nor();
 
-            position.add(- (direction.x * relSpeed), (gameScreen.playerCar.speed *dt)- (direction.y * relSpeed));
+            position.add(- (direction.x * relSpeed), (gameScreen.playerCar.speed * dt)- (direction.y * relSpeed));
             setLocation(position.x, position.y);
         }
     }
