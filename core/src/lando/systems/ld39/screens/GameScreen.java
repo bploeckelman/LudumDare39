@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.sun.javafx.binding.SelectBinding;
 import lando.systems.ld39.LudumDare39;
@@ -202,6 +203,8 @@ public class GameScreen extends BaseScreen {
         Assets.hudShader.setUniformf("fillColor", drawColor);
         batch.draw(Assets.lightningTexture, 0, camera.viewportHeight /2 - 50, 100, 100);
         batch.setShader(null);
+        String text = (int)(percent * 100) + "%";
+        Assets.drawString(batch, text, 10, camera.viewportHeight/2 + 70,Color.WHITE, .35f, Assets.font, 100, Align.center);
 //            hud.render(batch);
     }
 
