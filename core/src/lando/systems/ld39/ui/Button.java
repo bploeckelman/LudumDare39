@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Align;
 import lando.systems.ld39.utils.Assets;
 import lando.systems.ld39.utils.Config;
 
@@ -35,7 +36,7 @@ public class Button {
 
     private OrthographicCamera camera;
     private Vector2 touchPosScreen = new Vector2();
-    private float textScale = 0.3f;
+    public float textScale = 0.3f;
     private float textOffsetY = 3f;
     public Color textColor = Color.WHITE;
     private float textX;
@@ -99,49 +100,48 @@ public class Button {
 
     public void renderTooltip(SpriteBatch batch, OrthographicCamera hudCamera){
         // Tooltip
-        if (tooltip != null && !tooltip.equals("")) {
-            if (showTooltip) {
-                tempVec3.set(input.getX(), input.getY(), 0);
-                hudCamera.unproject(tempVec3);
-                float tX = tempVec3.x;
-                float tY = tempVec3.y;
-                float backgroundX;
-                float backgroundY;
-                float stringTX ;
-                float stringTY;
+        if (tooltip == null || tooltip.equals("") || !showTooltip) return;
 
-                // Screen space
-                if (tX < Config.gameWidth / 2) {
-                    // left half of the screen: align left edge of tooltip at cursor
-                    backgroundX = tX;
-                    if (tY > Config.gameHeight / 2) {
-                        // Tooltip will appear under the cursor (bottom-right).  Offset it.
-                        backgroundX += TOOLTIP_CURSOR_OFFSET_X;
-                    }
-                } else {
-                    // Right side of screen: align right edge of tooltip at cursor
-                    backgroundX = tX - tooltipBackgroundWidth;
-                }
-                stringTX = backgroundX + TOOLTIP_TEXT_PADDING_X;
-                if (tY <= Config.gameHeight / 2) {
-                    // bottom half of screen: align bottom edge of tooltip with cursor
-                    backgroundY = tY;
-                } else {
-                    // top half of screen: align top edge of tooltip with cursor
-                    backgroundY = tY - tooltipBackgroundHeight;
-                }
-                stringTY = backgroundY + tooltipTextOffsetY;
-                // DRAW
-                Assets.defaultNinePatch.draw(batch, backgroundX, backgroundY, tooltipBackgroundWidth, tooltipBackgroundHeight);
-                Assets.drawString(batch,
-                        tooltip,
-                        stringTX,
-                        stringTY,
-                        Color.WHITE,
-                        TOOLTIP_TEXT_SCALE,
-                        Assets.font);
+        tempVec3.set(input.getX(), input.getY(), 0);
+        hudCamera.unproject(tempVec3);
+        float tX = tempVec3.x;
+        float tY = tempVec3.y;
+        float backgroundX;
+        float backgroundY;
+        float stringTX ;
+        float stringTY;
+
+        // Screen space
+        if (tX < Config.gameWidth / 2) {
+            // left half of the screen: align left edge of tooltip at cursor
+            backgroundX = tX;
+            if (tY > Config.gameHeight / 2) {
+                // Tooltip will appear under the cursor (bottom-right).  Offset it.
+                backgroundX += TOOLTIP_CURSOR_OFFSET_X;
             }
+        } else {
+            // Right side of screen: align right edge of tooltip at cursor
+            backgroundX = tX - tooltipBackgroundWidth;
         }
+        stringTX = backgroundX + TOOLTIP_TEXT_PADDING_X;
+        if (tY <= Config.gameHeight / 2) {
+            // bottom half of screen: align bottom edge of tooltip with cursor
+            backgroundY = tY;
+        } else {
+            // top half of screen: align top edge of tooltip with cursor
+            backgroundY = tY - tooltipBackgroundHeight;
+        }
+        stringTY = backgroundY + tooltipTextOffsetY;
+
+        // DRAW
+        Assets.defaultNinePatch.draw(batch, backgroundX, backgroundY, tooltipBackgroundWidth, tooltipBackgroundHeight);
+        Assets.drawString(batch,
+                tooltip,
+                stringTX,
+                stringTY,
+                Color.WHITE,
+                TOOLTIP_TEXT_SCALE,
+                Assets.font);
     }
 
     public void update(float dt) {

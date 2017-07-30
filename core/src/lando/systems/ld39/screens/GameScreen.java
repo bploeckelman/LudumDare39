@@ -14,6 +14,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import com.sun.javafx.binding.SelectBinding;
 import lando.systems.ld39.LudumDare39;
 import lando.systems.ld39.objects.GameObject;
 import lando.systems.ld39.objects.PlayerCar;
@@ -191,7 +192,16 @@ public class GameScreen extends BaseScreen {
         }
     }
 
+    Color drawColor = new Color();
     private void renderHud(SpriteBatch batch) {
+        batch.setShader(Assets.hudShader);
+        batch.setColor(Color.YELLOW);
+        float percent = playerCar.getBatteryPercent();
+        Assets.hsvToRgb(percent * 120/ 365f, 1f, .8f, drawColor);
+        Assets.hudShader.setUniformf("amount", percent);
+        Assets.hudShader.setUniformf("fillColor", drawColor);
+        batch.draw(Assets.lightningTexture, 0, camera.viewportHeight /2 - 50, 100, 100);
+        batch.setShader(null);
 //            hud.render(batch);
     }
 

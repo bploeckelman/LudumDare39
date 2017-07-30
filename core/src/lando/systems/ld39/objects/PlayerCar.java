@@ -193,7 +193,8 @@ public class PlayerCar extends Vehicle {
         bounds.x = position.x - bounds_offset_x;
         bounds.y = position.y - bounds_offset_y;
         render(batch, Upgrades.Wheels, batteryLevel > 0);
-        renderChassis(batch);
+        render(batch, Upgrades.Chassis, false);
+        render(batch, Upgrades.Damage, false);
         render(batch, Upgrades.Battery, batteryLevel > 4);
         render(batch, Upgrades.Booster, isBoosting);
     }
@@ -205,8 +206,7 @@ public class PlayerCar extends Vehicle {
         }
     }
 
-    private void renderChassis(SpriteBatch batch) {
-        render(batch, Upgrades.Chassis, false);
-        render(batch, Upgrades.Damage, false);
+    public float getBatteryPercent(){
+        return batteryLevel/maxBattery;
     }
 }

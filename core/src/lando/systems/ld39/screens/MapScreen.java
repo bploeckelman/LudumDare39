@@ -45,6 +45,21 @@ public class MapScreen extends BaseScreen {
         Timeline.createSequence()
                 .push(Tween.to(animationPercent, 1, ROUTE_ANIMATION_TIME)
                         .ease(TweenEquations.easeInOutQuad)
+                        .setCallback(new TweenCallback() {
+                            @Override
+                            public void onEvent(int type, BaseTween<?> source) {
+                                Tween.to(alpha, 1, 1)
+                                        .target(1)
+                                        .setCallback(new TweenCallback() {
+                                            @Override
+                                            public void onEvent(int i, BaseTween<?> baseTween) {
+                                                LudumDare39.game.setScreen(new UpgradeScreen());
+
+                                            }
+                                        })
+                                        .start(Assets.tween);
+                            }
+                        })
                     .target(1))
                 .start(Assets.tween);
 
@@ -54,16 +69,7 @@ public class MapScreen extends BaseScreen {
     public void update(float dt) {
 //        current += dt;
         if (Gdx.input.justTouched()) {
-            Tween.to(alpha, 1, 1)
-                    .target(1)
-                    .setCallback(new TweenCallback() {
-                        @Override
-                        public void onEvent(int i, BaseTween<?> baseTween) {
-                            LudumDare39.game.setScreen(new UpgradeScreen());
-
-                        }
-                    })
-                    .start(Assets.tween);
+            // TODO: speed up the route animation
         }
     }
 
@@ -114,6 +120,12 @@ public class MapScreen extends BaseScreen {
         Assets.shapes.circle(loc.x, loc.y, 4);
         Assets.shapes.end();
 
+        // Screen transition overlay
+        batch.begin();
+        batch.setColor(0, 0, 0, alpha.floatValue());
+        batch.draw(Assets.whitePixel, 0, 0, hudCamera.viewportWidth, hudCamera.viewportHeight);
+        batch.setColor(Color.WHITE);
+        batch.end();
     }
 
 }
