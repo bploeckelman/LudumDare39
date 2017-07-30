@@ -157,9 +157,6 @@ public class GameScreen extends BaseScreen {
                 gameObjects.removeIndex(i);
             }
         }
-        for(GameObject gameObject : gameObjects) {
-            gameObject.update(dt);
-        }
         if (playerCar.dead){
             // TODO make this move to MapScreen
             pause = true;

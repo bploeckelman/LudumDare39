@@ -149,6 +149,8 @@ public class PlayerCar extends Vehicle {
             upgrades.setNext(Item.Damage);
             upgrades.setNext(Item.Weapons);
             upgrades.setNext(Item.Axes);
+
+            int stop = 0;
         }
     }
 
