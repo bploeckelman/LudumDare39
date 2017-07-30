@@ -19,6 +19,7 @@ public class Map {
             getScaledMapVector(483, 185),
             getScaledMapVector(473, 189),
             getScaledMapVector(463, 184),
+            getScaledMapVector(435, 188),
             getScaledMapVector(419, 192),
             getScaledMapVector(399, 201),
             getScaledMapVector(360, 193),
