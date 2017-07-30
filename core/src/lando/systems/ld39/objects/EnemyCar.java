@@ -43,7 +43,7 @@ public class EnemyCar extends Vehicle {
             }
             return;
         }
-        tiresOffRoad();
+        tiresOffRoad(dt);
         Rectangle playerBounds = gameScreen.playerCar.bounds;
         Vector2 playerPosition = gameScreen.playerCar.position;
         if (collisionBounds.overlaps(gameScreen.playerCar.collisionBounds)) {

@@ -115,7 +115,7 @@ public class PlayerCar extends Vehicle {
 
         setSpeed();
         updateBattery(dt);
-        offroadSlowdown();
+        offRoadSlowdown(dt);
     }
 
     private float fireTime = 0;
@@ -182,8 +182,8 @@ public class PlayerCar extends Vehicle {
     }
 
     // Moved this after the battery, so we still use the full speed to reduce the battery
-    private void offroadSlowdown(){
-        int tires = tiresOffRoad();
+    private void offRoadSlowdown(float dt){
+        int tires = tiresOffRoad(dt);
         speed *= .5f + (.125 * ( 4 - tires));
     }
 

@@ -136,7 +136,7 @@ public class Vehicle extends GameObject {
         }
     }
 
-    public int tiresOffRoad(){
+    public int tiresOffRoad(float dt){
         int count = 0;
         if (!gameScreen.road.isOnRoad(position.x - tireOffset_x, position.y - tireOffset_y)) {
             gameScreen.particleSystem.addDirtParticles(position.x - tireOffset_x, position.y - tireOffset_y);
@@ -154,7 +154,7 @@ public class Vehicle extends GameObject {
             gameScreen.particleSystem.addDirtParticles(position.x + tireOffset_x, position.y + tireOffset_y);
             count++;
         }
-        health -= count * .01f;
+        health -= count * 5f * dt;
         return count;
     }
 
