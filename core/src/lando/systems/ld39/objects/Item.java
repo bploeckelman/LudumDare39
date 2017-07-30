@@ -1,5 +1,6 @@
 package lando.systems.ld39.objects;
 
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.utils.IntMap;
 
 /**
@@ -15,6 +16,7 @@ public class Item {
     public static final int Weapons = 6;
     public static final int Axes = 7;
     public static final int EnemyChassis1 = 8;
+    public static final int Explosions = 9;
 
     private static final String None = ItemGroup.None;
 
@@ -32,6 +34,7 @@ public class Item {
         items.put(Axes, new ItemGroup(None, "TireAxes"));
         items.put(Weapons, new ItemGroup(None, "BasicGun", "Zappa", "RocketLauncher"));
         items.put(EnemyChassis1, new ItemGroup("Enemy1", "Enemy4", "Enemy5"));
+        items.put(Explosions, new ItemGroup("Explosion1", "Explosion2", "Explosion3", "Explosion4"));
     }
 
     public static int getMaxLevel(int itemType) {

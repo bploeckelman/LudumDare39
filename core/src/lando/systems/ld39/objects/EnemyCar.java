@@ -5,6 +5,7 @@ import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import lando.systems.ld39.screens.GameScreen;
@@ -27,7 +28,8 @@ public class EnemyCar extends Vehicle {
     public EnemyCar(GameScreen gameScreen, int enemyChassis) {
         super(gameScreen, enemyChassis);
         chassis = enemyChassis;
-        deadTimer = 1;
+        deadTimer = 4;
+        setUpgrade(Item.Explosions, MathUtils.random(Item.getMaxLevel(Item.Explosions)));
     }
 
     @Override

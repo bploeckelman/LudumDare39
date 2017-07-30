@@ -104,6 +104,10 @@ public class Vehicle extends GameObject {
         return false;
     }
 
+    public boolean isExploded() {
+        return dead;
+    }
+
     @Override
     public void render(SpriteBatch batch) {
         bounds.x = position.x - bounds_offset_x;
@@ -119,6 +123,10 @@ public class Vehicle extends GameObject {
         render(batch, Item.Booster, isBoosting() && isRunning);
         render(batch, Item.Axes, true);
         render(batch, Item.Weapons, isFiring());
+
+        if (isExploded()) {
+            render(batch, Item.Explosions, true);
+        }
     }
 
     protected void render(SpriteBatch batch, int item, boolean animate) {
