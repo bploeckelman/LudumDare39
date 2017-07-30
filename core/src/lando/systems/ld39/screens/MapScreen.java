@@ -1,14 +1,14 @@
 package lando.systems.ld39.screens;
 
-import aurelienribon.tweenengine.Timeline;
-import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.TweenEquations;
+import aurelienribon.tweenengine.*;
 import aurelienribon.tweenengine.primitives.MutableFloat;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.CatmullRomSpline;
 import com.badlogic.gdx.math.Vector2;
+import lando.systems.ld39.LudumDare39;
 import lando.systems.ld39.objects.Map;
 import lando.systems.ld39.utils.Assets;
 
@@ -53,6 +53,18 @@ public class MapScreen extends BaseScreen {
     @Override
     public void update(float dt) {
 //        current += dt;
+        if (Gdx.input.justTouched()) {
+            Tween.to(alpha, 1, 1)
+                    .target(1)
+                    .setCallback(new TweenCallback() {
+                        @Override
+                        public void onEvent(int i, BaseTween<?> baseTween) {
+                            LudumDare39.game.setScreen(new UpgradeScreen());
+
+                        }
+                    })
+                    .start(Assets.tween);
+        }
     }
 
     @Override
