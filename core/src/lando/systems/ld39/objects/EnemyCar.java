@@ -29,7 +29,17 @@ public class EnemyCar extends Vehicle {
         super(gameScreen, enemyChassis);
         chassis = enemyChassis;
         deadTimer = 4;
-        setUpgrade(Item.Explosions, MathUtils.random(Item.getMaxLevel(Item.Explosions)));
+
+        setRandom(Item.Explosions);
+        setRandom(Item.Engine);
+        setRandom(Item.Booster);
+    }
+
+    private void setRandom(int item) {
+        int max = Item.getMaxLevel(item);
+        if (max != -1) {
+            setUpgrade(item, MathUtils.random(max));
+        }
     }
 
     @Override
