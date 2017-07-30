@@ -3,6 +3,7 @@ package lando.systems.ld39.screens;
 import aurelienribon.tweenengine.*;
 import aurelienribon.tweenengine.primitives.MutableFloat;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -11,18 +12,25 @@ import com.badlogic.gdx.math.Vector2;
 import lando.systems.ld39.LudumDare39;
 import lando.systems.ld39.objects.Map;
 import lando.systems.ld39.utils.Assets;
+import lando.systems.ld39.utils.Config;
 
 public class MapScreen extends BaseScreen {
 
-    private static final float ROUTE_ANIMATION_TIME = 3;
+    private static final float TIME_MAP_FADE_IN = 1;
+    private static final float TIME_DRAW_ROUTE_TRAVELED = 3;
+
     private static final Color ROUTE_TRAVELED_COLOR = Color.RED;
     private static final Color ROUTE_UNTRAVELED_COLOR = Color.WHITE;
     private static final float ROUTE_WIDTH = 4;
+
+    private static final float DISP_ROUTE_KM = 4174;
 
     private Vector2[] routePoints;
     private CatmullRomSpline<Vector2> routeSpline;
 
     private MutableFloat animationPercent = new MutableFloat(0);
+    private MutableFloat mapAlpha = new MutableFloat(0);
+
 
     private float distanceTraveled = 0;
 
@@ -42,25 +50,21 @@ public class MapScreen extends BaseScreen {
             routeSpline.valueAt(routePoints[i], ((float)i) / ((float) Map.ROUTE_RASTER_COUNT-1));
         }
 
-        Timeline.createSequence()
-                .push(Tween.to(animationPercent, 1, ROUTE_ANIMATION_TIME)
-                        .ease(TweenEquations.easeInOutQuad)
-                        .setCallback(new TweenCallback() {
-                            @Override
-                            public void onEvent(int type, BaseTween<?> source) {
-                                Tween.to(alpha, 1, 1)
-                                        .target(1)
-                                        .setCallback(new TweenCallback() {
-                                            @Override
-                                            public void onEvent(int i, BaseTween<?> baseTween) {
-                                                LudumDare39.game.setScreen(new UpgradeScreen());
+        TweenCallback tweenCallback = new TweenCallback() {
+            @Override
+            public void onEvent(int i, BaseTween<?> baseTween) {
 
-                                            }
-                                        })
-                                        .start(Assets.tween);
-                            }
-                        })
-                    .target(1))
+            }
+        };
+
+        Timeline.createSequence()
+                .push(Tween.to(mapAlpha, 1, TIME_MAP_FADE_IN)
+                        .ease(TweenEquations.easeOutSine)
+                        .target(1))
+                .push(Tween.call(tweenCallback))
+                .push(Tween.to(animationPercent, 1, TIME_DRAW_ROUTE_TRAVELED)
+                        .ease(TweenEquations.easeInOutQuad)
+                        .target(1))
                 .start(Assets.tween);
 
     }
@@ -90,11 +94,9 @@ public class MapScreen extends BaseScreen {
         float nextRasterPercent;
         for(int i = 0; i < Map.ROUTE_RASTER_COUNT-1; ++i) {
             nextRasterPercent = ((float) i+1) / ((float) Map.ROUTE_RASTER_COUNT-1);
-            if (nextRasterPercent >= splineDistance) {
+            if (lastTraveledRasterPoint == null && nextRasterPercent >= splineDistance) {
                 thisRouteColor = ROUTE_UNTRAVELED_COLOR;
-                if (lastTraveledRasterPoint == null) {
-                    lastTraveledRasterPoint = routePoints[i];
-                }
+                lastTraveledRasterPoint = routePoints[i];
             }
 
             Assets.shapes.setColor(thisRouteColor);
@@ -120,12 +122,13 @@ public class MapScreen extends BaseScreen {
         Assets.shapes.circle(loc.x, loc.y, 4);
         Assets.shapes.end();
 
-        // Screen transition overlay
+        // On top of everything, "fade in" the map by drawing black on top of it.
         batch.begin();
-        batch.setColor(0, 0, 0, alpha.floatValue());
-        batch.draw(Assets.whitePixel, 0, 0, hudCamera.viewportWidth, hudCamera.viewportHeight);
+        batch.setColor(0,0,0,(1 - mapAlpha.floatValue()));
+        batch.draw(Assets.whitePixel, 0, 0, Config.gameWidth, Config.gameHeight);
         batch.setColor(Color.WHITE);
         batch.end();
+
     }
 
 }
