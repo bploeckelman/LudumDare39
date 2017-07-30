@@ -21,6 +21,8 @@ public class Upgrades {
     public static final int Booster = 3;
     public static final int Chassis = 4;
     public static final int Damage = 5;
+    public static final int Weapons = 6;
+    public static final int Axes = 7;
 
     private static final String None = "-None-";
 
@@ -71,11 +73,13 @@ public class Upgrades {
     private static IntMap<Upgrade> currentUpgrades = new IntMap<Upgrade>();
     static {
         currentUpgrades.put(Battery, new Upgrade(None, "MediumBattery", "LargeBattery", "Coil"));
-        currentUpgrades.put(Engine, new Upgrade("SmallEngine", "MediumEngine", "MegaEngine"));
+        currentUpgrades.put(Engine, new Upgrade(None, "SmallEngine", "MediumEngine", "MegaEngine"));
         currentUpgrades.put(Wheels, new Upgrade("Bronze", "Silver", "Gold"));
         currentUpgrades.put(Booster, new Upgrade(None, "BoostersSmall", "BoostersLarge"));
         currentUpgrades.put(Chassis, new Upgrade("CarBase1", "CarBase2", "CarBase3"));
         currentUpgrades.put(Damage, new Upgrade(None, "DamageSmall", "DamageLarge"));
+        currentUpgrades.put(Axes, new Upgrade(None, "TireAxes"));
+        currentUpgrades.put(Weapons, new Upgrade(None, "BasicGun", "Zappa", "RocketLauncher"));
     }
 
     public TextureRegion getCurrentImage(int type, float animTimer, boolean animate) {

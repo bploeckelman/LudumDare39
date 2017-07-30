@@ -2,7 +2,6 @@ package lando.systems.ld39.objects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
@@ -31,10 +30,6 @@ public class PlayerCar extends Vehicle {
     private float bounds_offset_x = 10f;
     private float bounds_offset_y = 10f;
 
-    private Animation<TextureRegion> coil;
-    private Animation<TextureRegion> smallBooster;
-    private Animation<TextureRegion> largeBooster;
-
     public boolean dead = false;
 
     // TODO: addon layers
@@ -51,14 +46,6 @@ public class PlayerCar extends Vehicle {
         position.y = (Config.gameHeight - bounds.height) / 2f;
         bounds.x = position.x - bounds_offset_x;
         bounds.y = position.y - bounds_offset_y;
-
-        loadImages();
-    }
-
-    private void loadImages() {
-        coil = new Animation<TextureRegion>(0.1f, Assets.atlas.findRegions("CoilAnim"), Animation.PlayMode.LOOP);
-        smallBooster = new Animation<TextureRegion>(0.1f, Assets.atlas.findRegions("BoostersSmallAnim"), Animation.PlayMode.LOOP);
-        largeBooster = new Animation<TextureRegion>(0.1f, Assets.atlas.findRegions("BoostersLargeAnim"), Animation.PlayMode.LOOP);
     }
 
     @Override
@@ -72,6 +59,7 @@ public class PlayerCar extends Vehicle {
         }
 
         isBoosting = isPressed(Input.Keys.SPACE);
+        updateFire(dt);
 
         bounds.x = position.x - bounds_offset_x;
         bounds.y = position.y - bounds_offset_y;
@@ -102,6 +90,23 @@ public class PlayerCar extends Vehicle {
         offroadSlowdown();
     }
 
+    private float fireTime = 0;
+
+    public boolean isFiring() {
+        return fireTime > 0;
+    }
+
+    private void updateFire(float dt) {
+        if (fireTime > 0) {
+            fireTime -= dt;
+            return;
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+            fireTime = 2;
+        }
+    }
+
     private void testSetUpgradesAndRemoveThisMethod() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.U)) {
             upgrades.setNext(Upgrades.Battery);
@@ -110,6 +115,8 @@ public class PlayerCar extends Vehicle {
             upgrades.setNext(Upgrades.Wheels);
             upgrades.setNext(Upgrades.Chassis);
             upgrades.setNext(Upgrades.Damage);
+            upgrades.setNext(Upgrades.Weapons);
+            upgrades.setNext(Upgrades.Axes);
         }
     }
 
@@ -196,6 +203,8 @@ public class PlayerCar extends Vehicle {
         render(batch, Upgrades.Battery, isRunning);
         render(batch, Upgrades.Engine, isRunning);
         render(batch, Upgrades.Booster, isBoosting && isRunning);
+        render(batch, Upgrades.Axes, true);
+        render(batch, Upgrades.Weapons, isFiring());
     }
 
     private void render(SpriteBatch batch, int item, boolean animate) {
