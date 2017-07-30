@@ -5,7 +5,7 @@ public class Stats {
     public int money = 0;
     public int powerupsCollected = 0;
     public int enemiesScrapped = 0;
-    public float distanceTraveled = 0;
+    public float distanceTraveledPercent = 0;
 
     public Stats() {}
 
@@ -13,7 +13,7 @@ public class Stats {
         this.money += stats.money;
         this.powerupsCollected += stats.powerupsCollected;
         this.enemiesScrapped += stats.enemiesScrapped;
-        this.distanceTraveled += stats.distanceTraveled;
+        this.distanceTraveledPercent += stats.distanceTraveledPercent;
     }
 
 }

@@ -54,6 +54,8 @@ public class GameScreen extends BaseScreen {
     public boolean bossActive;
     public boolean pause;
 
+    private Stats roundStats;
+
     public GameScreen() {
         PlayerCar tempPlayerCar = new PlayerCar(this);
         init(tempPlayerCar.getUpgrades());
@@ -64,6 +66,7 @@ public class GameScreen extends BaseScreen {
     }
 
     public void init(IntIntMap currentUpgrades) {
+        roundStats = new Stats();
         alpha.setValue(1);
         road = new Road();
         touchStart = new Vector3();
@@ -159,6 +162,8 @@ public class GameScreen extends BaseScreen {
         }
         if (playerCar.dead){
             // TODO make this move to MapScreen
+            // Set the distanceTraveledPercent
+            roundStats.distanceTraveledPercent = (road.distanceTraveled)/road.endRoad;
             pause = true;
             removeAllBullets();
             Tween.to(alpha, 1, 1)
@@ -166,7 +171,7 @@ public class GameScreen extends BaseScreen {
                     .setCallback(new TweenCallback() {
                         @Override
                         public void onEvent(int i, BaseTween<?> baseTween) {
-                            LudumDare39.game.setScreen(new MapScreen((road.distanceTraveled)/road.endRoad, playerCar));
+                            LudumDare39.game.setScreen(new MapScreen(roundStats, playerCar));
 
                         }
                     })

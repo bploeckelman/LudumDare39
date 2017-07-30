@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Align;
+import lando.systems.ld39.objects.Stats;
 import lando.systems.ld39.screens.MapScreen;
 import lando.systems.ld39.utils.Assets;
 import lando.systems.ld39.utils.Config;
@@ -38,11 +39,11 @@ public class MapScreenHud {
 
     /**
      *
-     * @param distanceTraveled in KM
+     * @param roundStats
      */
-    public MapScreenHud(float distanceTraveled) {
+    public MapScreenHud(Stats roundStats) {
 
-        this.distanceTraveled = distanceTraveled;
+        this.distanceTraveled = roundStats.distanceTraveledPercent * MapScreen.DISP_ROUTE_KM;
 
         // Process the % based layouts
         hudFrameOrigin = new Vector2(
@@ -74,7 +75,7 @@ public class MapScreenHud {
              + "Enemies scrapped: " + enemiesScrapped;
 
         // NOTE: String.format() isn't supported in GWT
-//        return String.format(java.util.Locale.US, HUD_STATS, iteration, distanceTraveled, moneyCollected, powerupsCollected, enemiesScrapped);
+//        return String.format(java.util.Locale.US, HUD_STATS, iteration, distanceTraveledPercent, moneyCollected, powerupsCollected, enemiesScrapped);
     }
 
     public void update(float dt, MapScreen.Stage stage, float stagePercent) {
