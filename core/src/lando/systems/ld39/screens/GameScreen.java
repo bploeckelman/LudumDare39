@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import lando.systems.ld39.objects.GameObject;
 import lando.systems.ld39.objects.PlayerCar;
+import lando.systems.ld39.particles.ParticleSystem;
 import lando.systems.ld39.road.Road;
 import lando.systems.ld39.utils.Assets;
 import lando.systems.ld39.utils.Config;
@@ -31,6 +32,7 @@ public class GameScreen extends BaseScreen {
     public Road road;
 
     public Array<GameObject> gameObjects = new Array<GameObject>();
+    public ParticleSystem particleSystem = new ParticleSystem();
 
     public PlayerCar playerCar;
 
@@ -69,6 +71,7 @@ public class GameScreen extends BaseScreen {
         updateWorld(dt);
         updateObjects(dt);
         updateCamera(dt);
+        particleSystem.update(dt);
     }
 
     private void updateWorld(float dt) {
@@ -121,6 +124,7 @@ public class GameScreen extends BaseScreen {
         {
             road.renderFrameBuffer(batch, camera);
             renderWorld(batch);
+            particleSystem.render(batch);
             renderObjects(batch);
         }
         batch.end();

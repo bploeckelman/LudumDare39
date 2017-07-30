@@ -50,12 +50,25 @@ public class Vehicle extends GameObject {
         batch.draw(keyframe, bounds.x, bounds.y);
     }
 
-    public int tiresOnRoad(){
+    public int tiresOffRoad(){
         int count = 0;
-        if (gameScreen.road.isOnRoad(position.x - tireOffset_x, position.y - tireOffset_y)) count++;
-        if (gameScreen.road.isOnRoad(position.x + tireOffset_x, position.y - tireOffset_y)) count++;
-        if (gameScreen.road.isOnRoad(position.x - tireOffset_x, position.y + tireOffset_y)) count++;
-        if (gameScreen.road.isOnRoad(position.x + tireOffset_x, position.y + tireOffset_y)) count++;
+        if (!gameScreen.road.isOnRoad(position.x - tireOffset_x, position.y - tireOffset_y)) {
+            gameScreen.particleSystem.addDirtParticles(position.x - tireOffset_x, position.y - tireOffset_y);
+            count++;
+        }
+        if (!gameScreen.road.isOnRoad(position.x + tireOffset_x, position.y - tireOffset_y)) {
+            gameScreen.particleSystem.addDirtParticles(position.x + tireOffset_x, position.y - tireOffset_y);
+            count++;
+        }
+        if (!gameScreen.road.isOnRoad(position.x - tireOffset_x, position.y + tireOffset_y)) {
+            gameScreen.particleSystem.addDirtParticles(position.x - tireOffset_x, position.y + tireOffset_y);
+            count++;
+        }
+        if (!gameScreen.road.isOnRoad(position.x + tireOffset_x, position.y + tireOffset_y)) {
+            gameScreen.particleSystem.addDirtParticles(position.x + tireOffset_x, position.y + tireOffset_y);
+            count++;
+        }
         return count;
+
     }
 }

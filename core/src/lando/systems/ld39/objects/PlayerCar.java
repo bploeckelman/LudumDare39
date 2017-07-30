@@ -2,13 +2,10 @@ package lando.systems.ld39.objects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import lando.systems.ld39.screens.GameScreen;
 import lando.systems.ld39.utils.Assets;
 import lando.systems.ld39.utils.Config;
@@ -75,6 +72,9 @@ public class PlayerCar extends Vehicle {
     private void setSpeed() {
         // i can't drive 55
         speed = 10 + (10 * (position.y - constraintBounds.y) / constraintBounds.height);
+        int tires = tiresOffRoad();
+        speed *= .5f + (.125 * ( 4 - tires));
+
     }
 
     private void constrainBounds(Rectangle bounds) {
@@ -126,4 +126,6 @@ public class PlayerCar extends Vehicle {
     public void render(SpriteBatch batch) {
         batch.draw(keyframe, bounds.x, bounds.y);
     }
+
+
 }
