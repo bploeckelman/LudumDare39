@@ -46,7 +46,7 @@ public class Assets {
     public static TextureRegion mediumBattery;
     public static TextureRegion largeBattery;
     public static TextureRegion smallBooster;
-    public static TextureRegion largeBooseter;
+    public static TextureRegion largeBooster;
     public static TextureRegion megaEngine;
 
     public static Texture map;
@@ -109,7 +109,7 @@ public class Assets {
         mediumBattery = atlas.findRegion("MediumBattery");
         largeBattery = atlas.findRegion("LargeBattery");
         smallBooster = atlas.findRegion("BoostersSmall");
-        largeBooseter = atlas.findRegion("BoostersLarge");
+        largeBooster = atlas.findRegion("BoostersLarge");
         megaEngine = atlas.findRegion("MegaEngine");
 
         map = mgr.get("images/usa-map-v1.png", Texture.class);

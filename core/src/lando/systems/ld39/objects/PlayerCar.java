@@ -6,8 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.IntIntMap;
+import com.badlogic.gdx.math.Vector3;
 import lando.systems.ld39.screens.GameScreen;
 import lando.systems.ld39.utils.Assets;
 import lando.systems.ld39.utils.Config;
@@ -24,6 +23,8 @@ public class PlayerCar extends Vehicle {
     public float speed = 0;
     public float maxSpeed = 15;
 
+    public boolean isBoosting = false;
+
     public float batteryLevel;
     public float maxBattery;
 
@@ -31,6 +32,9 @@ public class PlayerCar extends Vehicle {
     private float bounds_offset_y = 10f;
 
     private Animation<TextureRegion> coil;
+    private Animation<TextureRegion> smallBooster;
+    private Animation<TextureRegion> largeBooster;
+
     public boolean dead = false;
 
     // TODO: addon layers
@@ -52,7 +56,9 @@ public class PlayerCar extends Vehicle {
     }
 
     private void loadImages() {
-        coil = new Animation<TextureRegion>(0.1f, Assets.atlas.findRegions("coil"), Animation.PlayMode.LOOP);
+        coil = new Animation<TextureRegion>(0.1f, Assets.atlas.findRegions("CoilAnim"), Animation.PlayMode.LOOP);
+        smallBooster = new Animation<TextureRegion>(0.1f, Assets.atlas.findRegions("BoostersSmallAnim"), Animation.PlayMode.LOOP);
+        largeBooster = new Animation<TextureRegion>(0.1f, Assets.atlas.findRegions("BoostersLargeAnim"), Animation.PlayMode.LOOP);
     }
 
     @Override
@@ -89,14 +95,22 @@ public class PlayerCar extends Vehicle {
 
         testSetUpgradesAndRemoveThisMethod();
 
+        setSpeed();
         updateBattery(dt);
         offroadSlowdown();
     }
 
     private void testSetUpgradesAndRemoveThisMethod() {
-        if (Gdx.input.isKeyPressed(Input.Keys.U)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.U)) {
             upgrades.setNext(Upgrades.Battery);
-            upgrades.setNext(Upgrades.Booster);
+
+            if (!isBoosting) {
+                isBoosting = true;
+            } else {
+                isBoosting = false;
+                upgrades.setNext(Upgrades.Booster);
+            }
+
             upgrades.setNext(Upgrades.Engine);
             upgrades.setNext(Upgrades.Wheels);
         }
@@ -119,9 +133,12 @@ public class PlayerCar extends Vehicle {
         speed *= .5f + (.125 * ( 4 - tires));
     }
 
+    Vector3 tempVector3 = new Vector3();
     private void setSpeed() {
         // i can't drive 55
-        speed = minSpeed + ((maxSpeed - minSpeed) * (position.y - constraintBounds.y) / constraintBounds.height);
+        gameScreen.camera.project(tempVector3.set(position.x, position.y, 0));
+        float screenPercent = tempVector3.y / gameScreen.camera.viewportHeight;
+        speed = minSpeed + ((maxSpeed - minSpeed) * (screenPercent));
     }
 
     private void constrainBounds(Rectangle bounds) {
@@ -203,7 +220,7 @@ public class PlayerCar extends Vehicle {
             case 3:
                 battery = (batteryLevel > 1)
                     ? coil.getKeyFrame(animStateTime)
-                    : coil.getKeyFrames()[0];
+                    : coil.getKeyFrame(0);
                 break;
         }
 
@@ -213,7 +230,23 @@ public class PlayerCar extends Vehicle {
     }
 
     private void renderBoosters(SpriteBatch batch) {
+        TextureRegion boosters = null;
+        switch (upgrades.getLevel(Upgrades.Booster)) {
+            case 1:
+                boosters = isBoosting
+                        ? smallBooster.getKeyFrame(animStateTime)
+                        : Assets.smallBooster;
+                break;
+            case 2:
+                boosters = isBoosting
+                        ? largeBooster.getKeyFrame(animStateTime)
+                        : Assets.largeBooster;
+                break;
+        }
 
+        if (boosters != null) {
+            batch.draw(boosters, bounds.x, bounds.y, bounds.width, bounds.height);
+        }
     }
 
     private void renderWeapons(SpriteBatch batch) {
