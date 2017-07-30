@@ -15,6 +15,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import lando.systems.ld39.objects.Item;
 import lando.systems.ld39.objects.Upgrades;
 import lando.systems.ld39.utils.accessors.*;
 
@@ -113,7 +114,7 @@ public class Assets {
         whitePixel = atlas.findRegion("white-pixel");
 
         // loads images in updates
-        new Upgrades();
+        Item.load();
 
         carBase = atlas.findRegion("car-base");
 

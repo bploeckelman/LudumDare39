@@ -2,19 +2,14 @@ package lando.systems.ld39.objects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import lando.systems.ld39.screens.GameScreen;
-import lando.systems.ld39.utils.Assets;
 import lando.systems.ld39.utils.Config;
 
 public class PlayerCar extends Vehicle {
 
     public static float minSpeed = 2;
-
-    public Upgrades upgrades = new Upgrades();
 
     // this is the bounds the car can move around
     public Rectangle constraintBounds;
@@ -27,25 +22,35 @@ public class PlayerCar extends Vehicle {
     public float batteryLevel;
     public float maxBattery;
 
-    private float bounds_offset_x = 10f;
-    private float bounds_offset_y = 10f;
-
     public boolean dead = false;
 
     // TODO: addon layers
 
     public PlayerCar(GameScreen gameScreen) {
-        super(gameScreen, Assets.carBase);
+        super(gameScreen, Item.Chassis);
+
         // TODO: make this based on battery upgrade
         maxBattery = 10;
         batteryLevel = maxBattery;
-        bounds_offset_x = bounds.width / 2;
-        bounds_offset_y = bounds.height / 2;
 
         position.x = (Config.gameWidth  - bounds.width) / 2f;
         position.y = (Config.gameHeight - bounds.height) / 2f;
-        bounds.x = position.x - bounds_offset_x;
-        bounds.y = position.y - bounds_offset_y;
+
+
+        // set all upgrades to 0
+        upgrades.setLevel(Item.Engine, 0);
+        upgrades.setLevel(Item.Battery, 0);
+        upgrades.setLevel(Item.Wheels, 0);
+        upgrades.setLevel(Item.Booster, 0);
+        upgrades.setLevel(Item.Chassis, 0);
+        upgrades.setLevel(Item.Damage, 0);
+        upgrades.setLevel(Item.Weapons, 0);
+        upgrades.setLevel(Item.Axes, 0);
+    }
+
+    @Override
+    public boolean isBoosting() {
+        return isPressed(Input.Keys.SPACE);
     }
 
     @Override
@@ -58,7 +63,6 @@ public class PlayerCar extends Vehicle {
             return;
         }
 
-        isBoosting = isPressed(Input.Keys.SPACE);
         updateFire(dt);
 
         bounds.x = position.x - bounds_offset_x;
@@ -92,6 +96,7 @@ public class PlayerCar extends Vehicle {
 
     private float fireTime = 0;
 
+    @Override
     public boolean isFiring() {
         return fireTime > 0;
     }
@@ -109,14 +114,14 @@ public class PlayerCar extends Vehicle {
 
     private void testSetUpgradesAndRemoveThisMethod() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.U)) {
-            upgrades.setNext(Upgrades.Battery);
-            upgrades.setNext(Upgrades.Booster);
-            upgrades.setNext(Upgrades.Engine);
-            upgrades.setNext(Upgrades.Wheels);
-            upgrades.setNext(Upgrades.Chassis);
-            upgrades.setNext(Upgrades.Damage);
-            upgrades.setNext(Upgrades.Weapons);
-            upgrades.setNext(Upgrades.Axes);
+            upgrades.setNext(Item.Battery);
+            upgrades.setNext(Item.Booster);
+            upgrades.setNext(Item.Engine);
+            upgrades.setNext(Item.Wheels);
+            upgrades.setNext(Item.Chassis);
+            upgrades.setNext(Item.Damage);
+            upgrades.setNext(Item.Weapons);
+            upgrades.setNext(Item.Axes);
         }
     }
 
@@ -190,30 +195,6 @@ public class PlayerCar extends Vehicle {
         return isPressed(Input.Keys.D, Input.Keys.RIGHT, Input.Keys.DPAD_RIGHT);
     }
 
-    @Override
-    public void render(SpriteBatch batch) {
-        bounds.x = position.x - bounds_offset_x;
-        bounds.y = position.y - bounds_offset_y;
-
-        boolean isRunning = batteryLevel > 0;
-
-        render(batch, Upgrades.Wheels, isRunning);
-        render(batch, Upgrades.Chassis, false);
-        render(batch, Upgrades.Damage, false);
-        render(batch, Upgrades.Battery, isRunning);
-        render(batch, Upgrades.Engine, isRunning);
-        render(batch, Upgrades.Booster, isBoosting && isRunning);
-        render(batch, Upgrades.Axes, true);
-        render(batch, Upgrades.Weapons, isFiring());
-    }
-
-    private void render(SpriteBatch batch, int item, boolean animate) {
-        TextureRegion image = upgrades.getCurrentImage(item, animStateTime, animate);
-        if (image != null) {
-            batch.draw(image, bounds.x, bounds.y, bounds.width, bounds.height);
-        }
-    }
-
     public float getBatteryPercent(){
         return batteryLevel/maxBattery;
     }
@@ -221,10 +202,4 @@ public class PlayerCar extends Vehicle {
     public float getHealthPercent(){
         return .5f;
     }
-
-    private void renderWeapons(SpriteBatch batch) {
-
-    }
-
-
 }
