@@ -14,8 +14,8 @@ public class MapScreenHud {
     private static final Vector2 HUD_FRAME_DIMENSIONS = new Vector2(0.8f, 0.3f); // % of w & h;
     private static final float HUD_FRAME_THICKNESS = 0.02f; // % of width
     private static final Color HUD_FRAME_COLOR = Color.WHITE;
-    private static final Color HUD_FRAME_BACKGROUND_COLOR = new Color(0,0,0,0.5f);
-    private static final float HUD_TEXT_PADDING = 0.02f; // % of width
+    private static final Color HUD_FRAME_BACKGROUND_COLOR = new Color(0,0,0,0.6f);
+    private static final float HUD_TEXT_PADDING = 0.015f; // % of width
     private static final float HUD_TEXT_STATS_WIDTH = 0.6f; // % of width within the frame & text padding.
     private static final float HUD_TEXT_MONEY_WIDTH = 0.4f; // % of width within the frame & text padding.
     private static final float HUD_TEXT_STATS_FONT_HEIGHT = 18f;
@@ -23,7 +23,7 @@ public class MapScreenHud {
 
     private static final String HUD_STATS = "" +
             "Iteration: %d\n" +
-            "Distance Traveled: %.2f km\n" +
+            "Distance Traveled: %.1f km\n" +
             "[MONEY] Collected: %d\n" +
             "Powerups: %d\n" +
             "Enemies scrapped: %d";
@@ -88,26 +88,26 @@ public class MapScreenHud {
         batch.setColor(HUD_FRAME_BACKGROUND_COLOR);
         batch.draw(
                 Assets.whitePixel,
-                hudFrameOrigin.x + hudFrameThickness, hudFrameOrigin.y + hudFrameThickness,
-                hudFrameDimensions.x - (hudFrameThickness * 2), hudFrameDimensions.y - (hudFrameThickness * 2));
+                hudFrameOrigin.x, hudFrameOrigin.y, hudFrameDimensions.x, hudFrameDimensions.y);
         batch.setColor(HUD_FRAME_COLOR);
-        // Slap on the frame
-        // Bottom:
-        batch.draw(Assets.whitePixel,
-                hudFrameOrigin.x, hudFrameOrigin.y,
-                hudFrameDimensions.x, hudFrameThickness);
-        // left:
-        batch.draw(Assets.whitePixel,
-                hudFrameOrigin.x, hudFrameOrigin.y + hudFrameThickness,
-                hudFrameThickness, hudFrameDimensions.y - (hudFrameThickness * 2));
-        // right:
-        batch.draw(Assets.whitePixel,
-                hudFrameOrigin.x + hudFrameDimensions.x - hudFrameThickness, hudFrameOrigin.y + hudFrameThickness,
-                hudFrameThickness, hudFrameDimensions.y - (hudFrameThickness * 2));
-        // top:
-        batch.draw(Assets.whitePixel,
-                hudFrameOrigin.x, hudFrameOrigin.y + hudFrameDimensions.y - hudFrameThickness,
-                hudFrameDimensions.x, hudFrameThickness);
+        Assets.defaultNinePatch.draw(batch, hudFrameOrigin.x, hudFrameOrigin.y, hudFrameDimensions.x, hudFrameDimensions.y);
+//        // Slap on the frame
+//        // Bottom:
+//        batch.draw(Assets.whitePixel,
+//                hudFrameOrigin.x, hudFrameOrigin.y,
+//                hudFrameDimensions.x, hudFrameThickness);
+//        // left:
+//        batch.draw(Assets.whitePixel,
+//                hudFrameOrigin.x, hudFrameOrigin.y + hudFrameThickness,
+//                hudFrameThickness, hudFrameDimensions.y - (hudFrameThickness * 2));
+//        // right:
+//        batch.draw(Assets.whitePixel,
+//                hudFrameOrigin.x + hudFrameDimensions.x - hudFrameThickness, hudFrameOrigin.y + hudFrameThickness,
+//                hudFrameThickness, hudFrameDimensions.y - (hudFrameThickness * 2));
+//        // top:
+//        batch.draw(Assets.whitePixel,
+//                hudFrameOrigin.x, hudFrameOrigin.y + hudFrameDimensions.y - hudFrameThickness,
+//                hudFrameDimensions.x, hudFrameThickness);
 
         // Let's draw some text!
         if (currentStage == MapScreen.Stage.ANIMATE_TRAVEL) {
@@ -116,7 +116,7 @@ public class MapScreenHud {
         String stats = getHudStats(3, dispDistanceTraveled, 142, 12, 11);
         Assets.drawString(batch, stats,
                 hudTextStatsOrigin.x, hudTextStatsOrigin.y,
-                Color.WHITE, 0.3f, Assets.font, hudTextStatsWidth, Align.left);
+                Color.WHITE, 0.38f, Assets.font, hudTextStatsWidth, Align.left);
     }
 
 }

@@ -1,6 +1,5 @@
 package lando.systems.ld39.objects;
 
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import lando.systems.ld39.screens.GameScreen;
@@ -10,6 +9,9 @@ public class Vehicle extends GameObject {
 
     public float tireOffset_x = 21;
     public float tireOffset_y = 18;
+
+    public float health = 10;
+    public float maxHealth = 10;
 
     protected float animStateTime;
     protected Upgrades upgrades = new Upgrades();
@@ -113,4 +115,9 @@ public class Vehicle extends GameObject {
         }
         return count;
     }
+
+    public float getHealthPercent(){
+        return health / maxHealth;
+    }
+
 }

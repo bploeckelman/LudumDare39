@@ -150,8 +150,9 @@ public class Road {
         roadSegments.add(RoadDef.center);
         roadSegments.add(RoadDef.center);
         for (int i = 0; i < 100; i++){
-            int type = rand.nextInt(4);
-            int count = rand.nextInt(10) + 1;
+            int type = rand.nextInt(5);
+            int count = rand.nextInt(10) + 2;
+            if (type == 4) {count = 1;}
             for (int j = 0; j < count; j++){
                 switch (type) {
                     case 0:
@@ -165,6 +166,16 @@ public class Road {
                         break;
                     case 3:
                         roadSegments.add(RoadDef.thin);
+                        break;
+                    case 4: // Zigzag
+                        roadSegments.add(RoadDef.left);
+                        roadSegments.add(RoadDef.right);
+                        roadSegments.add(RoadDef.left);
+                        roadSegments.add(RoadDef.right);
+                        roadSegments.add(RoadDef.left);
+                        roadSegments.add(RoadDef.right);
+                        break;
+                    default:
                         break;
                 }
             }
