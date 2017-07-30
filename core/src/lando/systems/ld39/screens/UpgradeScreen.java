@@ -1,5 +1,8 @@
 package lando.systems.ld39.screens;
 
+import aurelienribon.tweenengine.BaseTween;
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenCallback;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -9,6 +12,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
+import lando.systems.ld39.LudumDare39;
 import lando.systems.ld39.ui.Button;
 import lando.systems.ld39.utils.Assets;
 
@@ -23,6 +27,7 @@ public class UpgradeScreen extends BaseScreen {
     Rectangle carRegion;
 
     Vector3 touchPos;
+    Button continueButton;
 
     public enum UpgradeType { BATTERY, MOTOR, BOOSTER, WEAPON, HULL, TIRES }
     public class UpgradeItem {
@@ -52,6 +57,17 @@ public class UpgradeScreen extends BaseScreen {
         initializeUpgradeItems();
 
         touchPos = new Vector3();
+
+        final float continue_width = carRegion.width;
+        final float continue_height = buttonRegion.y - 35f;
+        Rectangle continueButtonRect = new Rectangle(carRegion.x, 10f, continue_width, continue_height);
+        continueButton = new Button(Assets.defaultNinePatch, continueButtonRect, hudCamera, "Hit the road", null);
+        continueButton.textColor = Color.BLACK;
+
+        alpha.setValue(1f);
+        Tween.to(alpha, 1, 1)
+                .target(0)
+                .start(Assets.tween);
     }
 
     @Override
@@ -69,6 +85,19 @@ public class UpgradeScreen extends BaseScreen {
                     current_upgrade_level = (int) (Math.random() * max_upgrade_level + 1);
                     cost = (int) (Math.random() * 501f) + 500;
                 }
+            }
+
+            if (continueButton.checkForTouch(touchX, touchY)) {
+                Tween.to(alpha, 1, 1)
+                        .target(1)
+                        .setCallback(new TweenCallback() {
+                            @Override
+                            public void onEvent(int i, BaseTween<?> baseTween) {
+                                // TODO: pass along current upgrade stats
+                                LudumDare39.game.setScreen(new GameScreen());
+                            }
+                        })
+                        .start(Assets.tween);
             }
         }
         hudCamera.update();
@@ -177,6 +206,15 @@ public class UpgradeScreen extends BaseScreen {
                         carRegion.width - 2f * margin_car,
                         carRegion.height - 2f * margin_car);
             }
+
+
+            batch.draw(Assets.whitePixel, continueButton.bounds.x, continueButton.bounds.y, continueButton.bounds.width, continueButton.bounds.height);
+            continueButton.render(batch);
+
+            // Screen transition overlay
+            batch.setColor(0, 0, 0, alpha.floatValue());
+            batch.draw(Assets.whitePixel, 0, 0, hudCamera.viewportWidth, hudCamera.viewportHeight);
+            batch.setColor(Color.WHITE);
         }
         batch.end();
     }
