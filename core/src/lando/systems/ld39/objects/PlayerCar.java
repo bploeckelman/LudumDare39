@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.math.Vector3;
 import lando.systems.ld39.screens.GameScreen;
 import lando.systems.ld39.utils.Assets;
 import lando.systems.ld39.utils.Config;
@@ -102,9 +103,12 @@ public class PlayerCar extends Vehicle {
         speed *= .5f + (.125 * ( 4 - tires));
     }
 
+    Vector3 tempVector3 = new Vector3();
     private void setSpeed() {
         // i can't drive 55
-        speed = minSpeed + ((maxSpeed - minSpeed) * (position.y - constraintBounds.y) / constraintBounds.height);
+        gameScreen.camera.project(tempVector3.set(position.x, position.y, 0));
+        float screenPercent = tempVector3.y / gameScreen.camera.viewportHeight;
+        speed = minSpeed + ((maxSpeed - minSpeed) * (screenPercent));
     }
 
     private void constrainBounds(Rectangle bounds) {
