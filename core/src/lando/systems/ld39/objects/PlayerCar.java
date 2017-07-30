@@ -17,8 +17,6 @@ public class PlayerCar extends Vehicle {
     public float speed = 0;
     public float maxSpeed = 15;
 
-    public boolean isBoosting = false;
-
     public float batteryLevel;
     public float maxBattery;
 
@@ -123,10 +121,6 @@ public class PlayerCar extends Vehicle {
             upgrades.setNext(Item.Weapons);
             upgrades.setNext(Item.Axes);
         }
-    }
-
-    public void setUpgrade(int type, int level) {
-        upgrades.setLevel(type, level);
     }
 
     private void updateBattery(float dt){

@@ -58,6 +58,11 @@ public class Vehicle extends GameObject {
         setLocation(x + bounds_offset_x, y + bounds_offset_y);
     }
 
+    // set individual upgrade - doesn't have to exist - if you set an item to a level, it'll get added to the car
+    public void setUpgrade(int type, int level) {
+        upgrades.setLevel(type, level);
+    }
+
     public IntIntMap getUpgrades() {
         return upgrades.getUpgrades();
     }

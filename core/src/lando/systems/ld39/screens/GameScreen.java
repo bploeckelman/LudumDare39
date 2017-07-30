@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.sun.javafx.binding.SelectBinding;
 import lando.systems.ld39.LudumDare39;
+import lando.systems.ld39.objects.EnemyCar2;
 import lando.systems.ld39.objects.GameObject;
 import lando.systems.ld39.objects.PlayerCar;
 import lando.systems.ld39.particles.ParticleSystem;
@@ -81,6 +82,17 @@ public class GameScreen extends BaseScreen {
         gameObjects.add(playerCar);
     }
 
+    // temp enemy gen
+    private float hammerTime = 7;
+
+    private void addEnemy(float dt) {
+        hammerTime += dt;
+        if (hammerTime > 5) {
+            hammerTime = 0;
+            gameObjects.add(EnemyCar2.getEnemy(this));
+        }
+    }
+
     @Override
     public void update(float dt) {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
@@ -94,6 +106,7 @@ public class GameScreen extends BaseScreen {
 
         if (pause) return;
 
+        addEnemy(dt);
         updateWorld(dt);
         updateObjects(dt);
         updateCamera(dt);
