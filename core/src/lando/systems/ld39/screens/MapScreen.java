@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.Vector2;
 import lando.systems.ld39.LudumDare39;
 import lando.systems.ld39.objects.Map;
 import lando.systems.ld39.objects.PlayerCar;
+import lando.systems.ld39.objects.Stats;
 import lando.systems.ld39.ui.MapScreenHud;
 import lando.systems.ld39.utils.Assets;
 import lando.systems.ld39.utils.Config;
@@ -21,6 +22,7 @@ import static lando.systems.ld39.screens.MapScreen.Stage.FADE_OUT;
 
 public class MapScreen extends BaseScreen {
 
+    private static final float TIME_PAUSE = 0.5f;
     private static final float TIME_MAP_FADE_IN = 1;
     private static final float TIME_MAP_FADE_OUT = 1;
     private static final float TIME_DRAW_ROUTE_TRAVELED = 3;
@@ -29,7 +31,7 @@ public class MapScreen extends BaseScreen {
     private static final Color ROUTE_UNTRAVELED_COLOR = Color.WHITE;
     private static final float ROUTE_WIDTH = 4;
 
-    private static final float DISP_ROUTE_KM = 4174f;
+    public static final float DISP_ROUTE_KM = 4174f;
 
     private Vector2[] routePoints;
     private CatmullRomSpline<Vector2> routeSpline;
@@ -41,7 +43,7 @@ public class MapScreen extends BaseScreen {
     private float currentStageTime = 0;
     private MapScreenHud mapScreenHud;
 
-    private float distanceTraveled = 0;
+    private Stats roundStats;
 
     public enum Stage {
         FADE_IN,
@@ -52,13 +54,13 @@ public class MapScreen extends BaseScreen {
 
     /**
      *
-     * @param distanceTraveled value between 0 and 1, inclusive.
+     * @param roundStats
      */
-    public MapScreen(float distanceTraveled, final PlayerCar playerCar) {
+    public MapScreen(Stats roundStats, final PlayerCar playerCar) {
 
-        this.distanceTraveled = distanceTraveled;
+        this.roundStats = roundStats;
         currentStage = Stage.FADE_IN;
-        mapScreenHud = new MapScreenHud(DISP_ROUTE_KM * distanceTraveled);
+        mapScreenHud = new MapScreenHud(roundStats);
 
         routeSpline = new CatmullRomSpline<Vector2>(Map.ROUTE_POINTS, false);
         routePoints = new Vector2[Map.ROUTE_RASTER_COUNT];
@@ -71,17 +73,17 @@ public class MapScreen extends BaseScreen {
                 .push(Tween.to(alpha, 1, TIME_MAP_FADE_IN)
                         .ease(TweenEquations.easeOutSine)
                         .target(1))
-                .pushPause(1)
+                .pushPause(TIME_PAUSE)
                 .push(Tween.call(new TweenCallback() {
                     @Override
                     public void onEvent(int i, BaseTween<?> baseTween) {
                         setCurrentStage(ANIMATE_TRAVEL);
                     }
                 }))
-                .push(Tween.to(animationPercent, 1, TIME_DRAW_ROUTE_TRAVELED * Math.max(distanceTraveled, 0.4f))
+                .push(Tween.to(animationPercent, 1, TIME_DRAW_ROUTE_TRAVELED * Math.max(roundStats.distanceTraveledPercent, 0.4f))
                         .ease(TweenEquations.easeInOutQuad)
                         .target(1))
-                .pushPause(1)
+                .pushPause(TIME_PAUSE)
                 .push(Tween.call(new TweenCallback() {
                     @Override
                     public void onEvent(int i, BaseTween<?> baseTween) {
@@ -148,7 +150,7 @@ public class MapScreen extends BaseScreen {
     @Override
     public void render(SpriteBatch batch) {
 
-        float splineDistance = distanceTraveled * animationPercent.floatValue();
+        float splineDistance = roundStats.distanceTraveledPercent * animationPercent.floatValue();
 
         // Draw the Map
         batch.begin();
