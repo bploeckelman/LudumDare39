@@ -2,6 +2,7 @@ package lando.systems.ld39.objects;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.IntIntMap;
 import lando.systems.ld39.screens.GameScreen;
 import lando.systems.ld39.utils.Config;
@@ -14,6 +15,10 @@ public class Vehicle extends GameObject {
     public float health = 10;
     public float maxHealth = 10;
 
+    public Rectangle collisionBounds;
+
+    public static Rectangle defaultCollisionBounds = new Rectangle(8, 15, 38, 80);
+
     protected float animStateTime;
     protected Upgrades upgrades = new Upgrades();
 
@@ -24,6 +29,7 @@ public class Vehicle extends GameObject {
 
     public Vehicle(GameScreen gameScreen, int chassisType) {
         super(gameScreen);
+        collisionBounds = new Rectangle();
 
         upgrades.setLevel(chassisType, 0);
         keyframe = upgrades.getCurrentImage(chassisType, 0, false);
@@ -35,11 +41,13 @@ public class Vehicle extends GameObject {
     public void setX(float x) {
         position.x = x;
         bounds.x = position.x - bounds_offset_x;
+        collisionBounds.x = bounds.x + defaultCollisionBounds.x;
     }
 
     public void setY(float y) {
         position.y = y;
         bounds.y = position.y - bounds_offset_y;
+        collisionBounds.y = bounds.y + defaultCollisionBounds.y;
     }
 
     public void setLocation(float x, float y) {
@@ -50,6 +58,8 @@ public class Vehicle extends GameObject {
     public void setSize(float width, float height) {
         bounds.width = width;
         bounds.height = height;
+        collisionBounds.width = defaultCollisionBounds.width;
+        collisionBounds.height = defaultCollisionBounds.height;
         bounds_offset_x = width / 2;
         bounds_offset_y = height /2;
     }

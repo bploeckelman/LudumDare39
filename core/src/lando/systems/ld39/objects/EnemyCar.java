@@ -25,9 +25,8 @@ public class EnemyCar extends Vehicle {
 
     @Override
     public void update(float dt) {
-        Rectangle playerBounds = gameScreen.playerCar.bounds;
         Vector2 playerPosition = gameScreen.playerCar.position;
-        if (bounds.overlaps(playerBounds)) {
+        if (collisionBounds.overlaps(gameScreen.playerCar.collisionBounds)) {
             // TODO: Collide
         } else {
             // Follow player
@@ -35,8 +34,7 @@ public class EnemyCar extends Vehicle {
             Vector2 direction = (new Vector2(position)).sub(playerPosition).nor();
 
             position.add(- (direction.x * relSpeed), gameScreen.playerCar.speed - (direction.y * relSpeed));
-            bounds.x = position.x - bounds_offset_x;
-            bounds.y = position.y - bounds_offset_y;
+            setLocation(position.x, position.y);
         }
     }
 

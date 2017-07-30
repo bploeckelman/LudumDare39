@@ -97,6 +97,9 @@ public class PlayerCar extends Vehicle {
         position.x = bounds.x + bounds_offset_x;
         position.y = bounds.y + bounds_offset_y;
 
+        collisionBounds.x = bounds.x + defaultCollisionBounds.x;
+        collisionBounds.y = bounds.y + defaultCollisionBounds.y;
+
         testSetUpgradesAndRemoveThisMethod();
 
         setSpeed();
