@@ -34,7 +34,7 @@ public class MapScreen extends BaseScreen {
     private CatmullRomSpline<Vector2> routeSpline;
 
     private MutableFloat animationPercent = new MutableFloat(0);
-    private MutableFloat mapAlpha = new MutableFloat(0);
+    private MutableFloat alpha = new MutableFloat(0);
     private Stage currentStage;
     private float currentStagePercent = 0;
     private float currentStageTime = 0;
@@ -67,7 +67,7 @@ public class MapScreen extends BaseScreen {
         }
 
         Timeline.createSequence()
-                .push(Tween.to(mapAlpha, 1, TIME_MAP_FADE_IN)
+                .push(Tween.to(alpha, 1, TIME_MAP_FADE_IN)
                         .ease(TweenEquations.easeOutSine)
                         .target(1))
                 .pushPause(1)
@@ -77,7 +77,7 @@ public class MapScreen extends BaseScreen {
                         setCurrentStage(ANIMATE_TRAVEL);
                     }
                 }))
-                .push(Tween.to(animationPercent, 1, TIME_DRAW_ROUTE_TRAVELED * Math.max(distanceTraveled, 0.2f))
+                .push(Tween.to(animationPercent, 1, TIME_DRAW_ROUTE_TRAVELED * Math.max(distanceTraveled, 0.4f))
                         .ease(TweenEquations.easeInOutQuad)
                         .target(1))
                 .pushPause(1)
@@ -210,15 +210,18 @@ public class MapScreen extends BaseScreen {
         Assets.shapes.circle(loc.x, loc.y, 6);
         Assets.shapes.end();
 
+
+        batch.begin();
+        mapScreenHud.draw(batch);
+
         if (currentStage == Stage.FADE_IN || currentStage == Stage.FADE_OUT) {
             // On top of everything, "fade" in/out by drawing black on top of it.
-            batch.begin();
-            batch.setColor(0,0,0,(1 - mapAlpha.floatValue()));
+            batch.setColor(0,0,0,(1 - alpha.floatValue()));
             batch.draw(Assets.whitePixel, 0, 0, Config.gameWidth, Config.gameHeight);
             batch.setColor(Color.WHITE);
-            batch.end();
         }
 
+        batch.end();
     }
 
 }
