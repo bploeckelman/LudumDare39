@@ -57,6 +57,14 @@ public class PlayerCar extends Vehicle {
         upgrades.setLevel(Item.Axes, 0);
     }
 
+    public float getSpeed() {
+        float currentSpeed = speed;
+        if (isBoosting()) {
+            currentSpeed *= 10;
+        }
+        return currentSpeed;
+    }
+
     private int axeHits = 0;
     public void pickupAxe() {
         axeHits = 0;
@@ -128,7 +136,7 @@ public class PlayerCar extends Vehicle {
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.ENTER) && isWeaponEnabled()) {
-            bulletVelocity.set(0, speed + 1000);
+            bulletVelocity.set(0, getSpeed() + 1000);
             if (upgrades.getLevel(Item.Weapons) == 1){
                 alternateGun = !alternateGun;
                 bulletPosition.set(position.x + 6, position.y + bounds_offset_y);

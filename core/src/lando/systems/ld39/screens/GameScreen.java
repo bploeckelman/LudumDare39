@@ -183,10 +183,7 @@ public class GameScreen extends BaseScreen {
     private void updateCamera(float dt) {
         camera.zoom = MathUtils.clamp(camera.zoom, minZoom, maxZoom);
 
-        float deltaY = playerCar.speed * dt;
-        if (playerCar.isBoosting()) {
-            deltaY *= 10;
-        }
+        float deltaY = playerCar.getSpeed() * dt;
 
         // move camera based on car speed - update position of car in so it doesn't drop
         playerCar.position.y += deltaY;
