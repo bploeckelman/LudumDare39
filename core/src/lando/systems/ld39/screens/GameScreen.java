@@ -45,6 +45,7 @@ public class GameScreen extends BaseScreen {
     private Vector3 touchStart;
     private Vector3 cameraTouchStart;
     private boolean cancelTouchUp;
+    public boolean bossActive;
     public boolean pause;
 
     public GameScreen() {
@@ -57,6 +58,7 @@ public class GameScreen extends BaseScreen {
         constraintBounds = new Rectangle(0, 10, camera.viewportWidth, camera.viewportHeight * 0.7f);
         constraintOffset = new Vector2((camera.viewportWidth /2) - 10, camera.viewportHeight /2);
         pause = true;
+        bossActive = false;
         createCar();
         Tween.to(alpha, 1, 1)
                 .target(0)
@@ -112,7 +114,7 @@ public class GameScreen extends BaseScreen {
                     .setCallback(new TweenCallback() {
                         @Override
                         public void onEvent(int i, BaseTween<?> baseTween) {
-                            LudumDare39.game.setScreen(new MapScreen((camera.position.y / road.segmentLength)/road.endRoad));
+                            LudumDare39.game.setScreen(new MapScreen((road.distanceTraveled)/road.endRoad));
 
                         }
                     })
@@ -128,6 +130,9 @@ public class GameScreen extends BaseScreen {
         playerCar.position.y += deltaY;
         camera.position.y += deltaY;
         constraintBounds.y += deltaY;
+        if (!bossActive) {
+            road.distanceTraveled += ( deltaY / road.segmentLength);
+        }
 
         // Keep camera within world bounds
 //        float minY = world.bounds.y + camera.viewportHeight / 2 * camera.zoom;

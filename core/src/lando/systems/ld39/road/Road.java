@@ -19,6 +19,7 @@ import java.util.Random;
  */
 public class Road {
     public Random rand = new Random();
+    public float distanceTraveled;
     public float endRoad = 500;
     public float segmentLength = 400;
     public float shoulderWidth = 70;
@@ -34,6 +35,7 @@ public class Road {
         shapes.setAutoShapeType(true);
         roadSegments = new Array<RoadDef>();
         generateRoad();
+        distanceTraveled = 0;
     }
 
     public void update(float dt) {

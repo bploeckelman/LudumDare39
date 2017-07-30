@@ -188,6 +188,8 @@ public class PlayerCar extends Vehicle {
 
     @Override
     public void render(SpriteBatch batch) {
+        bounds.x = position.x - bounds_offset_x;
+        bounds.y = position.y - bounds_offset_y;
         renderTires(batch);
         renderChassis(batch);
         renderPower(batch);
