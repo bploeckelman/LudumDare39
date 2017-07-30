@@ -17,6 +17,7 @@ public class Item {
     public static final int Axes = 7;
     public static final int EnemyChassis1 = 8;
     public static final int Explosions = 9;
+    public static final int Boss = 10;
 
     private static final String None = ItemGroup.None;
 
@@ -33,8 +34,9 @@ public class Item {
         items.put(Damage, new ItemGroup(None, "DamageSmall", "DamageLarge"));
         items.put(Axes, new ItemGroup(None, "TireAxes"));
         items.put(Weapons, new ItemGroup(None, "BasicGun", "Zappa", "RocketLauncher"));
-        items.put(EnemyChassis1, new ItemGroup("Enemy1", "Enemy4", "Enemy5"));
+        items.put(EnemyChassis1, new ItemGroup("Enemy1", "Enemy4", "Enemy5", "Boss1"));
         items.put(Explosions, new ItemGroup("Explosion1", "Explosion2", "Explosion3", "Explosion4"));
+        items.put(Boss, new ItemGroup("Boss1"));
     }
 
     public static int getMaxLevel(int itemType) {
