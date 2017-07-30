@@ -11,6 +11,9 @@ public class Vehicle extends GameObject {
     public float tireOffset_x = 21;
     public float tireOffset_y = 18;
 
+    public float health = 10;
+    public float maxHealth = 10;
+
     protected float anim_frame_duration = 0.1f;
 
     private Animation<TextureRegion> anim;
@@ -70,4 +73,9 @@ public class Vehicle extends GameObject {
         return count;
 
     }
+
+    public float getHealthPercent(){
+        return health / maxHealth;
+    }
+
 }
