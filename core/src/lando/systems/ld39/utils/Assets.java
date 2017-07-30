@@ -17,6 +17,8 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import lando.systems.ld39.utils.accessors.*;
 
+import javax.xml.soap.Text;
+
 /**
  * Created by Brian on 7/25/2017.
  */
@@ -39,7 +41,14 @@ public class Assets {
 
     public static TextureRegion testTexture;
     public static TextureRegion whitePixel;
+
     public static TextureRegion carBase;
+    public static TextureRegion mediumBattery;
+    public static TextureRegion largeBattery;
+    public static TextureRegion smallBooster;
+    public static TextureRegion largeBooseter;
+    public static TextureRegion megaEngine;
+
     public static Texture map;
 
     public static boolean initialized;
@@ -95,7 +104,13 @@ public class Assets {
 
         testTexture = atlas.findRegion("badlogic");
         whitePixel = atlas.findRegion("white-pixel");
+
         carBase = atlas.findRegion("car-base");
+        mediumBattery = atlas.findRegion("MediumBattery");
+        largeBattery = atlas.findRegion("LargeBattery");
+        smallBooster = atlas.findRegion("BoostersSmall");
+        largeBooseter = atlas.findRegion("BoostersLarge");
+        megaEngine = atlas.findRegion("MegaEngine");
 
         map = mgr.get("images/usa-map-v1.png", Texture.class);
 

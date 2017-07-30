@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Array;
 import lando.systems.ld39.screens.GameScreen;
 import lando.systems.ld39.utils.Assets;
 import lando.systems.ld39.utils.Config;
@@ -19,14 +20,8 @@ public class PlayerCar extends Vehicle {
 
     private float bounds_offset_x = 10f;
     private float bounds_offset_y = 10f;
-    private float tireOffset_x = 21;
-    private float tireOffset_y = 18;
 
-    private static float anim_frame_duration = 0.1f;
-
-
-    private Animation<TextureRegion> anim;
-    private float animStateTime;
+    private Animation<TextureRegion> coil;
 
     // TODO: addon layers
 
@@ -38,6 +33,12 @@ public class PlayerCar extends Vehicle {
 
         position.x = (Config.gameWidth  - bounds.width) / 2f;
         position.y = (Config.gameHeight - bounds.height) / 2f;
+
+        loadImages();
+    }
+
+    private void loadImages() {
+        coil = new Animation<TextureRegion>(0.1f, Assets.atlas.findRegions("coil"), Animation.PlayMode.LOOP);
     }
 
     @Override
@@ -124,7 +125,36 @@ public class PlayerCar extends Vehicle {
 
     @Override
     public void render(SpriteBatch batch) {
+        renderTires(batch);
+        renderChassis(batch);
+        renderPower(batch);
+        renderWeapons(batch);
+    }
+
+    private void renderTires(SpriteBatch batch) {
+
+    }
+
+    private void renderChassis(SpriteBatch batch) {
         batch.draw(keyframe, bounds.x, bounds.y);
+        // draw damage
+    }
+
+    private void renderPower(SpriteBatch batch) {
+        renderBattery(batch);
+        renderBoosters(batch);
+    }
+
+    private void renderBattery(SpriteBatch batch) {
+
+    }
+
+    private void renderBoosters(SpriteBatch batch) {
+
+    }
+
+    private void renderWeapons(SpriteBatch batch) {
+
     }
 
 

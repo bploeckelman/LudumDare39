@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import lando.systems.ld39.screens.GameScreen;
-import lando.systems.ld39.utils.Assets;
 import lando.systems.ld39.utils.Config;
 
 public class Vehicle extends GameObject {
@@ -15,7 +14,7 @@ public class Vehicle extends GameObject {
     protected float anim_frame_duration = 0.1f;
 
     private Animation<TextureRegion> anim;
-    private float animStateTime;
+    protected float animStateTime;
 
     // TODO: addon layers
 
