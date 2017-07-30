@@ -20,12 +20,10 @@ import lando.systems.ld39.utils.Config;
  */
 public class TitleScreen extends BaseScreen {
 
-    public MutableFloat alpha;
     public float accum;
 
     public TitleScreen() {
         accum = 0f;
-        alpha = new MutableFloat(0f);
     }
 
     @Override

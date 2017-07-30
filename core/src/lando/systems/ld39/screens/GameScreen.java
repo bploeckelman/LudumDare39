@@ -1,6 +1,9 @@
 package lando.systems.ld39.screens;
 
+import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenCallback;
+import aurelienribon.tweenengine.primitives.MutableFloat;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
@@ -11,6 +14,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import lando.systems.ld39.LudumDare39;
 import lando.systems.ld39.objects.GameObject;
 import lando.systems.ld39.objects.PlayerCar;
 import lando.systems.ld39.particles.ParticleSystem;
@@ -42,8 +46,10 @@ public class GameScreen extends BaseScreen {
     private Vector3 touchStart;
     private Vector3 cameraTouchStart;
     private boolean cancelTouchUp;
+    public boolean pause;
 
     public GameScreen() {
+        alpha.setValue(1);
         road = new Road();
         touchStart = new Vector3();
         cameraTouchStart = new Vector3();
@@ -51,8 +57,19 @@ public class GameScreen extends BaseScreen {
 
         constraintBounds = new Rectangle(0, 10, camera.viewportWidth, camera.viewportHeight * 0.7f);
         constraintOffset = new Vector2((camera.viewportWidth /2) - 10, camera.viewportHeight /2);
-
+        pause = true;
         createCar();
+        Tween.to(alpha, 1, 1)
+                .target(0)
+                .setCallback(new TweenCallback() {
+                    @Override
+                    public void onEvent(int i, BaseTween<?> baseTween) {
+                        pause = false;
+
+                    }
+                })
+                .start(Assets.tween);
+
     }
 
     private void createCar() {
@@ -68,10 +85,13 @@ public class GameScreen extends BaseScreen {
             Gdx.app.exit();
         }
 
+        particleSystem.update(dt);
+
+        if (pause) return;
+
         updateWorld(dt);
         updateObjects(dt);
         updateCamera(dt);
-        particleSystem.update(dt);
     }
 
     private void updateWorld(float dt) {
@@ -82,6 +102,20 @@ public class GameScreen extends BaseScreen {
         playerCar.constraintBounds = constraintBounds;
         for(GameObject gameObject : gameObjects) {
             gameObject.update(dt);
+        }
+        if (playerCar.dead){
+            // TODO make this move to MapScreen
+            pause = true;
+            Tween.to(alpha, 1, 1)
+                    .target(1)
+                    .setCallback(new TweenCallback() {
+                        @Override
+                        public void onEvent(int i, BaseTween<?> baseTween) {
+                            LudumDare39.game.setScreen(new GameScreen());
+
+                        }
+                    })
+                    .start(Assets.tween);
         }
     }
 
@@ -134,6 +168,9 @@ public class GameScreen extends BaseScreen {
         batch.begin();
         {
             renderHud(batch);
+            batch.setColor(0, 0, 0, alpha.floatValue());
+            batch.draw(Assets.whitePixel, 0, 0, hudCamera.viewportWidth, hudCamera.viewportHeight);
+            batch.setColor(Color.WHITE);
         }
         batch.end();
     }

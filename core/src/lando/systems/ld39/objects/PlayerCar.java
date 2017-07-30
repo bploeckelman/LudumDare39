@@ -13,26 +13,37 @@ import lando.systems.ld39.utils.Config;
 
 public class PlayerCar extends Vehicle {
 
+    public static float minSpeed = 2;
+
     // this is the bounds the car can move around
     public Rectangle constraintBounds;
 
     public float speed = 0;
+    public float maxSpeed = 15;
+
+    public float batteryLevel;
+    public float maxBattery;
 
     private float bounds_offset_x = 10f;
     private float bounds_offset_y = 10f;
 
     private Animation<TextureRegion> coil;
+    public boolean dead = false;
 
     // TODO: addon layers
 
     public PlayerCar(GameScreen gameScreen) {
         super(gameScreen, Assets.carBase);
-
+        // TODO: make this based on battery upgrade
+        maxBattery = 10;
+        batteryLevel = maxBattery;
         bounds_offset_x = bounds.width / 2;
         bounds_offset_y = bounds.height / 2;
 
         position.x = (Config.gameWidth  - bounds.width) / 2f;
         position.y = (Config.gameHeight - bounds.height) / 2f;
+        bounds.x = position.x - bounds_offset_x;
+        bounds.y = position.y - bounds_offset_y;
 
         loadImages();
     }
@@ -44,6 +55,12 @@ public class PlayerCar extends Vehicle {
     @Override
     public void update(float dt) {
         super.update(dt);
+
+        if (batteryLevel <= 0){
+            speed = 0;
+            dead = true;
+            return;
+        }
 
         bounds.x = position.x - bounds_offset_x;
         bounds.y = position.y - bounds_offset_y;
@@ -68,14 +85,26 @@ public class PlayerCar extends Vehicle {
         position.y = bounds.y + bounds_offset_y;
 
         setSpeed();
+        updateBattery(dt);
+        offroadSlowdown();
+    }
+
+    private void updateBattery(float dt){
+        batteryLevel -= (speed/maxSpeed) * dt;
+        if (batteryLevel < 2){
+            speed *= (.5f * batteryLevel);
+        }
+    }
+
+    // Moved this after the battery, so we still use the full speed to reduce the battery
+    private void offroadSlowdown(){
+        int tires = tiresOffRoad();
+        speed *= .5f + (.125 * ( 4 - tires));
     }
 
     private void setSpeed() {
         // i can't drive 55
-        speed = 10 + (10 * (position.y - constraintBounds.y) / constraintBounds.height);
-        int tires = tiresOffRoad();
-        speed *= .5f + (.125 * ( 4 - tires));
-
+        speed = minSpeed + ((maxSpeed - minSpeed) * (position.y - constraintBounds.y) / constraintBounds.height);
     }
 
     private void constrainBounds(Rectangle bounds) {
