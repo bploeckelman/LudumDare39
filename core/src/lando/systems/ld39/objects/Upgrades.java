@@ -47,7 +47,7 @@ public class Upgrades {
     public void setNext(int type) {
         int level = upgrades.get(type, -1);
         if (level != -1) {
-            if (++level == getMaxLevel(type)) {
+            if (level++ == getMaxLevel(type)) {
                 level = 0;
             }
             setLevel(type, level);

@@ -8,11 +8,15 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.IntIntMap;
 import lando.systems.ld39.LudumDare39;
+import lando.systems.ld39.objects.Item;
+import lando.systems.ld39.objects.PlayerCar;
 import lando.systems.ld39.ui.Button;
 import lando.systems.ld39.utils.Assets;
 
@@ -28,24 +32,30 @@ public class UpgradeScreen extends BaseScreen {
 
     Vector3 touchPos;
     Button continueButton;
+    Button purchaseButton;
 
-    public enum UpgradeType { BATTERY, MOTOR, BOOSTER, WEAPON, HULL, TIRES }
     public class UpgradeItem {
-        public UpgradeType type;
+        public int type;
         public String description;
         public TextureRegion buttonTexture;
         public TextureRegion upgradeTexture;
         public Button button;
+        public int currentLevel;
+        public int maxLevel;
     }
     Array<UpgradeItem> upgradeItems;
     UpgradeItem selectedUpgrade;
 
+    IntIntMap currentUpgrades;
+    PlayerCar playerCar;
+
     // TODO: temporary
-    int max_upgrade_level = 3;
-    int current_upgrade_level = 1;
     int cost = 1000;
 
-    public UpgradeScreen() {
+    public UpgradeScreen(IntIntMap currentUpgrades) {
+        this.currentUpgrades = currentUpgrades;
+        playerCar = new PlayerCar(null);
+
         buttonHeaderRegion = new Rectangle(40, 450, 200, 60);
         buttonRegion = new Rectangle(40, 90, 200, 350);
 
@@ -64,6 +74,14 @@ public class UpgradeScreen extends BaseScreen {
         continueButton = new Button(Assets.defaultNinePatch, continueButtonRect, hudCamera, "Hit the road", null);
         continueButton.textColor = Color.BLACK;
 
+        final float confirm_button_y = infoRegion.y + 10f;
+        final float confirm_button_width = infoRegion.width / 2f;
+        final float confirm_button_height = 50f;
+        final float confirm_button_x = infoRegion.x + ((infoRegion.width / 2f) - (confirm_button_width / 2f));
+        Rectangle confirmButtonRect = new Rectangle(confirm_button_x, confirm_button_y, confirm_button_width, confirm_button_height);
+        purchaseButton = new Button(Assets.defaultNinePatch, confirmButtonRect, hudCamera, "Purchase", null);
+        purchaseButton.textColor = Color.BLACK;
+
         alpha.setValue(1f);
         Tween.to(alpha, 1, 1)
                 .target(0)
@@ -81,8 +99,8 @@ public class UpgradeScreen extends BaseScreen {
                 upgradeItem.button.update(dt);
                 if (upgradeItem.button.checkForTouch(touchX, touchY)) {
                     selectedUpgrade = upgradeItem;
-                    // TODO: set us properly
-                    current_upgrade_level = (int) (Math.random() * max_upgrade_level + 1);
+
+                    // TODO: set properly
                     cost = (int) (Math.random() * 501f) + 500;
                 }
             }
@@ -93,14 +111,22 @@ public class UpgradeScreen extends BaseScreen {
                         .setCallback(new TweenCallback() {
                             @Override
                             public void onEvent(int i, BaseTween<?> baseTween) {
-                                // TODO: pass along current upgrade stats
-                                LudumDare39.game.setScreen(new GameScreen());
+                                LudumDare39.game.setScreen(new GameScreen(currentUpgrades));
                             }
                         })
                         .start(Assets.tween);
             }
+
+            if (selectedUpgrade.currentLevel != selectedUpgrade.maxLevel && purchaseButton.checkForTouch(touchX, touchY)) {
+                handleUpgrade();
+            }
         }
         hudCamera.update();
+
+        playerCar.animStateTime += dt;
+        playerCar.setUpgrades(currentUpgrades);
+        playerCar.setSize(carRegion.width, carRegion.height);
+        playerCar.setBoundsLocation(carRegion.x, carRegion.y);
     }
 
     @Override
@@ -145,6 +171,8 @@ public class UpgradeScreen extends BaseScreen {
 
             // Draw info section details
             if (selectedUpgrade != null) {
+                selectedUpgrade.currentLevel = currentUpgrades.get(selectedUpgrade.type, 0);
+
                 final float margin_top = 10f;
                 final float margin_left = 10f;
                 final float icon_size = 64f;
@@ -153,7 +181,7 @@ public class UpgradeScreen extends BaseScreen {
                 batch.draw(selectedUpgrade.buttonTexture, icon_pos_x, icon_pos_y, icon_size, icon_size);
 
                 final float type_pos_y = icon_pos_y - textHeight;
-                Assets.drawString(batch, selectedUpgrade.type.name(),
+                Assets.drawString(batch, Item.getName(selectedUpgrade.type),
                         infoRegion.x, icon_pos_y - textHeight,
                         Color.GOLD, 0.5f, Assets.font, infoRegion.width, Align.center);
 
@@ -162,51 +190,34 @@ public class UpgradeScreen extends BaseScreen {
                         infoRegion.x + margin_left, description_pos_y,
                         Color.WHITE, 0.35f, Assets.font, infoRegion.width, Align.left);
 
-                final float confirm_button_y = infoRegion.y + 10f;
-                final float confirm_button_width = infoRegion.width / 2f;
-                final float confirm_button_height = 50f;
                 final float upgrade_height = 20f;
 
                 // TODO: determine cost text based on upgrade level
-                final float cost_pos_y = confirm_button_y + confirm_button_height + 2f * margin_top + upgrade_height + 2f * textHeight;
+                final float cost_pos_y = purchaseButton.bounds.y + purchaseButton.bounds.height + 2f * margin_top + upgrade_height + 2f * textHeight;
                 Assets.drawString(batch, "$" + cost, infoRegion.x, cost_pos_y,
                         Color.GOLDENROD, 0.55f, Assets.font, infoRegion.width, Align.center);
 
                 // current upgrade level / max upgrade levels
-                final float upgrade_level_pos_y = confirm_button_y + confirm_button_height + margin_top;
+                final float upgrade_level_pos_y = purchaseButton.bounds.y + purchaseButton.bounds.height + margin_top;
                 final float max_upgrade_width = infoRegion.width - 2f * margin_left;
-                final float upgrade_width = ((float) current_upgrade_level / (float) max_upgrade_level) * max_upgrade_width;
+                final float current_upgrade_width = ((float) selectedUpgrade.currentLevel / (float) selectedUpgrade.maxLevel) * max_upgrade_width;
+                final float next_upgrade_width = MathUtils.clamp((((float) selectedUpgrade.currentLevel + 1f) / (float) selectedUpgrade.maxLevel), 0f, 1f) * max_upgrade_width;
                 batch.draw(Assets.whitePixel, infoRegion.x + margin_left, upgrade_level_pos_y, max_upgrade_width, upgrade_height);
+                batch.setColor(Color.YELLOW);
+                batch.draw(Assets.whitePixel, infoRegion.x + margin_left, upgrade_level_pos_y, next_upgrade_width, upgrade_height);
                 batch.setColor(Color.GREEN);
-                batch.draw(Assets.whitePixel, infoRegion.x + margin_left, upgrade_level_pos_y, upgrade_width, upgrade_height);
+                batch.draw(Assets.whitePixel, infoRegion.x + margin_left, upgrade_level_pos_y, current_upgrade_width, upgrade_height);
                 batch.setColor(Color.WHITE);
                 Assets.defaultNinePatch.draw(batch, infoRegion.x + margin_left, upgrade_level_pos_y, max_upgrade_width, upgrade_height);
 
-                // TODO: confirm upgrade button
-                final float confirm_button_x = infoRegion.x + ((infoRegion.width / 2f) - (confirm_button_width / 2f));
-                batch.draw(Assets.whitePixel, confirm_button_x, confirm_button_y, confirm_button_width, confirm_button_height);
-                Assets.defaultNinePatch.draw(batch, confirm_button_x, confirm_button_y, confirm_button_width, confirm_button_height);
-                Assets.drawString(batch, "Confirm Upgrade", confirm_button_x, confirm_button_y + 2f * textHeight,
-                        Color.BLACK, 0.3f, Assets.font, confirm_button_width, Align.center);
-
-
-                // TODO: draw player car with selected upgrade
-                final float margin_car = 10f;
-                batch.draw(Assets.carBase,
-                        carRegion.x + margin_car,
-                        carRegion.y + margin_car,
-                        carRegion.width - 2f * margin_car,
-                        carRegion.height - 2f * margin_car);
-            } else {
-                // TODO: draw player car with current level of upgrades
-                final float margin_car = 10f;
-                batch.draw(Assets.carBase,
-                        carRegion.x + margin_car,
-                        carRegion.y + margin_car,
-                        carRegion.width - 2f * margin_car,
-                        carRegion.height - 2f * margin_car);
+                // purchase upgrade button
+                batch.setColor((selectedUpgrade.currentLevel == selectedUpgrade.maxLevel) ? Color.DARK_GRAY : Color.WHITE);
+                batch.draw(Assets.whitePixel, purchaseButton.bounds.x, purchaseButton.bounds.y, purchaseButton.bounds.width, purchaseButton.bounds.height);
+                purchaseButton.render(batch);
+                batch.setColor(Color.WHITE);
             }
 
+            playerCar.render(batch);
 
             batch.draw(Assets.whitePixel, continueButton.bounds.x, continueButton.bounds.y, continueButton.bounds.width, continueButton.bounds.height);
             continueButton.render(batch);
@@ -221,40 +232,52 @@ public class UpgradeScreen extends BaseScreen {
 
     private void initializeUpgradeItems() {
         UpgradeItem upgradeBattery = new UpgradeItem();
-        upgradeBattery.type = UpgradeType.BATTERY;
+        upgradeBattery.type = Item.Battery;
         upgradeBattery.description = "Increased travel distance on one charge";
         upgradeBattery.buttonTexture = Assets.upgradeIconBattery;
         upgradeBattery.upgradeTexture = Assets.carBase;
+        upgradeBattery.currentLevel = currentUpgrades.get(Item.Battery, 0);
+        upgradeBattery.maxLevel = Item.getMaxLevel(Item.Battery);
 
         UpgradeItem upgradeMotor = new UpgradeItem();
-        upgradeMotor.type = UpgradeType.MOTOR;
+        upgradeMotor.type = Item.Engine;
         upgradeMotor.description = "Increased overall top speed";
         upgradeMotor.buttonTexture = Assets.upgradeIconMotor;
         upgradeMotor.upgradeTexture = Assets.carBase;
+        upgradeMotor.currentLevel = currentUpgrades.get(Item.Engine, 0);
+        upgradeMotor.maxLevel = Item.getMaxLevel(Item.Engine);
 
         UpgradeItem upgradeBooster = new UpgradeItem();
-        upgradeBooster.type = UpgradeType.BOOSTER;
+        upgradeBooster.type = Item.Booster;
         upgradeBooster.description = "Increased number of turbo boosts";
         upgradeBooster.buttonTexture = Assets.upgradeIconBooster;
         upgradeBooster.upgradeTexture = Assets.carBase;
+        upgradeBooster.currentLevel = currentUpgrades.get(Item.Booster, 0);
+        upgradeBooster.maxLevel = Item.getMaxLevel(Item.Booster);
 
         UpgradeItem upgradeWeapon = new UpgradeItem();
-        upgradeWeapon.type = UpgradeType.WEAPON;
+        upgradeWeapon.type = Item.Weapons;
         upgradeWeapon.description = "Improved weapon system";
         upgradeWeapon.buttonTexture = Assets.upgradeIconWeapon;
         upgradeWeapon.upgradeTexture = Assets.carBase;
+        upgradeWeapon.currentLevel = currentUpgrades.get(Item.Weapons, 0);
+        upgradeWeapon.maxLevel = Item.getMaxLevel(Item.Weapons);
 
         UpgradeItem upgradeHull = new UpgradeItem();
-        upgradeHull.type = UpgradeType.HULL;
+        upgradeHull.type = Item.Chassis;
         upgradeHull.description = "Increased damage resistance";
         upgradeHull.buttonTexture = Assets.upgradeIconHull;
         upgradeHull.upgradeTexture = Assets.carBase;
+        upgradeHull.currentLevel = currentUpgrades.get(Item.Chassis, 0);
+        upgradeHull.maxLevel = Item.getMaxLevel(Item.Chassis);
 
         UpgradeItem upgradeTires = new UpgradeItem();
-        upgradeTires.type = UpgradeType.TIRES;
+        upgradeTires.type = Item.Wheels;
         upgradeTires.description = "Improved handling";
         upgradeTires.buttonTexture = Assets.upgradeIconTire;
         upgradeTires.upgradeTexture = Assets.carBase;
+        upgradeTires.currentLevel = currentUpgrades.get(Item.Weapons, 0);
+        upgradeTires.maxLevel = Item.getMaxLevel(Item.Wheels);
 
         upgradeItems = new Array<UpgradeItem>();
         upgradeItems.addAll(upgradeBattery, upgradeMotor, upgradeBooster, upgradeWeapon, upgradeHull, upgradeTires);
@@ -286,6 +309,17 @@ public class UpgradeScreen extends BaseScreen {
         }
 
         selectedUpgrade = null;
+    }
+
+    private void handleUpgrade() {
+        if (selectedUpgrade == null) return;
+
+        int level = currentUpgrades.get(selectedUpgrade.type, 0);
+        int max = Item.getMaxLevel(selectedUpgrade.type);
+        if (max != -1) {
+            // don't set level of an item that doesn't exist
+            currentUpgrades.put(selectedUpgrade.type, MathUtils.clamp(level + 1, 0, max));
+        }
     }
 
 }

@@ -19,7 +19,7 @@ public class Vehicle extends GameObject {
 
     public static Rectangle defaultCollisionBounds = new Rectangle(8, 15, 38, 80);
 
-    protected float animStateTime;
+    public float animStateTime;
     protected Upgrades upgrades = new Upgrades();
 
     protected float bounds_offset_x;

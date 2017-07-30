@@ -36,6 +36,21 @@ public class Item {
 
     public static int getMaxLevel(int itemType) {
         ItemGroup group = items.get(itemType);
-        return (group != null) ? group.getMaxLevel() : -1;
+        return (group != null) ? group.getMaxLevel() - 1 : -1;
     }
+
+    public static String getName(int itemType) {
+        switch (itemType) {
+            case Engine: return "Motor";
+            case Battery: return "Battery";
+            case Wheels: return "Tires";
+            case Booster: return "Turbo";
+            case Chassis: return "Chassis";
+            case Damage: return "Damage";
+            case Weapons: return "Weapon";
+            case Axes: return "Axes";
+            default: return "WTF Man, that's not a valid item";
+        }
+    }
+
 }

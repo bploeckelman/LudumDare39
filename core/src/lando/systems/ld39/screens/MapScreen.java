@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.CatmullRomSpline;
 import com.badlogic.gdx.math.Vector2;
 import lando.systems.ld39.LudumDare39;
 import lando.systems.ld39.objects.Map;
+import lando.systems.ld39.objects.PlayerCar;
 import lando.systems.ld39.ui.MapScreenHud;
 import lando.systems.ld39.utils.Assets;
 import lando.systems.ld39.utils.Config;
@@ -53,7 +54,7 @@ public class MapScreen extends BaseScreen {
      *
      * @param distanceTraveled value between 0 and 1, inclusive.
      */
-    public MapScreen(float distanceTraveled) {
+    public MapScreen(float distanceTraveled, final PlayerCar playerCar) {
 
         this.distanceTraveled = distanceTraveled;
         currentStage = Stage.FADE_IN;
@@ -93,7 +94,7 @@ public class MapScreen extends BaseScreen {
                 .push(Tween.call(new TweenCallback() {
                     @Override
                     public void onEvent(int i, BaseTween<?> baseTween) {
-                        LudumDare39.game.setScreen(new UpgradeScreen());
+                        LudumDare39.game.setScreen(new UpgradeScreen(playerCar.getUpgrades()));
                     }
                 }))
                 .start(Assets.tween);
@@ -139,27 +140,7 @@ public class MapScreen extends BaseScreen {
                 default:
                     throw new RuntimeException("Invalid stage!");
             }
-
-
-
         }
-
-        // TODO: Remove this when done developing
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ANY_KEY)) {
-            LudumDare39.game.setScreen(new MapScreen(1));
-        }
-//        if (Gdx.input.justTouched()) {
-//            Tween.to(alpha, 1, 1)
-//                    .target(1)
-//                    .setCallback(new TweenCallback() {
-//                        @Override
-//                        public void onEvent(int i, BaseTween<?> baseTween) {
-//                            LudumDare39.game.setScreen(new UpgradeScreen());
-//
-//                        }
-//                    })
-//                    .start(Assets.tween);
-//        }
 
         mapScreenHud.update(dt, currentStage, currentStagePercent);
     }

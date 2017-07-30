@@ -16,6 +16,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pools;
+import com.badlogic.gdx.utils.IntIntMap;
 import lando.systems.ld39.LudumDare39;
 import lando.systems.ld39.objects.*;
 import lando.systems.ld39.particles.ParticleSystem;
@@ -54,6 +55,15 @@ public class GameScreen extends BaseScreen {
     public boolean pause;
 
     public GameScreen() {
+        PlayerCar tempPlayerCar = new PlayerCar(this);
+        init(tempPlayerCar.getUpgrades());
+    }
+
+    public GameScreen(IntIntMap currentUpgrades) {
+        init(currentUpgrades);
+    }
+
+    public void init(IntIntMap currentUpgrades) {
         alpha.setValue(1);
         road = new Road();
         touchStart = new Vector3();
@@ -65,7 +75,7 @@ public class GameScreen extends BaseScreen {
         pause = true;
         bossActive = false;
         viewBounds = new Rectangle(0,0,camera.viewportWidth, camera.viewportHeight);
-        createCar();
+        createCar(currentUpgrades);
         Tween.to(alpha, 1, 1)
                 .target(0)
                 .setCallback(new TweenCallback() {
@@ -78,10 +88,10 @@ public class GameScreen extends BaseScreen {
                 .start(Assets.tween);
     }
 
-    private void createCar() {
-
+    private void createCar(IntIntMap currentUpgrades) {
         playerCar = new PlayerCar(this);
         playerCar.constraintBounds = constraintBounds;
+        playerCar.setUpgrades(currentUpgrades);
         gameObjects.add(playerCar);
     }
 
@@ -102,7 +112,7 @@ public class GameScreen extends BaseScreen {
             Gdx.app.exit();
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.G)) {
-            LudumDare39.game.setScreen(new UpgradeScreen());
+            LudumDare39.game.setScreen(new UpgradeScreen(playerCar.getUpgrades()));
         }
 
         particleSystem.update(dt);
@@ -159,7 +169,7 @@ public class GameScreen extends BaseScreen {
                     .setCallback(new TweenCallback() {
                         @Override
                         public void onEvent(int i, BaseTween<?> baseTween) {
-                            LudumDare39.game.setScreen(new MapScreen((road.distanceTraveled)/road.endRoad));
+                            LudumDare39.game.setScreen(new MapScreen((road.distanceTraveled)/road.endRoad, playerCar));
 
                         }
                     })
