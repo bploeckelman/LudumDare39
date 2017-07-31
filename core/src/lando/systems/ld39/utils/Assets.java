@@ -61,7 +61,7 @@ public class Assets {
     public static TextureRegion falcon;
     public static TextureRegion progressCar;
 
-    public static TextureRegion garageBackground;
+    public static Texture garageBackground;
     public static TextureRegion upgradeIconBattery;
     public static TextureRegion upgradeIconMotor;
     public static TextureRegion upgradeIconBooster;
@@ -119,6 +119,7 @@ public class Assets {
         mgr.load("images/black-pixel.png", Texture.class);
         mgr.load("images/title-screen1.png", Texture.class);
         mgr.load("images/title-screen2.png", Texture.class);
+        mgr.load("images/upgrade-garage-bg.png", Texture.class);
 
         batch = new SpriteBatch();
         shapes = new ShapeRenderer();
@@ -154,7 +155,8 @@ public class Assets {
 
         carBase = atlas.findRegion("car-base");
 
-        garageBackground = atlas.findRegion("upgrade-garage-bg");
+        garageBackground = mgr.get("images/upgrade-garage-bg.png");
+        //garageBackground = atlas.findRegion("upgrade-garage-bg");
         upgradeIconBattery = atlas.findRegion("upgrade-icon-battery");
         upgradeIconMotor = atlas.findRegion("upgrade-icon-motor");
         upgradeIconBooster = atlas.findRegion("upgrade-icon-booster");
