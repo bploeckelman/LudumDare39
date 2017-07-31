@@ -366,7 +366,7 @@ public class GameScreen extends BaseScreen {
         if (index >= sequence.length) index = 0;
         if (sequence[index] == keyCode) {
             if (++index == sequence.length) {
-                SoundManager.playSound(SoundManager.SoundOptions.cashMoney);
+                SoundManager.playSound(SoundManager.SoundOptions.cash_money);
                 roundStats.moneyCollected += 10000;
                 index = 0;
             }

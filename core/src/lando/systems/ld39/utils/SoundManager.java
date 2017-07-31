@@ -14,7 +14,7 @@ public class SoundManager {
     public static final float MUSIC_VOLUME = 0.25f;
 
     public enum SoundOptions {
-        accelerate, coast, cashMoney
+        accelerate, coast, cash_money, button_click, engine_start, apply_upgrade,
     }
 
     public enum MusicOptions {
@@ -30,8 +30,11 @@ public class SoundManager {
     public static void load(boolean playMusic) {
         soundMap.put(SoundOptions.accelerate, Gdx.audio.newSound(Gdx.files.internal("sounds/accelerate.ogg")));
         soundMap.put(SoundOptions.coast, Gdx.audio.newSound(Gdx.files.internal("sounds/coast.ogg")));
-        // make a money sound for the konami code!
-        soundMap.put(SoundOptions.cashMoney, Gdx.audio.newSound(Gdx.files.internal("sounds/coast.ogg")));
+        // TODO: make a money sound for the konami code!
+        soundMap.put(SoundOptions.cash_money, Gdx.audio.newSound(Gdx.files.internal("sounds/coast.ogg")));
+        soundMap.put(SoundOptions.button_click, Gdx.audio.newSound(Gdx.files.internal("sounds/button-boop.ogg")));
+        soundMap.put(SoundOptions.engine_start, Gdx.audio.newSound(Gdx.files.internal("sounds/engine-start.ogg")));
+        soundMap.put(SoundOptions.apply_upgrade, Gdx.audio.newSound(Gdx.files.internal("sounds/upgrade-drill.ogg")));
 
         musicMap.put(MusicOptions.game, Gdx.audio.newMusic(Gdx.files.internal("sounds/music-game.mp3")));
         musicMap.put(MusicOptions.garage, Gdx.audio.newMusic(Gdx.files.internal("sounds/music-garage.mp3")));
