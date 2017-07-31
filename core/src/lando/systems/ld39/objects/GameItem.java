@@ -216,9 +216,14 @@ public class GameItem extends GameObject {
 
         PlayerCar car = gameScreen.playerCar;
         if (car.collisionBounds.overlaps(collisionBounds) && !isPickingUp) {
-            car.addDamage(item.runoverDamage);
-            if (car.health <= 0 && item.pickupSoundType != null) {
-                SoundManager.playSound(item.pickupSoundType);
+            if (!item.isPickup && car.hasAxes()) {
+                car.hitAxe();
+                remove = true;
+            } else {
+                car.addDamage(item.runoverDamage);
+                if (car.health <= 0 && item.pickupSoundType != null) {
+                    SoundManager.playSound(item.pickupSoundType);
+                }
             }
             if (item.removeOnRunOver) {
                 handlePickup(car, item);

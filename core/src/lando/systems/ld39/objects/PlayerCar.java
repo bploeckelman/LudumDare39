@@ -96,9 +96,13 @@ public class PlayerCar extends Vehicle {
     }
 
     public void hitAxe() {
-        if (++axeHits == 3) {
+        if (++axeHits >= 3) {
             setUpgrade(Item.Axes, 0);
         }
+    }
+
+    public boolean hasAxes() {
+        return upgrades.getLevel(Item.Axes) > 0;
     }
 
     @Override
