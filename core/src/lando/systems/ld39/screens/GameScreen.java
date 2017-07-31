@@ -127,7 +127,7 @@ public class GameScreen extends BaseScreen {
         if (pause) return;
 
         addCounter += dt;
-        if (addCounter > 0.4f) {
+        if (addCounter > 0.2f) {
             GameItem.AddItem(this);
             addCounter = 0;
         }

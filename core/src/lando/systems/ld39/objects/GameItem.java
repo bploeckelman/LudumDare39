@@ -70,7 +70,7 @@ public class GameItem extends GameObject {
     }
 
     public static void AddItem(GameScreen gameScreen) {
-        boolean pickup = MathUtils.random.nextFloat() > 0.94f;
+        boolean pickup = MathUtils.random.nextFloat() > 0.97f;
 
         GameItem item = new GameItem(gameScreen, pickup);
 
@@ -94,5 +94,13 @@ public class GameItem extends GameObject {
 
         item.setLocation(x, y);
         gameScreen.gameObjects.add(item);
+    }
+
+    @Override
+    public void update(float dt) {
+        super.update(dt);
+
+        float bottomY =  (gameScreen.camera.position.y - gameScreen.camera.viewportHeight) / 2;
+        remove = ((position.y + bounds_offset_y) < bottomY);
     }
 }
