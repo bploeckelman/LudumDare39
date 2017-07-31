@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
+import lando.systems.ld39.road.Road;
 import lando.systems.ld39.screens.GameScreen;
 import lando.systems.ld39.utils.Assets;
 
@@ -33,8 +34,8 @@ public class GameItem extends GameObject {
         if (obstacles.size > 0) return;
 
         obstacles.add(new ItemData("palmtree", false, false, 0));
-        obstacles.add(new ItemData("palmtree_2", false, false, 0));
-        obstacles.add(new ItemData("palmtree_3", false, false, 0));
+        obstacles.add(new ItemData("palmtree2", false, false, 0));
+        obstacles.add(new ItemData("palmtree3", false, false, 0));
         obstacles.add(new ItemData("cone", false, false, 0.9f));
         obstacles.add(new ItemData("manholecover", false, true, 1));
         obstacles.add(new ItemData("barricade", false, false, 0.9f));
@@ -64,17 +65,34 @@ public class GameItem extends GameObject {
     public GameItem(GameScreen gameScreen, boolean pickup) {
         super(gameScreen);
 
-        item = pickup ? pickups.get(MathUtils.random(pickups.size)) : obstacles.get(MathUtils.random(obstacles.size));
-        keyframe = item.image;
+        item = pickup ? pickups.get(MathUtils.random.nextInt(pickups.size)) : obstacles.get(MathUtils.random.nextInt(obstacles.size));
+        setKeyFrame(item.image);
     }
 
-    @Override
-    public void update(float dt) {
+    public static void AddItem(GameScreen gameScreen) {
+        boolean pickup = MathUtils.random.nextFloat() > 0.94f;
 
-    }
+        GameItem item = new GameItem(gameScreen, pickup);
 
-    @Override
-    public void render(SpriteBatch batch) {
+        float x = 0;
+        float y = gameScreen.camera.position.y + gameScreen.camera.viewportHeight;
 
+        boolean inRoad = MathUtils.random.nextFloat() < item.item.inRoadPercentage;
+
+        float left = gameScreen.road.getLeftEdge(y);
+        float right = gameScreen.road.getRightEdge(y);
+
+        if (inRoad) {
+            x = left + ((right - left) *  MathUtils.random.nextFloat());
+        } else {
+            if (MathUtils.randomBoolean()) {
+                x = left * MathUtils.random.nextFloat();
+            } else {
+                x = right + ((gameScreen.camera.viewportWidth - right) * MathUtils.random.nextFloat());
+            }
+        }
+
+        item.setLocation(x, y);
+        gameScreen.gameObjects.add(item);
     }
 }

@@ -112,6 +112,7 @@ public class GameScreen extends BaseScreen {
         }
     }
 
+    float addCounter = 0;
     @Override
     public void update(float dt) {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
@@ -124,6 +125,12 @@ public class GameScreen extends BaseScreen {
         particleSystem.update(dt);
 
         if (pause) return;
+
+        addCounter += dt;
+        if (addCounter > 0.4f) {
+            GameItem.AddItem(this);
+            addCounter = 0;
+        }
 
         addEnemy(dt);
         updateWorld(dt);
