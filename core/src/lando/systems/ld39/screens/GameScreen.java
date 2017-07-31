@@ -31,7 +31,7 @@ import lando.systems.ld39.utils.SoundManager;
  */
 public class GameScreen extends BaseScreen {
 
-    public static boolean DEBUG = false;
+    public static boolean DEBUG = true;
 
     public static float zoomScale = 0.15f;
     public static float maxZoom = 1.6f;
