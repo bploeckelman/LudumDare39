@@ -143,7 +143,7 @@ public class MapScreenHud {
      * It's the hud's turn to animate stuff.  Return control to the MapScreen when done.
      */
     public void takeControl() {
-        Timeline.createSequence()
+        Timeline t = Timeline.createSequence()
                 .pushPause(TIME_CASH_IN_PAUSE)
                 .push(Tween.call(new TweenCallback() {
                     @Override
@@ -158,53 +158,59 @@ public class MapScreenHud {
                         .push(Tween.to(displayCurrentFunds, 1, TIME_CASH_IN_DISTANCE)
                                 .ease(TweenEquations.easeInOutSine)
                                 .target(fundsMoneyAfterDistance))
-                )
-                .pushPause(TIME_CASH_IN_PAUSE)
-                .push(Tween.call(new TweenCallback() {
-                    @Override
-                    public void onEvent(int i, BaseTween<?> baseTween) {
-                        setCurrentStage(CASH_IN_MONEY);
-                    }
-                }))
-                .push(Timeline.createParallel()
-                        .push(Tween.to(displayMoneyCollected, 1, TIME_CASH_IN_MONEY_COLLECTED)
-                                .ease(TweenEquations.easeInOutSine)
-                                .target(0))
-                        .push(Tween.to(displayCurrentFunds, 1, TIME_CASH_IN_MONEY_COLLECTED)
-                                .ease(TweenEquations.easeInOutSine)
-                                .target(fundsMoneyAfterMoneyCollected))
-                )
-                .pushPause(TIME_CASH_IN_PAUSE)
-                .push(Tween.call(new TweenCallback() {
-                    @Override
-                    public void onEvent(int i, BaseTween<?> baseTween) {
-                        setCurrentStage(CASH_IN_POWERUPS);
-                    }
-                }))
-                .push(Timeline.createParallel()
-                        .push(Tween.to(displayPowerupsCollected, 1, TIME_CASH_IN_POWERUPS)
-                                .ease(TweenEquations.easeInOutSine)
-                                .target(0))
-                        .push(Tween.to(displayCurrentFunds, 1, TIME_CASH_IN_POWERUPS)
-                                .ease(TweenEquations.easeInOutSine)
-                                .target(fundsMoneyAfterPowerups))
-                )
-                .pushPause(TIME_CASH_IN_PAUSE)
-                .push(Tween.call(new TweenCallback() {
-                    @Override
-                    public void onEvent(int i, BaseTween<?> baseTween) {
-                        setCurrentStage(CASH_IN_ENEMIES_SCRAPPED);
-                    }
-                }))
-                .push(Timeline.createParallel()
-                        .push(Tween.to(displayEnemiesScrapped, 1, TIME_CASH_IN_ENEMIES_SCRAPPED)
-                                .ease(TweenEquations.easeInOutSine)
-                                .target(0))
-                        .push(Tween.to(displayCurrentFunds, 1, TIME_CASH_IN_ENEMIES_SCRAPPED)
-                                .ease(TweenEquations.easeInOutSine)
-                                .target(fundsMoneyAfterEnemies))
-                )
-                .pushPause(TIME_CASH_IN_PAUSE)
+                );
+        if (displayMoneyCollected.floatValue() > 0) {
+            t.pushPause(TIME_CASH_IN_PAUSE)
+                    .push(Tween.call(new TweenCallback() {
+                        @Override
+                        public void onEvent(int i, BaseTween<?> baseTween) {
+                            setCurrentStage(CASH_IN_MONEY);
+                        }
+                    }))
+                    .push(Timeline.createParallel()
+                            .push(Tween.to(displayMoneyCollected, 1, TIME_CASH_IN_MONEY_COLLECTED)
+                                    .ease(TweenEquations.easeInOutSine)
+                                    .target(0))
+                            .push(Tween.to(displayCurrentFunds, 1, TIME_CASH_IN_MONEY_COLLECTED)
+                                    .ease(TweenEquations.easeInOutSine)
+                                    .target(fundsMoneyAfterMoneyCollected))
+                    );
+        }
+        if (displayPowerupsCollected.floatValue() > 0) {
+                t.pushPause(TIME_CASH_IN_PAUSE)
+                    .push(Tween.call(new TweenCallback() {
+                        @Override
+                        public void onEvent(int i, BaseTween<?> baseTween) {
+                            setCurrentStage(CASH_IN_POWERUPS);
+                        }
+                    }))
+                    .push(Timeline.createParallel()
+                            .push(Tween.to(displayPowerupsCollected, 1, TIME_CASH_IN_POWERUPS)
+                                    .ease(TweenEquations.easeInOutSine)
+                                    .target(0))
+                            .push(Tween.to(displayCurrentFunds, 1, TIME_CASH_IN_POWERUPS)
+                                    .ease(TweenEquations.easeInOutSine)
+                                    .target(fundsMoneyAfterPowerups))
+                    );
+        }
+        if (displayEnemiesScrapped.floatValue() > 0) {
+                t.pushPause(TIME_CASH_IN_PAUSE)
+                    .push(Tween.call(new TweenCallback() {
+                        @Override
+                        public void onEvent(int i, BaseTween<?> baseTween) {
+                            setCurrentStage(CASH_IN_ENEMIES_SCRAPPED);
+                        }
+                    }))
+                    .push(Timeline.createParallel()
+                            .push(Tween.to(displayEnemiesScrapped, 1, TIME_CASH_IN_ENEMIES_SCRAPPED)
+                                    .ease(TweenEquations.easeInOutSine)
+                                    .target(0))
+                            .push(Tween.to(displayCurrentFunds, 1, TIME_CASH_IN_ENEMIES_SCRAPPED)
+                                    .ease(TweenEquations.easeInOutSine)
+                                    .target(fundsMoneyAfterEnemies))
+                    );
+        }
+                t.pushPause(TIME_CASH_IN_PAUSE)
                 .push(Tween.call(new TweenCallback() {
                     @Override
                     public void onEvent(int i, BaseTween<?> baseTween) {
