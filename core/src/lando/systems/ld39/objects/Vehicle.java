@@ -66,9 +66,12 @@ public class Vehicle extends GameObject {
             if (!(this instanceof PlayerCar)) {
                 gameScreen.roundStats.enemiesScrapped += 1;
             }
-            dead = true;
-
+            killCar();
         }
+    }
+
+    public void killCar() {
+        dead = true;
     }
 
     public boolean isRunning() {

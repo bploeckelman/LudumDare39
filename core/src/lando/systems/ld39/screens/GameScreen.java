@@ -118,6 +118,8 @@ public class GameScreen extends BaseScreen {
         }
     }
 
+    public Array<GameItem> drops = new Array<GameItem>(5);
+
     float addCounter = 0;
     float addTime = 0;
     @Override
@@ -133,6 +135,15 @@ public class GameScreen extends BaseScreen {
 
         if (pause) return;
 
+        addItems(dt);
+
+        addEnemy(dt);
+        updateWorld(dt);
+        updateObjects(dt);
+        updateCamera(dt);
+    }
+
+    private void addItems(float dt) {
         addCounter += dt;
         if (addCounter > addTime) {
             GameItem.AddItem(this);
@@ -140,10 +151,10 @@ public class GameScreen extends BaseScreen {
             addTime = MathUtils.random.nextFloat() * 0.4f;
         }
 
-        addEnemy(dt);
-        updateWorld(dt);
-        updateObjects(dt);
-        updateCamera(dt);
+        for (GameItem gi : drops) {
+            gameObjects.add(gi);
+        }
+        drops.clear();
     }
 
     private void updateWorld(float dt) {
@@ -292,11 +303,11 @@ public class GameScreen extends BaseScreen {
         Assets.hsvToRgb(MathUtils.clamp(healthPercent * 120/ 365f, 0f, 1f), 1f, .8f, drawColor);
         Assets.hudShader.setUniformf("amount", healthPercent);
         Assets.hudShader.setUniformf("fillColor", drawColor);
-        batch.draw(Assets.healthTexture, camera.viewportWidth - 80, camera.viewportHeight /2 - 30, 60, 60);
+        batch.draw(Assets.healthTexture, camera.viewportWidth - 80, camera.viewportHeight / 2 - 30, 60, 60);
 
         batch.setShader(null);
         String text = (int)(percent * 100) + "%";
-        Assets.drawString(batch, text, 10, camera.viewportHeight/2 + 70,Color.WHITE, .35f, Assets.font, 100, Align.center);
+        Assets.drawString(batch, text, 10, camera.viewportHeight / 2 + 70, Color.WHITE, .35f, Assets.font, 100, Align.center);
 //            hud.render(batch);
     }
 

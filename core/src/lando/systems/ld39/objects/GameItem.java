@@ -53,10 +53,10 @@ public class GameItem extends GameObject {
     private static Array<ItemData> obstacles = new Array<ItemData>();
     private static Array<ItemData> pickups = new Array<ItemData>();
 
-    public static final int Repair = 1;
-    public static final int Money = 2;
-    public static final int Battery = 3;
-    public static final int Weapon = 4;
+    public static final int Repair = 0;
+    public static final int Money = 1;
+    public static final int Battery = 2;
+    public static final int Weapon = 3;
 
     public static void load() {
         if (obstacles.size > 0) return;
@@ -91,10 +91,24 @@ public class GameItem extends GameObject {
     private ItemData item;
 
     public GameItem(GameScreen gameScreen, boolean pickup) {
+        this(gameScreen, pickup, -1);
+    }
+
+    public GameItem(GameScreen gameScreen, boolean pickup, int pickupId) {
         super(gameScreen);
 
-        item = pickup ? pickups.get(MathUtils.random.nextInt(pickups.size)) : obstacles.get(MathUtils.random.nextInt(obstacles.size));
+        if (!pickup) {
+            item = obstacles.get(MathUtils.random.nextInt(obstacles.size));
+        } else {
+            if (pickupId == -1) {
+                pickupId = MathUtils.random.nextInt(pickups.size);
+            }
+            item = pickups.get(pickupId);
+        }
+
         setKeyFrame(item.image);
+
+        // todo - make bigger and remove this code.
         if (pickup) {
             Assets.inflateRect(bounds, 10);
         }
@@ -127,12 +141,11 @@ public class GameItem extends GameObject {
 
         float left = gameScreen.road.getLeftEdge(y);
         float right = gameScreen.road.getRightEdge(y);
-        float shoulderBuffer = gameScreen.road.shoulderWidth * 1.5f;
         if (inRoad) {
             x = left + ((right - left) *  MathUtils.random.nextFloat());
         } else {
             // move things that do more than 75% damage farther off road
-            float padding = (item.item.inRoadPercentage == 0 && item.item.runoverDamage > (car.maxHealth * .75)) ? 30 : 0;
+            float padding = (item.item.inRoadPercentage == 0 && item.item.runoverDamage > (car.maxHealth * .75)) ? item.bounds_offset_x : 0;
 
             if (MathUtils.randomBoolean()) {
                 x = (left - padding) * MathUtils.random.nextFloat();

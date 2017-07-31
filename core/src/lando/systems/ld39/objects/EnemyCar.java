@@ -20,6 +20,12 @@ import lando.systems.ld39.utils.Assets;
 
 public class EnemyCar extends Vehicle {
 
+    // in order - these need to increase
+    public static float dropBattery = 0.1f; //10%
+    public static float dropWeapon = 0.3f; //20%
+    public static float dropHealth = 0.4f; //10%
+    public static float dropCash = 0.85f; //45%
+
     enum Type {cruiser, follower, leader, miniBoss, musk}
 
     private int chassis;
@@ -62,6 +68,29 @@ public class EnemyCar extends Vehicle {
         Assets.inflateRect(collisionBounds, -4, -10);
         collision_offset_x = collisionBounds.width / 2;
         collision_offset_y = collisionBounds.height / 2;
+    }
+
+    @Override
+    public void killCar() {
+        super.killCar();
+
+        int id = 0;
+        float drop = MathUtils.random.nextFloat();
+        if (drop < dropBattery) {
+            id = GameItem.Battery;
+        } else if (drop < dropWeapon) {
+            id = GameItem.Weapon;
+        } else if (drop < dropHealth) {
+            id = GameItem.Repair;
+        } else if (drop < dropCash) {
+            id = GameItem.Money;
+        }
+
+        if (id > 0) {
+            GameItem item = new GameItem(gameScreen, true, id);
+            item.setLocation(position.x, position.y);
+            gameScreen.drops.add(item);
+        }
     }
 
     @Override
