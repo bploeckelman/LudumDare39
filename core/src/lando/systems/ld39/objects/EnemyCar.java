@@ -2,6 +2,7 @@ package lando.systems.ld39.objects;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
@@ -16,6 +17,7 @@ import lando.systems.ld39.ai.conditions.HealthBelowCondition;
 import lando.systems.ld39.ai.conditions.OffScreenCondition;
 import lando.systems.ld39.ai.states.*;
 import lando.systems.ld39.screens.GameScreen;
+import lando.systems.ld39.ui.KilledBy;
 import lando.systems.ld39.utils.Assets;
 import lando.systems.ld39.utils.SoundManager;
 
@@ -148,6 +150,11 @@ public class EnemyCar extends Vehicle {
                     health -= 9;
                     gameScreen.playerCar.hitAxe();
                 }
+                if (gameScreen.playerCar.health <= 0f) {
+                    TextureRegion killedByImage = upgrades.getCurrentImage(Item.EnemyChassis1, animStateTime, false);
+                    gameScreen.killedBy = new KilledBy("Enemy vehicle", killedByImage, gameScreen.hudCamera);
+                }
+
                 health -= 1;
                 Rectangle intersection = new Rectangle();
                 Intersector.intersectRectangles(collisionBounds, gameScreen.playerCar.collisionBounds, intersection);

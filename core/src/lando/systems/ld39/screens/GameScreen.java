@@ -23,6 +23,7 @@ import lando.systems.ld39.LudumDare39;
 import lando.systems.ld39.objects.*;
 import lando.systems.ld39.particles.ParticleSystem;
 import lando.systems.ld39.road.Road;
+import lando.systems.ld39.ui.KilledBy;
 import lando.systems.ld39.utils.Assets;
 import lando.systems.ld39.utils.Config;
 import lando.systems.ld39.utils.Screenshake;
@@ -60,6 +61,7 @@ public class GameScreen extends BaseScreen {
 
     public Stats roundStats;
 
+    public KilledBy killedBy;
     public Screenshake shaker;
 
     public GameScreen() {
@@ -76,6 +78,7 @@ public class GameScreen extends BaseScreen {
         alpha.setValue(1);
         road = new Road();
 
+        killedBy = null;
         shaker = new Screenshake(120, 3);
 
         constraintBounds = new Rectangle(0, 10, camera.viewportWidth, camera.viewportHeight * 0.7f);
@@ -127,9 +130,9 @@ public class GameScreen extends BaseScreen {
     float addTime = 0;
     @Override
     public void update(float dt) {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            Gdx.app.exit();
-        }
+//        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+//            Gdx.app.exit();
+//        }
 //        if (Gdx.input.isKeyJustPressed(Input.Keys.G)) {
 //            LudumDare39.game.setScreen(new UpgradeScreen(playerCar.getUpgrades()));
 //        }
@@ -139,6 +142,24 @@ public class GameScreen extends BaseScreen {
 
         particleSystem.update(dt);
 
+        if (playerCar.dead && killedBy == null) {
+            killedBy = new KilledBy("Too much damage", Assets.healthTexture, hudCamera);
+        }
+
+        if ((pause && killedBy != null)) {
+            if (Gdx.input.justTouched()) {
+                Tween.to(alpha, 1, 1)
+                        .target(1)
+                        .setCallback(new TweenCallback() {
+                            @Override
+                            public void onEvent(int i, BaseTween<?> baseTween) {
+                                killedBy = null;
+                                LudumDare39.game.setScreen(new MapScreen(roundStats, playerCar));
+                            }
+                        })
+                        .start(Assets.tween);
+            }
+        }
         if (pause) return;
 
         addItems(dt);
@@ -214,15 +235,6 @@ public class GameScreen extends BaseScreen {
             roundStats.distanceTraveledPercent = (road.distanceTraveled)/road.endRoad;
             pause = true;
             removeAllBullets();
-            Tween.to(alpha, 1, 1)
-                    .target(1)
-                    .setCallback(new TweenCallback() {
-                        @Override
-                        public void onEvent(int i, BaseTween<?> baseTween) {
-                            LudumDare39.game.setScreen(new MapScreen(roundStats, playerCar));
-                        }
-                    })
-                    .start(Assets.tween);
         }
     }
 
@@ -334,6 +346,13 @@ public class GameScreen extends BaseScreen {
         String text = (int)(percent * 100) + "%";
         Assets.drawString(batch, text, 10, camera.viewportHeight / 2 + 70, Color.WHITE, .35f, Assets.font, 100, Align.center);
 //            hud.render(batch);
+
+        if (killedBy != null) {
+            batch.setColor(0f, 0f, 0f, 0.7f);
+            batch.draw(Assets.whitePixel, 0, 0, hudCamera.viewportWidth, hudCamera.viewportHeight);
+            batch.setColor(Color.WHITE);
+            killedBy.render(batch);
+        }
     }
 
     public void removeAllBullets(){

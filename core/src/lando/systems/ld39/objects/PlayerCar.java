@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntMap;
 import lando.systems.ld39.screens.GameScreen;
+import lando.systems.ld39.ui.KilledBy;
 import lando.systems.ld39.utils.Assets;
 import lando.systems.ld39.utils.Config;
 import lando.systems.ld39.utils.SoundManager;
@@ -120,6 +121,7 @@ public class PlayerCar extends Vehicle {
         if (batteryLevel <= 0){
             speed = 0;
             dead = true;
+            gameScreen.killedBy = new KilledBy("Running out of power", Assets.upgradeIconBattery, gameScreen.hudCamera);
             return;
         }
 

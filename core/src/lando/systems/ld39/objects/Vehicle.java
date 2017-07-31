@@ -17,7 +17,7 @@ public class Vehicle extends GameObject {
     public float health = 10;
     public float maxHealth = 10;
 
-    protected Upgrades upgrades = new Upgrades();
+    public Upgrades upgrades = new Upgrades();
 
     public float bulletDamage = 4;
     public float reloadTime = 2;

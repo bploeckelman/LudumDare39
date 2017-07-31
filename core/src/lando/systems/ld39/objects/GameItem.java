@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import lando.systems.ld39.screens.GameScreen;
+import lando.systems.ld39.ui.KilledBy;
 import lando.systems.ld39.utils.Assets;
 import lando.systems.ld39.utils.SoundManager;
 import lando.systems.ld39.utils.accessors.RectangleAccessor;
@@ -27,6 +28,7 @@ public class GameItem extends GameObject {
         public float runoverDamage;
         public float inRoadPercentage;
         public int pickupId;
+        public String killedByName;
 
         public float collisionLeft;
         public float collisionRight;
@@ -54,6 +56,12 @@ public class GameItem extends GameObject {
             this.collisionRight = right;
             this.pickupSoundType = pickupSoundType;
             this.pickupId = 0;
+
+            if (textureImage.startsWith("palm")) killedByName = "Palm tree";
+            else if (textureImage.startsWith("tree")) killedByName = "Tree";
+            else if (textureImage.startsWith("cone")) killedByName = "Cone";
+            else if (textureImage.startsWith("cactus")) killedByName = "Cactus";
+            else killedByName = "Something?";
         }
     }
 
@@ -237,6 +245,7 @@ public class GameItem extends GameObject {
                 }
                 if (car.health <= 0) {
                     SoundManager.playSound(SoundManager.SoundOptions.crash_1);
+                    gameScreen.killedBy = new KilledBy(item.killedByName, item.image, gameScreen.hudCamera);
                 }
             }
             if (item.removeOnRunOver) {
@@ -296,6 +305,5 @@ public class GameItem extends GameObject {
         batch.setColor(1, 1, 1, alpha.floatValue());
         super.render(batch);
         batch.setColor(Color.WHITE);
-
     }
 }
