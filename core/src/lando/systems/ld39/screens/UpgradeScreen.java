@@ -1,8 +1,11 @@
 package lando.systems.ld39.screens;
 
 import aurelienribon.tweenengine.BaseTween;
+import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
+import aurelienribon.tweenengine.equations.Quart;
+import aurelienribon.tweenengine.primitives.MutableInteger;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -49,12 +52,15 @@ public class UpgradeScreen extends BaseScreen {
     IntIntMap currentUpgrades;
     PlayerCar playerCar;
 
-    // TODO: temporary
-    int cost = 1000;
+    MutableInteger cashMoneys;
+    boolean allowPurchase;
 
     public UpgradeScreen(IntIntMap currentUpgrades) {
         // reset damage
         currentUpgrades.put(Item.Damage, 0);
+
+        cashMoneys = new MutableInteger(0);
+        allowPurchase = false;
 
         this.currentUpgrades = currentUpgrades;
         playerCar = new PlayerCar(null);
@@ -86,8 +92,9 @@ public class UpgradeScreen extends BaseScreen {
         purchaseButton.textColor = Color.BLACK;
 
         alpha.setValue(1f);
-        Tween.to(alpha, 1, 1)
-                .target(0)
+        Timeline.createSequence()
+                .push(Tween.to(alpha, 1, 1).target(0))
+                .push(Tween.to(cashMoneys, 1, 1).target(LudumDare39.game.gameStats.currentMoney).ease(Quart.OUT))
                 .start(Assets.tween);
     }
 
@@ -102,9 +109,6 @@ public class UpgradeScreen extends BaseScreen {
                 upgradeItem.button.update(dt);
                 if (upgradeItem.button.checkForTouch(touchX, touchY)) {
                     selectedUpgrade = upgradeItem;
-
-                    // TODO: set properly
-                    cost = (int) (Math.random() * 501f) + 500;
                 }
             }
 
@@ -121,7 +125,7 @@ public class UpgradeScreen extends BaseScreen {
             }
 
             // added 2 null checks - if you don't select anything these are null.
-            if (selectedUpgrade != null && selectedUpgrade.currentLevel != selectedUpgrade.maxLevel && purchaseButton != null &&  purchaseButton.checkForTouch(touchX, touchY)) {
+            if (selectedUpgrade != null && selectedUpgrade.currentLevel != selectedUpgrade.maxLevel && purchaseButton.checkForTouch(touchX, touchY)) {
                 handleUpgrade();
             }
         }
@@ -162,6 +166,13 @@ public class UpgradeScreen extends BaseScreen {
                     infoHeaderRegion.x, infoHeaderRegion.y + infoHeaderRegion.height - textHeight,
                     Color.BLACK, 0.4f, Assets.font, infoHeaderRegion.width, Align.center);
 
+            // Draw cash moneys
+            final float cash_pos_y = buttonHeaderRegion.y + buttonHeaderRegion.height + 3f * textHeight;
+            Assets.drawString(batch, "$" + cashMoneys.intValue(),
+                    buttonHeaderRegion.x, cash_pos_y,
+                    Color.GOLD, 0.6f, Assets.font,
+                    (carRegion.x + carRegion.width) - buttonRegion.x, Align.center);
+
             // Draw upgrade item buttons
             final float button_icon_padding = 10f;
             for (UpgradeItem upgradeItem : upgradeItems) {
@@ -200,8 +211,13 @@ public class UpgradeScreen extends BaseScreen {
                 final float upgrade_height = 20f;
 
                 // cost text
+                allowPurchase = false;
                 if (selectedUpgrade.currentLevel != selectedUpgrade.maxLevel) {
                     final int cost = PlayerCar.upgradesMeta.get(selectedUpgrade.type).get(selectedUpgrade.currentLevel + 1).cost;
+                    if (cashMoneys.intValue() >= cost) {
+                        allowPurchase = true;
+                    }
+
                     final float cost_pos_y = purchaseButton.bounds.y + purchaseButton.bounds.height + 2f * margin_top + upgrade_height + 2f * textHeight;
                     Assets.drawString(batch, "$" + cost, infoRegion.x, cost_pos_y,
                             Color.GOLDENROD, 0.55f, Assets.font, infoRegion.width, Align.center);
@@ -221,7 +237,7 @@ public class UpgradeScreen extends BaseScreen {
                 Assets.defaultNinePatch.draw(batch, infoRegion.x + margin_left, upgrade_level_pos_y, max_upgrade_width, upgrade_height);
 
                 // purchase upgrade button
-                batch.setColor((selectedUpgrade.currentLevel == selectedUpgrade.maxLevel) ? Color.DARK_GRAY : Color.WHITE);
+                batch.setColor((allowPurchase) ? Color.WHITE: Color.DARK_GRAY);
                 batch.draw(Assets.whitePixel, purchaseButton.bounds.x, purchaseButton.bounds.y, purchaseButton.bounds.width, purchaseButton.bounds.height);
                 purchaseButton.render(batch);
                 batch.setColor(Color.WHITE);
@@ -322,13 +338,23 @@ public class UpgradeScreen extends BaseScreen {
     }
 
     private void handleUpgrade() {
-        if (selectedUpgrade == null) return;
+        if (selectedUpgrade == null || !allowPurchase) return;
 
         int level = currentUpgrades.get(selectedUpgrade.type, 0);
         int max = Item.getMaxLevel(selectedUpgrade.type);
+        if (level == max) return;
+
         if (max != -1) {
             // don't set level of an item that doesn't exist
             currentUpgrades.put(selectedUpgrade.type, MathUtils.clamp(level + 1, 0, max));
+
+            final int cost = PlayerCar.upgradesMeta.get(selectedUpgrade.type).get(selectedUpgrade.currentLevel + 1).cost;
+            final int currentCash = cashMoneys.intValue();
+            LudumDare39.game.gameStats.currentMoney -= cost;
+            Tween.to(cashMoneys, 1, 1)
+                    .target(currentCash - cost)
+                    .ease(Quart.OUT)
+                    .start(Assets.tween);
         }
     }
 
