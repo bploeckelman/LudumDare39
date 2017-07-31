@@ -12,11 +12,15 @@ import com.badlogic.gdx.utils.IntMap;
 import lando.systems.ld39.screens.GameScreen;
 import lando.systems.ld39.utils.Assets;
 import lando.systems.ld39.utils.Config;
+import lando.systems.ld39.utils.SoundManager;
 
 public class PlayerCar extends Vehicle {
 
     public static float minSpeed = 20;
 //    public static Rectangle defaultCollisionBounds = new Rectangle(8, 15, 38, 80);
+    private boolean accelerating;
+    private boolean coasting;
+    private float bullshitTimer = 0f;
 
     // this is the bounds the car can move around
     public Rectangle constraintBounds;
@@ -40,6 +44,9 @@ public class PlayerCar extends Vehicle {
 
     public PlayerCar(GameScreen gameScreen) {
         super(gameScreen, Item.Chassis);
+
+        accelerating = false;
+        coasting = false;
 
         initializeUpgradesMeta();
 
@@ -121,8 +128,26 @@ public class PlayerCar extends Vehicle {
 
         float offset = 200f * dt;
         if (isUp()) {
+            if (!accelerating) {
+                accelerating = true;
+                bullshitTimer = 0f;
+                SoundManager.playSound(SoundManager.SoundOptions.accelerate);
+            } else {
+                bullshitTimer += dt;
+                if (bullshitTimer >= 1.25f && !coasting) {
+                    coasting = true;
+                    long sid = SoundManager.playSound(SoundManager.SoundOptions.coast);
+                    SoundManager.soundMap.get(SoundManager.SoundOptions.coast).setLooping(sid, true);
+                }
+            }
             bounds.y += offset;
         } else if (isDown()) {
+            if (coasting) {
+                accelerating = false;
+                coasting = false;
+                bullshitTimer = 0f;
+                SoundManager.stopSound(SoundManager.SoundOptions.coast);
+            }
             bounds.y -= offset;
         }
 
@@ -162,7 +187,7 @@ public class PlayerCar extends Vehicle {
             return;
         }
 
-        if (Gdx.input.isKeyPressed(Input.Keys.ENTER) && isWeaponEnabled()) {
+        if ((Gdx.input.isKeyPressed(Input.Keys.ENTER) || Gdx.input.isButtonPressed(Input.Buttons.LEFT)) && isWeaponEnabled()) {
             bulletVelocity.set(0, getSpeed() + 1000);
             if (upgrades.getLevel(Item.Weapons) == 1){
                 alternateGun = !alternateGun;
@@ -315,10 +340,10 @@ public class PlayerCar extends Vehicle {
 
         Array<Upgrades.UpgradeItemMeta> batteryUpgradeMeta = new Array<Upgrades.UpgradeItemMeta>();
         batteryUpgradeMeta.addAll(
-                new Upgrades.UpgradeItemMeta(0, 10),
-                new Upgrades.UpgradeItemMeta(100, 50),
-                new Upgrades.UpgradeItemMeta(200, 100),
-                new Upgrades.UpgradeItemMeta(400, 200)
+                new Upgrades.UpgradeItemMeta(0, 40),
+                new Upgrades.UpgradeItemMeta(100, 100),
+                new Upgrades.UpgradeItemMeta(200, 200),
+                new Upgrades.UpgradeItemMeta(400, 500)
         );
         Array<Upgrades.UpgradeItemMeta> engineUpgradeMeta = new Array<Upgrades.UpgradeItemMeta>();
         engineUpgradeMeta.addAll(

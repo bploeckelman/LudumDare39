@@ -15,6 +15,7 @@ import lando.systems.ld39.objects.Stats;
 import lando.systems.ld39.ui.MapScreenHud;
 import lando.systems.ld39.utils.Assets;
 import lando.systems.ld39.utils.Config;
+import lando.systems.ld39.utils.SoundManager;
 
 import static lando.systems.ld39.screens.MapScreen.Stage.ANIMATE_TRAVEL;
 import static lando.systems.ld39.screens.MapScreen.Stage.FADE_OUT;
@@ -100,6 +101,7 @@ public class MapScreen extends BaseScreen {
 
     private void onHudComplete() {
         System.out.println("MapScreen | onHudComplete");
+        SoundManager.setMusicVolume(0f, 1f);
         Timeline.createSequence()
                 .push(Tween.call(new TweenCallback() {
                     @Override
@@ -113,6 +115,8 @@ public class MapScreen extends BaseScreen {
                 .push(Tween.call(new TweenCallback() {
                     @Override
                     public void onEvent(int i, BaseTween<?> baseTween) {
+                        SoundManager.setMusicVolume(SoundManager.MUSIC_VOLUME, 1f);
+                        SoundManager.playMusic(SoundManager.MusicOptions.garage);
                         LudumDare39.game.setScreen(new UpgradeScreen(playerCar.getUpgrades()));
                     }
                 }))

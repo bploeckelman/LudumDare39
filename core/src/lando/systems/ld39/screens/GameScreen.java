@@ -24,6 +24,7 @@ import lando.systems.ld39.particles.ParticleSystem;
 import lando.systems.ld39.road.Road;
 import lando.systems.ld39.utils.Assets;
 import lando.systems.ld39.utils.Config;
+import lando.systems.ld39.utils.SoundManager;
 
 /**
  * Created by Brian on 7/25/2017
@@ -181,6 +182,8 @@ public class GameScreen extends BaseScreen {
             }
         }
         if (playerCar.dead){
+            SoundManager.soundMap.get(SoundManager.SoundOptions.coast).stop();
+
             // TODO make this move to MapScreen
             // Set the distanceTraveledPercent
             roundStats.distanceTraveledPercent = (road.distanceTraveled)/road.endRoad;
@@ -192,7 +195,6 @@ public class GameScreen extends BaseScreen {
                         @Override
                         public void onEvent(int i, BaseTween<?> baseTween) {
                             LudumDare39.game.setScreen(new MapScreen(roundStats, playerCar));
-
                         }
                     })
                     .start(Assets.tween);
@@ -284,7 +286,7 @@ public class GameScreen extends BaseScreen {
         batch.flush();
         batch.setColor(Color.GREEN);
         float healthPercent = playerCar.getHealthPercent();
-        Assets.hsvToRgb(healthPercent * 120/ 365f, 1f, .8f, drawColor);
+        Assets.hsvToRgb(MathUtils.clamp(healthPercent * 120/ 365f, 0f, 1f), 1f, .8f, drawColor);
         Assets.hudShader.setUniformf("amount", healthPercent);
         Assets.hudShader.setUniformf("fillColor", drawColor);
         batch.draw(Assets.healthTexture, camera.viewportWidth - 80, camera.viewportHeight /2 - 30, 60, 60);

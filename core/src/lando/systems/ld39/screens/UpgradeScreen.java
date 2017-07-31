@@ -22,6 +22,7 @@ import lando.systems.ld39.objects.Item;
 import lando.systems.ld39.objects.PlayerCar;
 import lando.systems.ld39.ui.Button;
 import lando.systems.ld39.utils.Assets;
+import lando.systems.ld39.utils.SoundManager;
 
 public class UpgradeScreen extends BaseScreen {
 
@@ -56,8 +57,12 @@ public class UpgradeScreen extends BaseScreen {
     boolean allowPurchase;
 
     public UpgradeScreen(IntIntMap currentUpgrades) {
+        SoundManager.playMusic(SoundManager.MusicOptions.garage);
+
         // reset damage
         currentUpgrades.put(Item.Damage, 0);
+        // turn off axes
+        currentUpgrades.put(Item.Axes, 0);
 
         cashMoneys = new MutableInteger(0);
         allowPurchase = false;
@@ -113,11 +118,14 @@ public class UpgradeScreen extends BaseScreen {
             }
 
             if (continueButton.checkForTouch(touchX, touchY)) {
+                SoundManager.setMusicVolume(0f, 1f);
                 Tween.to(alpha, 1, 1)
                         .target(1)
                         .setCallback(new TweenCallback() {
                             @Override
                             public void onEvent(int i, BaseTween<?> baseTween) {
+                                SoundManager.setMusicVolume(SoundManager.MUSIC_VOLUME, 1f);
+                                SoundManager.playMusic(SoundManager.MusicOptions.game);
                                 LudumDare39.game.setScreen(new GameScreen(currentUpgrades));
                             }
                         })

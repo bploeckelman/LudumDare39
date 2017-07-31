@@ -6,6 +6,7 @@ import lando.systems.ld39.objects.Stats;
 import lando.systems.ld39.screens.BaseScreen;
 import lando.systems.ld39.screens.TitleScreen;
 import lando.systems.ld39.utils.Assets;
+import lando.systems.ld39.utils.SoundManager;
 
 /**
  * Created by Brian on 7/25/2017
@@ -22,6 +23,7 @@ public class LudumDare39 extends ApplicationAdapter {
 	@Override
 	public void create () {
 		Assets.load();
+        SoundManager.load(true);
 		float progress = 0f;
 		do {
 			progress = Assets.update();
@@ -44,6 +46,7 @@ public class LudumDare39 extends ApplicationAdapter {
 	public void render () {
 		float dt = Math.min(Gdx.graphics.getDeltaTime(), 1f / 30f);
 		Assets.tween.update(dt);
+		SoundManager.update(dt);
 		screen.update(dt);
 		screen.render(Assets.batch);
 //        Gdx.app.log("Render Calls", "" + Assets.batch.renderCalls);
