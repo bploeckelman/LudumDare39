@@ -75,6 +75,7 @@ public class EnemyCar extends Vehicle {
     @Override
     public void killCar() {
         super.killCar();
+        SoundManager.playSound(SoundManager.SoundOptions.crash_1);
 
         int id = 0;
         float drop = MathUtils.random.nextFloat();
