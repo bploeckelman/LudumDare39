@@ -44,7 +44,9 @@ public class Road {
     }
 
     public void update(float dt) {
-
+        if (distanceTraveled > endRoad/2f) {
+            atDesert = true;
+        }
     }
 
     public void renderFrameBuffer(SpriteBatch batch, OrthographicCamera camera){

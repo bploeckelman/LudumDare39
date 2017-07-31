@@ -33,10 +33,8 @@ public class GameScreen extends BaseScreen {
 
     public static boolean DEBUG = true;
 
-    public static float zoomScale = 0.15f;
     public static float maxZoom = 1.6f;
     public static float minZoom = 0.2f;
-    public static float DRAG_DELTA = 10f;
 
     public static final Array<Bullet> activeBullets = new Array<Bullet>();
     public static final Pool<Bullet> bulletsPool = Pools.get(Bullet.class, 500);
@@ -53,10 +51,8 @@ public class GameScreen extends BaseScreen {
     private Vector2 constraintOffset;
     public Rectangle viewBounds;
 
-    private Vector3 touchStart;
-    private Vector3 cameraTouchStart;
-    private boolean cancelTouchUp;
     public boolean bossActive;
+    public boolean killedMiniBoss;
     public boolean pause;
 
     public Stats roundStats;
@@ -74,9 +70,6 @@ public class GameScreen extends BaseScreen {
         roundStats = new Stats();
         alpha.setValue(1);
         road = new Road();
-        touchStart = new Vector3();
-        cameraTouchStart = new Vector3();
-        cancelTouchUp = false;
 
         constraintBounds = new Rectangle(0, 10, camera.viewportWidth, camera.viewportHeight * 0.7f);
         constraintOffset = new Vector2((camera.viewportWidth /2) - 10, camera.viewportHeight /2);
@@ -110,9 +103,10 @@ public class GameScreen extends BaseScreen {
     private float hammerTime = 7;
 
     private void addEnemy(float dt) {
-        if (vehicles.size > 2) return;
+        if (bossActive) return;
+        if (vehicles.size > 3) return;
         hammerTime += dt;
-        if (hammerTime > 3) {
+        if (hammerTime > 2) {
             hammerTime = 0;
             vehicles.add(EnemyCar.getEnemy(this));
         }
@@ -229,6 +223,13 @@ public class GameScreen extends BaseScreen {
         constraintBounds.y += deltaY;
         if (!bossActive) {
             road.distanceTraveled += ( deltaY / road.segmentLength);
+        }
+        if (!killedMiniBoss){
+            if (!bossActive && road.distanceTraveled >= road.endRoad/2f){
+                bossActive = true;
+                vehicles.add(EnemyCar.getMiniBoss(this));
+            }
+            road.distanceTraveled = Math.min(road.distanceTraveled, road.endRoad/2f);
         }
 
         camera.update();

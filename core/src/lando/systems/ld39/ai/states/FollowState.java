@@ -14,6 +14,7 @@ public class FollowState extends State {
     float reloadDelay;
     Vector2 bulletVelocity;
     Vector2 bulletPosition;
+    float carSpeed;
 
     public FollowState(EnemyCar owner) {
         super(owner);
@@ -21,6 +22,7 @@ public class FollowState extends State {
         reloadDelay = 1;
         bulletPosition = new Vector2();
         bulletVelocity = new Vector2();
+        carSpeed = owner.gameScreen.playerCar.speed;
     }
 
     @Override
@@ -40,7 +42,7 @@ public class FollowState extends State {
         }
 
 
-        float carSpeed = Math.max(owner.gameScreen.playerCar.speed * speedMul, 100f);
+        carSpeed = MathUtils.lerp(carSpeed, Math.max(owner.gameScreen.playerCar.speed * speedMul, 400f), .1f);
         positionY += owner.position.y + carSpeed * dt;
         float deltaX = owner.avoidGrass(positionY);
 

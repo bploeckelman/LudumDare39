@@ -98,6 +98,10 @@ public class EnemyCar extends Vehicle {
     public void update(float dt) {
         super.update(dt);
         if (dead){
+            if (type == Type.miniBoss) {
+                gameScreen.killedMiniBoss = true;
+                gameScreen.bossActive = false;
+            }
             deadTimer -= dt;
             if (deadTimer < 0){
                 remove = true;
@@ -176,7 +180,6 @@ public class EnemyCar extends Vehicle {
 
     private static int testlevel = 0;
     public static Vehicle getEnemy(GameScreen gameScreen) {
-        //Vector3 cameraPosition = gameScreen.camera.position;
 
         int chassis = Item.EnemyChassis1;
 
@@ -187,11 +190,25 @@ public class EnemyCar extends Vehicle {
         }
         Type type = Type.cruiser;
         float r = MathUtils.random();
-        if (r > .9f){
-            type = Type.follower;
-        } else if (r > .5f){
-            type = Type.leader;
+        float percentTraveled = gameScreen.road.distanceTraveled / gameScreen.road.endRoad;
+        if (percentTraveled > .75f) {
+            if (r > .9f){
+                type = Type.follower;
+            } else if (r > .5f){
+                type = Type.leader;
+            }
+        } else if (percentTraveled > .5f){
+            if (r > .75f){
+                type = Type.follower;
+            } else if (r > .5f){
+                type = Type.leader;
+            }
+        } else if (percentTraveled > .25f) {
+            if (r > .5f) {
+                type = Type.follower;
+            }
         }
+
 
         EnemyCar enemyCar = new EnemyCar(gameScreen, chassis, type);
         enemyCar.setUpgrade(chassis, newLevel);
@@ -200,6 +217,22 @@ public class EnemyCar extends Vehicle {
         if (type == Type.follower){
             positionY = gameScreen.camera.position.y - gameScreen.camera.viewportHeight/2f - enemyCar.bounds_offset_y;
         }
+        float left = gameScreen.road.getLeftEdge(positionY);
+        float right = gameScreen.road.getRightEdge(positionY);
+        float positionX = MathUtils.random(left + enemyCar.bounds_offset_x, right - enemyCar.bounds_offset_x);
+
+
+        enemyCar.setLocation(positionX, positionY);
+        enemyCar.initializeStates();
+
+        return enemyCar;
+    }
+
+    public static EnemyCar getMiniBoss(GameScreen gameScreen){
+        EnemyCar enemyCar = new EnemyCar(gameScreen, Item.EnemyChassis1, Type.miniBoss);
+        enemyCar.setUpgrade(Item.EnemyChassis1, 3);
+        float positionY = gameScreen.camera.position.y + gameScreen.camera.viewportHeight/2f + enemyCar.bounds_offset_y;
+
         float left = gameScreen.road.getLeftEdge(positionY);
         float right = gameScreen.road.getRightEdge(positionY);
         float positionX = MathUtils.random(left + enemyCar.bounds_offset_x, right - enemyCar.bounds_offset_x);
@@ -224,10 +257,22 @@ public class EnemyCar extends Vehicle {
             case leader:
                 createLeader();
                 break;
+            case miniBoss:
+                createMiniBoss();
+                break;
         }
 
     }
 
+
+    public void createMiniBoss(){
+        health = 100;
+        State initialState = new LeaderState(this);
+
+        Array<Transition> transitions = new Array<Transition>();
+
+        stateMachine = new StateMachine(initialState, transitions);
+    }
 
     public void createLeader() {
         health = 30;

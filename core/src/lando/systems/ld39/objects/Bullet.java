@@ -39,7 +39,7 @@ public class Bullet implements Pool.Poolable{
     }
 
     public void render(SpriteBatch batch){
-        batch.draw(tex, position.x -16, position.y-16, 32, 32);
+        batch.draw(tex, position.x -20, position.y-20, 40, 40);
     }
 
     @Override
