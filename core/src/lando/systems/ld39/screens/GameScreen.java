@@ -156,7 +156,6 @@ public class GameScreen extends BaseScreen {
             Bullet b = activeBullets.get(i);
             b.update(dt);
             for (Vehicle car : vehicles){
-                if (!(car instanceof Vehicle)) continue;
                 if (car != b.owner && car.bounds.contains(b.position) && !car.dead) {
                     car.addDamage(b.damage);
                     b.alive = false;
