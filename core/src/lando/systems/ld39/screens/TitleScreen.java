@@ -8,6 +8,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Align;
@@ -21,6 +22,8 @@ import lando.systems.ld39.utils.Config;
 public class TitleScreen extends BaseScreen {
 
     public float accum;
+    public float animStateTime = 0f;
+    public Texture keyframe;
 
     public TitleScreen() {
         accum = 0f;
@@ -29,6 +32,10 @@ public class TitleScreen extends BaseScreen {
     @Override
     public void update(float dt) {
         accum += dt;
+
+        animStateTime += dt;
+        keyframe = Assets.titleScreenAnim.getKeyFrame(animStateTime);
+
         if (Gdx.input.justTouched() || Gdx.input.isKeyJustPressed(Input.Keys.ANY_KEY)) {
             Tween.to(alpha, 1, 1)
                     .target(1)
@@ -53,7 +60,8 @@ public class TitleScreen extends BaseScreen {
         batch.setProjectionMatrix(hudCamera.combined);
         batch.begin();
         {
-            batch.draw(Assets.titleScreen, 0, 0, hudCamera.viewportWidth, hudCamera.viewportHeight);
+            batch.draw(keyframe, 0, 0, hudCamera.viewportWidth, hudCamera.viewportHeight);
+            Assets.drawString(batch, "Made for Ludum Dare 39: 'Running out of power'", 0, 90f, new Color(0.2f, 0.2f, 1, 1), .35f, Assets.font, hudCamera.viewportWidth, Align.center);
             Assets.drawString(batch, "Click to Start", 0, 30f, new Color(0, 1, 0, clickAlpha), .4f, Assets.font, hudCamera.viewportWidth, Align.center);
 
             batch.setColor(0, 0, 0, alpha.floatValue());
