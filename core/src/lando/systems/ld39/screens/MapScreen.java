@@ -47,6 +47,8 @@ public class MapScreen extends BaseScreen {
     private final Stats roundStats;
     private final PlayerCar playerCar;
 
+    private boolean quicken = false;
+
     public enum Stage {
         FADE_IN,
         ANIMATE_TRAVEL,
@@ -143,8 +145,11 @@ public class MapScreen extends BaseScreen {
     @Override
     public void update(float dt) {
 //        current += dt;
-        if (Gdx.input.justTouched()) {
-            // TODO: speed up the route animation
+        if (Gdx.input.justTouched() && !quicken) {
+            quicken = true;
+        }
+        if (quicken) {
+            Assets.tween.update(dt * 2.5f);
         }
         currentStageTime += dt;
 
