@@ -59,6 +59,6 @@ public class MoveToTopState extends State {
     @Override
     public void onExit() {
         owner.invincible = false;
-        Gdx.app.log("Boss", "Say Something");
+        owner.speechTimer = 2f;
     }
 }

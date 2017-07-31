@@ -1,10 +1,12 @@
 package lando.systems.ld39.objects;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import lando.systems.ld39.ai.StateMachine;
 import lando.systems.ld39.ai.Transition;
@@ -41,6 +43,8 @@ public class EnemyCar extends Vehicle {
     private static float collidedWithPlayerTimerDefault = 1f;
     private Vector2 collisionDirection;
     public boolean flying;
+    public String taunt = "";
+    public float speechTimer;
 
     public EnemyCar(GameScreen gameScreen) {
         this(gameScreen, Item.EnemyChassis1, Type.cruiser);
@@ -49,6 +53,7 @@ public class EnemyCar extends Vehicle {
     public EnemyCar(GameScreen gameScreen, int enemyChassis, Type type) {
         super(gameScreen, enemyChassis);
         chassis = enemyChassis;
+        speechTimer = 0;
         deadTimer = 1;
         this.type = type;
         flying = false;
@@ -103,6 +108,7 @@ public class EnemyCar extends Vehicle {
     @Override
     public void update(float dt) {
         super.update(dt);
+        speechTimer -= dt;
         if (dead){
             if (type == Type.miniBoss) {
                 gameScreen.killedMiniBoss = true;
@@ -185,6 +191,19 @@ public class EnemyCar extends Vehicle {
 
         render(batch, chassis, true);
         super.render(batch);
+
+        if (speechTimer > 0){
+            float x = position.x - 20;
+            float y = position.y - 60;
+            batch.setColor(Color.WHITE);
+            
+            Assets.eightBitFont.getData().setScale(.8f);
+            Assets.glyphLayout.setText(Assets.eightBitFont, taunt);
+            Assets.speechNinePatch.draw(batch, x - 10 - Assets.glyphLayout.width, y - 10 - Assets.glyphLayout.height, Assets.glyphLayout.width + 20, Assets.glyphLayout.height + 20);
+            Assets.eightBitFont.setColor(Color.BLACK);
+            Assets.eightBitFont.draw(batch, taunt, x - Assets.glyphLayout.width, y);
+
+        }
     }
 
     public static Vehicle getEnemy(GameScreen gameScreen) {
@@ -295,6 +314,7 @@ public class EnemyCar extends Vehicle {
     public void createFinalBoss(){
         health = 200;
         maxHealth = 200;
+        taunt = "You've caught me!";
         State initialState = new MoveToTopState(this);
         State firstPhase = new LeaderState(this);
         State launchPhase = new LaunchMuskState(this);
@@ -320,6 +340,8 @@ public class EnemyCar extends Vehicle {
     public void createMiniBoss(){
         health = 100;
         maxHealth = 100;
+        taunt = "I'll stop you";
+        speechTimer = 4f;
         State initialState = new LeaderState(this);
 
         Array<Transition> transitions = new Array<Transition>();

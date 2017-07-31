@@ -32,7 +32,9 @@ public class Assets {
     public static ShapeRenderer shapes;
     public static GlyphLayout layout;
     public static BitmapFont font;
+    public static BitmapFont eightBitFont;
     public static ShaderProgram fontShader;
+    public static GlyphLayout glyphLayout;
 
     public static ShaderProgram roadShader;
     public static Texture grassTexture;
@@ -43,6 +45,7 @@ public class Assets {
 
     public static TextureAtlas atlas;
     public static NinePatch defaultNinePatch;
+    public static NinePatch speechNinePatch;
 
     public static TextureRegion testTexture;
     public static TextureRegion whitePixel;
@@ -74,7 +77,7 @@ public class Assets {
 
     public static void load() {
         initialized = false;
-
+        glyphLayout = new GlyphLayout();
         final TextureLoader.TextureParameter linearParams = new TextureLoader.TextureParameter();
         linearParams.minFilter = Texture.TextureFilter.Linear;
         linearParams.magFilter = Texture.TextureFilter.Linear;
@@ -155,6 +158,8 @@ public class Assets {
         map = mgr.get("images/usa-map-v1.png", Texture.class);
 
         defaultNinePatch = new NinePatch(atlas.findRegion("ninepatch"), 6,6,6,6);
+        speechNinePatch = new NinePatch(atlas.findRegion("speech"), 12, 12, 12, 12);
+        eightBitFont = new BitmapFont(Gdx.files.internal("fonts/emulogic-16pt.fnt"));
 
         final Texture distText = new Texture(Gdx.files.internal("fonts/ubuntu.png"), true);
         distText.setFilter(Texture.TextureFilter.MipMapLinearNearest, Texture.TextureFilter.Linear);
