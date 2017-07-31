@@ -114,11 +114,15 @@ public class UpgradeScreen extends BaseScreen {
                 upgradeItem.button.update(dt);
                 if (upgradeItem.button.checkForTouch(touchX, touchY)) {
                     selectedUpgrade = upgradeItem;
+                    SoundManager.playSound(SoundManager.SoundOptions.button_click);
+                    break;
                 }
             }
 
             if (continueButton.checkForTouch(touchX, touchY)) {
                 SoundManager.setMusicVolume(0f, 1f);
+                SoundManager.playSound(SoundManager.SoundOptions.button_click);
+                SoundManager.playSound(SoundManager.SoundOptions.engine_start);
                 Tween.to(alpha, 1, 1)
                         .target(1)
                         .setCallback(new TweenCallback() {
@@ -356,6 +360,7 @@ public class UpgradeScreen extends BaseScreen {
         if (max != -1) {
             // don't set level of an item that doesn't exist
             currentUpgrades.put(selectedUpgrade.type, MathUtils.clamp(level + 1, 0, max));
+            SoundManager.playSound(SoundManager.SoundOptions.apply_upgrade);
 
             final int cost = PlayerCar.upgradesMeta.get(selectedUpgrade.type).get(selectedUpgrade.currentLevel + 1).cost;
             final int currentCash = cashMoneys.intValue();
