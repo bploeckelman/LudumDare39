@@ -124,6 +124,7 @@ public class Road {
 
         Assets.roadShader.setUniformf("u_camera", camera.position.x / camera.viewportWidth, camera.position.y/ camera.viewportHeight);
 
+        batch.draw(Assets.blackPixel, -100, camera.position.y + camera.viewportHeight/2f, camera.viewportWidth + 200f, - camera.viewportHeight);
         batch.draw(fboTexture, 0, camera.position.y + camera.viewportHeight/2f, camera.viewportWidth, - camera.viewportHeight);
         batch.setShader(null);
 

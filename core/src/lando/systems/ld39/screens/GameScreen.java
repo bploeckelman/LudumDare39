@@ -5,6 +5,7 @@ import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -24,6 +25,7 @@ import lando.systems.ld39.particles.ParticleSystem;
 import lando.systems.ld39.road.Road;
 import lando.systems.ld39.utils.Assets;
 import lando.systems.ld39.utils.Config;
+import lando.systems.ld39.utils.Screenshake;
 import lando.systems.ld39.utils.SoundManager;
 
 /**
@@ -57,6 +59,8 @@ public class GameScreen extends BaseScreen {
 
     public Stats roundStats;
 
+    public Screenshake shaker;
+
     public GameScreen() {
         PlayerCar tempPlayerCar = new PlayerCar(this);
         init(tempPlayerCar.getUpgrades());
@@ -70,6 +74,8 @@ public class GameScreen extends BaseScreen {
         roundStats = new Stats();
         alpha.setValue(1);
         road = new Road();
+
+        shaker = new Screenshake(120, 3);
 
         constraintBounds = new Rectangle(0, 10, camera.viewportWidth, camera.viewportHeight * 0.7f);
         constraintOffset = new Vector2((camera.viewportWidth /2) - 10, camera.viewportHeight /2);
@@ -121,9 +127,12 @@ public class GameScreen extends BaseScreen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             Gdx.app.exit();
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.G)) {
-            LudumDare39.game.setScreen(new UpgradeScreen(playerCar.getUpgrades()));
-        }
+//        if (Gdx.input.isKeyJustPressed(Input.Keys.G)) {
+//            LudumDare39.game.setScreen(new UpgradeScreen(playerCar.getUpgrades()));
+//        }
+//        if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
+//            shaker.shake(2f);
+//        }
 
         particleSystem.update(dt);
 
@@ -135,6 +144,8 @@ public class GameScreen extends BaseScreen {
         updateWorld(dt);
         updateObjects(dt);
         updateCamera(dt);
+
+        shaker.update(dt, camera, camera.position.x, camera.position.y);
     }
 
     private void addItems(float dt) {
@@ -193,6 +204,7 @@ public class GameScreen extends BaseScreen {
         }
         if (playerCar.dead){
             SoundManager.soundMap.get(SoundManager.SoundOptions.coast).stop();
+            shaker.shake(2f);
 
             // TODO make this move to MapScreen
             // Set the distanceTraveledPercent

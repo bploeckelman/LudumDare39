@@ -65,6 +65,7 @@ public class Vehicle extends GameObject {
         if (health <= 0 && !dead){
             if (!(this instanceof PlayerCar)) {
                 gameScreen.roundStats.enemiesScrapped += 1;
+                gameScreen.shaker.shake(1f);
             }
             killCar();
         }
