@@ -57,7 +57,7 @@ public class GameScreen extends BaseScreen {
     public boolean bossActive;
     public boolean pause;
 
-    private Stats roundStats;
+    public Stats roundStats;
 
     public GameScreen() {
         PlayerCar tempPlayerCar = new PlayerCar(this);
@@ -113,6 +113,7 @@ public class GameScreen extends BaseScreen {
     }
 
     float addCounter = 0;
+    float addTime = 0;
     @Override
     public void update(float dt) {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
@@ -127,9 +128,10 @@ public class GameScreen extends BaseScreen {
         if (pause) return;
 
         addCounter += dt;
-        if (addCounter > 0.2f) {
+        if (addCounter > addTime) {
             GameItem.AddItem(this);
             addCounter = 0;
+            addTime = MathUtils.random.nextFloat() * 0.4f;
         }
 
         addEnemy(dt);
@@ -252,8 +254,9 @@ public class GameScreen extends BaseScreen {
     }
 
     private void renderObjects(SpriteBatch batch) {
-        for (GameObject gameObject : gameObjects) {
-            gameObject.render(batch);
+        // car is first element, make sure it's on top
+        for (int i = gameObjects.size - 1; i >= 0; i--) {
+            gameObjects.get(i).render(batch);
         }
     }
 
