@@ -153,7 +153,7 @@ public class Road {
         int roadIndex = (int)(yPosition / segmentLength);
         RoadDef current = getRoadDef(roadIndex);
         RoadDef next = getRoadDef(roadIndex + 1);
-        float percent = yPosition % segmentLength;
+        float percent = (yPosition % segmentLength)/segmentLength;
         return MathUtils.lerp(current.leftSide, next.leftSide, percent);
     }
 
@@ -166,7 +166,7 @@ public class Road {
         int roadIndex = (int)(yPosition / segmentLength);
         RoadDef current = getRoadDef(roadIndex);
         RoadDef next = getRoadDef(roadIndex + 1);
-        float percent = yPosition % segmentLength;
+        float percent = (yPosition % segmentLength) /segmentLength;
         return MathUtils.lerp(current.leftSide + current.width, next.leftSide + next.width, percent);
     }
 
