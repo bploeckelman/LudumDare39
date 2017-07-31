@@ -14,6 +14,7 @@ import lando.systems.ld39.ai.states.LeaderState;
 import lando.systems.ld39.ai.states.State;
 import lando.systems.ld39.screens.GameScreen;
 import lando.systems.ld39.utils.Assets;
+import lando.systems.ld39.utils.SoundManager;
 
 /**
  * Created by Brian on 7/30/2017.
@@ -156,6 +157,7 @@ public class EnemyCar extends Vehicle {
                 }
 
                 collidedWithPlayer = true;
+                SoundManager.playSound(SoundManager.SoundOptions.crash_cars);
             }
         } else {
             // Follow player
