@@ -1,6 +1,8 @@
 package lando.systems.ld39.objects;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
@@ -123,7 +125,7 @@ public class GameItem extends GameObject {
     @Override
     protected void updateCollisionBounds(Rectangle bounds) {
         if (item.collisionRight > 0 || item.collisionLeft > 0) {
-              bounds = new Rectangle(item.collisionLeft, 0, item.collisionRight - item.collisionLeft, bounds.height);
+            bounds = new Rectangle(item.collisionLeft, 0, item.collisionRight - item.collisionLeft, bounds.height);
         }
         super.updateCollisionBounds(bounds);
     }
@@ -148,7 +150,7 @@ public class GameItem extends GameObject {
         float left = gameScreen.road.getLeftEdge(y);
         float right = gameScreen.road.getRightEdge(y);
         if (inRoad) {
-            x = left + ((right - left) *  MathUtils.random.nextFloat());
+            x = left + ((right - left) * MathUtils.random.nextFloat());
         } else {
             // move things that do more than 75% damage farther off road
             float padding = (item.item.inRoadPercentage == 0 && item.item.runoverDamage > (car.maxHealth * .75)) ? item.bounds_offset_x : 0;
@@ -157,7 +159,7 @@ public class GameItem extends GameObject {
                 x = (left - padding) * MathUtils.random.nextFloat();
             } else {
                 x = right + padding;
-                x +=  ((gameScreen.camera.viewportWidth - x) * MathUtils.random.nextFloat());
+                x += ((gameScreen.camera.viewportWidth - x) * MathUtils.random.nextFloat());
             }
         }
 
@@ -166,6 +168,11 @@ public class GameItem extends GameObject {
     }
 
     float dist = 0;
+    float pickupTime = 0f;
+    boolean isPickingUp = false;
+    Rectangle pickupBounds;
+    float offsetY = 0;
+    float alpha = 1f;
 
     @Override
     public void update(float dt) {
@@ -192,16 +199,29 @@ public class GameItem extends GameObject {
             setLocation(curX, curY);
         }
 
+        if (pickupTime > 0) {
+            Rectangle newBounds = new Rectangle(pickupBounds);
+            Assets.inflateRect(newBounds, 40 * (1 - pickupTime));
+            bounds = newBounds;
+            setY(gameScreen.camera.position.y - offsetY);
+            alpha -= dt;
+
+            pickupTime -= dt;
+            if (pickupTime <= 0) {
+                pickupTime = 0;
+                remove = true;
+            }
+        }
+
 
         PlayerCar car = gameScreen.playerCar;
-        if (car.collisionBounds.overlaps(collisionBounds)) {
+        if (car.collisionBounds.overlaps(collisionBounds) && !isPickingUp) {
             car.addDamage(item.runoverDamage);
             if (car.health <= 0 && item.pickupSoundType != null) {
                 SoundManager.playSound(item.pickupSoundType);
             }
             if (item.removeOnRunOver) {
                 handlePickup(car, item);
-                remove = true;
             }
         } else {
             float bottomY = (gameScreen.camera.position.y - gameScreen.camera.viewportHeight) / 2;
@@ -214,6 +234,13 @@ public class GameItem extends GameObject {
         if (item.pickupSoundType != null) {
             SoundManager.playSound(item.pickupSoundType);
         }
+
+        pickupTime = 1f;
+        pickupBounds = new Rectangle(bounds);
+        animate = false;
+        offsetY = gameScreen.camera.position.y - position.y;
+        isPickingUp = true;
+
         gameScreen.roundStats.powerupsCollected += 1;
         switch (item.pickupId) {
             case Repair:
@@ -234,5 +261,18 @@ public class GameItem extends GameObject {
                 car.pickupAxe();
                 break;
         }
+    }
+
+
+    @Override
+    public void render(SpriteBatch batch) {
+        if (alpha <= 0) {
+            alpha = 0;
+        }
+
+        batch.setColor(1, 1, 1, alpha);
+        super.render(batch);
+        batch.setColor(Color.WHITE);
+
     }
 }
