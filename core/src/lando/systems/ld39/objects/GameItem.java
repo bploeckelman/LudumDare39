@@ -49,9 +49,9 @@ public class GameItem extends GameObject {
         obstacles.add(new ItemData("palmtree2", false, 100, false, 0));
         obstacles.add(new ItemData("palmtree3", false, 100, false, 0));
         obstacles.add(new ItemData("cone", false, 5, true, 0.9f));
-        obstacles.add(new ItemData("manholecover", false, 0, false, 1));
-        obstacles.add(new ItemData("barricade", false, 10, true, 0.9f));
-        obstacles.add(new ItemData("barricade2", false, 10, true, 0.9f));
+//        obstacles.add(new ItemData("manholecover", false, 0, false, 1));
+//        obstacles.add(new ItemData("barricade", false, 10, true, 0.9f));
+//        obstacles.add(new ItemData("barricade2", false, 10, true, 0.9f));
         obstacles.add(new ItemData("treeA", false, 100, false, 0));
         obstacles.add(new ItemData("treeC", false, 100, false, 0));
         obstacles.add(new ItemData("treeD", false, 100, false, 0));
