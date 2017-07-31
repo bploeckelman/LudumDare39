@@ -68,7 +68,7 @@ public class GameItem extends GameObject {
         obstacles.add(new ItemData("palmtree", false, 100, false, 0, SoundManager.SoundOptions.crash_1, 33, 54));
         obstacles.add(new ItemData("palmtree2", false, 100, false, 0, SoundManager.SoundOptions.crash_1, 25, 62));
         obstacles.add(new ItemData("palmtree3", false, 100, false, 0, SoundManager.SoundOptions.crash_1, 33, 52));
-        obstacles.add(new ItemData("cone", false, 5, true, 0.9f, null));
+        obstacles.add(new ItemData("cone", false, 5, true, 0.8f, SoundManager.SoundOptions.crash_thump));
 //        obstacles.add(new ItemData("manholecover", false, 0, false, 1, null));
 //        obstacles.add(new ItemData("barricade", false, 10, true, 0.9f, null));
 //        obstacles.add(new ItemData("barricade2", false, 10, true, 0.9f, null));
