@@ -57,7 +57,7 @@ public class ParticleSystem {
                 float vx = 0;
                 float vy = 0;
                 float scale = MathUtils.random(1f, 2f);
-                float ttl = MathUtils.random(.5f, 1f);
+                float ttl = MathUtils.random(.5f, 2f);
                 float greyValue = MathUtils.random(.2f);
                 particle.init(
                         px, py,

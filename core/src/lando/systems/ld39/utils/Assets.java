@@ -21,6 +21,8 @@ import lando.systems.ld39.objects.Item;
 import lando.systems.ld39.objects.Upgrades;
 import lando.systems.ld39.utils.accessors.*;
 
+import javax.xml.soap.Text;
+
 /**
  * Created by Brian on 7/25/2017.
  */
@@ -55,6 +57,9 @@ public class Assets {
     public static TextureRegion whitePixel;
 
     public static TextureRegion carBase;
+    public static TextureRegion progressBar;
+    public static TextureRegion falcon;
+    public static TextureRegion progressCar;
 
     public static TextureRegion garageBackground;
     public static TextureRegion upgradeIconBattery;
@@ -158,6 +163,9 @@ public class Assets {
         upgradeIconTire = atlas.findRegion("upgrade-icon-tire");
         lightningTexture = atlas.findRegion("lightning");
         healthTexture = atlas.findRegion("health");
+        progressBar = atlas.findRegion("progress");
+        falcon = atlas.findRegion("Falcon", 0);
+        progressCar = atlas.findRegion("car-base");
 
         basicProjectileTex = atlas.findRegion("basicProjectile");
         zappaTex = atlas.findRegion("ZappaProjectile1");

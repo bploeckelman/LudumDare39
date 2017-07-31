@@ -337,19 +337,25 @@ public class GameScreen extends BaseScreen {
         Assets.hsvToRgb(percent * 120/ 365f, 1f, .8f, drawColor);
         Assets.hudShader.setUniformf("amount", percent);
         Assets.hudShader.setUniformf("fillColor", drawColor);
-        batch.draw(Assets.lightningTexture, 0, camera.viewportHeight /2 - 50, 100, 100);
+        batch.draw(Assets.lightningTexture, 0, camera.viewportHeight /2, 100, 100);
         batch.flush();
         batch.setColor(Color.GREEN);
         float healthPercent = playerCar.getHealthPercent();
         Assets.hsvToRgb(MathUtils.clamp(healthPercent * 120/ 365f, 0f, 1f), 1f, .8f, drawColor);
         Assets.hudShader.setUniformf("amount", healthPercent);
         Assets.hudShader.setUniformf("fillColor", drawColor);
-        batch.draw(Assets.healthTexture, camera.viewportWidth - 80, camera.viewportHeight / 2 - 30, 60, 60);
+        batch.draw(Assets.healthTexture, 20, camera.viewportHeight / 2 - 80, 60, 60);
 
         batch.setShader(null);
         String text = (int)(percent * 100) + "%";
-        Assets.drawString(batch, text, 10, camera.viewportHeight / 2 + 70, Color.WHITE, .35f, Assets.font, 100, Align.center);
+        Assets.drawString(batch, text, 10, camera.viewportHeight / 2 + 120, Color.WHITE, .35f, Assets.font, 100, Align.center);
 //            hud.render(batch);
+
+        batch.setColor(Color.WHITE);
+        batch.draw(Assets.progressBar, camera.viewportWidth - 40, camera.viewportHeight /2 - 128, 32, 256);
+        batch.draw(Assets.falcon, camera.viewportWidth - 38, camera.viewportHeight /2 + 98, 28, 28);
+        float yPos = road.distanceTraveled/road.endRoad * 226f;
+        batch.draw(Assets.progressCar, camera.viewportWidth - 33, camera.viewportHeight/2 - 128 + yPos, 18, 28);
 
         if (killedBy != null) {
             batch.setColor(0f, 0f, 0f, 0.7f);
