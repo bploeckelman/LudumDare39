@@ -130,6 +130,7 @@ public class UpgradeScreen extends BaseScreen {
                             public void onEvent(int i, BaseTween<?> baseTween) {
                                 SoundManager.setMusicVolume(SoundManager.MUSIC_VOLUME, 1f);
                                 SoundManager.playMusic(SoundManager.MusicOptions.game);
+                                LudumDare39.game.roundNumber++;
                                 LudumDare39.game.setScreen(new GameScreen(currentUpgrades));
                             }
                         })
