@@ -8,10 +8,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import lando.systems.ld39.ai.StateMachine;
 import lando.systems.ld39.ai.Transition;
-import lando.systems.ld39.ai.states.CruisingState;
-import lando.systems.ld39.ai.states.FollowState;
-import lando.systems.ld39.ai.states.LeaderState;
-import lando.systems.ld39.ai.states.State;
+import lando.systems.ld39.ai.conditions.AtPositionCondition;
+import lando.systems.ld39.ai.conditions.Condition;
+import lando.systems.ld39.ai.conditions.HealthBelowCondition;
+import lando.systems.ld39.ai.conditions.OffScreenCondition;
+import lando.systems.ld39.ai.states.*;
 import lando.systems.ld39.screens.GameScreen;
 import lando.systems.ld39.utils.Assets;
 import lando.systems.ld39.utils.SoundManager;
@@ -39,6 +40,7 @@ public class EnemyCar extends Vehicle {
     private float collidedWithPlayerTimer;
     private static float collidedWithPlayerTimerDefault = 1f;
     private Vector2 collisionDirection;
+    public boolean flying;
 
     public EnemyCar(GameScreen gameScreen) {
         this(gameScreen, Item.EnemyChassis1, Type.cruiser);
@@ -49,12 +51,14 @@ public class EnemyCar extends Vehicle {
         chassis = enemyChassis;
         deadTimer = 1;
         this.type = type;
+        flying = false;
         collisionDirection = new Vector2();
         collidedWithPlayerTimer = collidedWithPlayerTimerDefault;
-
-        setRandom(Item.Explosions);
-        setRandom(Item.Engine);
-        setRandom(Item.Booster);
+        if (type != Type.musk) {
+            setRandom(Item.Explosions);
+            setRandom(Item.Engine);
+            setRandom(Item.Booster);
+        }
     }
 
     private void setRandom(int item) {
@@ -110,7 +114,9 @@ public class EnemyCar extends Vehicle {
             }
             return;
         }
-        tiresOffRoad(dt);
+        if (!flying) {
+            tiresOffRoad(dt);
+        }
 
         Rectangle playerBounds = gameScreen.playerCar.bounds;
         Vector2 playerPosition = gameScreen.playerCar.position;
@@ -181,16 +187,13 @@ public class EnemyCar extends Vehicle {
         super.render(batch);
     }
 
-    private static int testlevel = 0;
     public static Vehicle getEnemy(GameScreen gameScreen) {
 
         int chassis = Item.EnemyChassis1;
 
-        //int level = MathUtils.random(Item.getMaxLevel(chassis));
-        int newLevel = testlevel++;
-        if (testlevel == Item.getMaxLevel(chassis)) {
-            testlevel = 0;
-        }
+//        int level = MathUtils.random(Item.getMaxLevel(chassis));
+        int newLevel = MathUtils.random(2);
+
         Type type = Type.cruiser;
         float r = MathUtils.random();
         float percentTraveled = gameScreen.road.distanceTraveled / gameScreen.road.endRoad;
@@ -247,6 +250,24 @@ public class EnemyCar extends Vehicle {
         return enemyCar;
     }
 
+    public static EnemyCar getMusk(GameScreen gameScreen){
+        EnemyCar enemyCar = new EnemyCar(gameScreen, Item.EnemyChassis1, Type.musk);
+        enemyCar.setUpgrade(Item.EnemyChassis1, 4);
+        float positionY = gameScreen.camera.position.y + gameScreen.camera.viewportHeight/2f + enemyCar.bounds_offset_y;
+
+        float left = gameScreen.road.getLeftEdge(positionY);
+        float right = gameScreen.road.getRightEdge(positionY);
+        float positionX = MathUtils.random(left + enemyCar.bounds_offset_x, right - enemyCar.bounds_offset_x);
+
+
+        enemyCar.setLocation(positionX, positionY);
+        enemyCar.initializeStates();
+
+        return enemyCar;
+    }
+
+
+
 
 
     public void initializeStates(){
@@ -263,13 +284,42 @@ public class EnemyCar extends Vehicle {
             case miniBoss:
                 createMiniBoss();
                 break;
+            case musk:
+                createFinalBoss();
+                break;
         }
 
     }
 
 
+    public void createFinalBoss(){
+        health = 200;
+        maxHealth = 200;
+        State initialState = new MoveToTopState(this);
+        State firstPhase = new LeaderState(this);
+        State launchPhase = new LaunchMuskState(this);
+        State rocketPhase = new MuskState(this);
+
+        Array<Transition> transitions = new Array<Transition>();
+        Condition atTopCond = new AtPositionCondition(this, 500f);
+        Condition healthBelow50 = new HealthBelowCondition(this, .5f);
+        Condition offScreen = new OffScreenCondition(this);
+
+        Transition startFightTrans = new Transition(initialState, atTopCond, firstPhase);
+        transitions.add(startFightTrans);
+
+        Transition launchTransition = new Transition(firstPhase, healthBelow50, launchPhase);
+        transitions.add(launchTransition);
+
+        Transition rocketTime = new Transition(launchPhase, offScreen, rocketPhase);
+        transitions.add(rocketTime);
+
+        stateMachine = new StateMachine(initialState, transitions);
+    }
+
     public void createMiniBoss(){
         health = 100;
+        maxHealth = 100;
         State initialState = new LeaderState(this);
 
         Array<Transition> transitions = new Array<Transition>();
@@ -279,6 +329,7 @@ public class EnemyCar extends Vehicle {
 
     public void createLeader() {
         health = 30;
+        maxHealth = 30;
         State initialState = new LeaderState(this);
 
         Array<Transition> transitions = new Array<Transition>();

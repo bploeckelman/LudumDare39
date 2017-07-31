@@ -21,6 +21,8 @@ public class Vehicle extends GameObject {
 
     public float bulletDamage = 4;
     public float reloadTime = 2;
+    public boolean invincible;
+
 
 
     // TODO: addon layers
@@ -33,6 +35,8 @@ public class Vehicle extends GameObject {
         setKeyFrame(upgrades.getCurrentImage(chassisType, 0, false));
 
         setLocation((Config.gameWidth - bounds.width) / 2f, (Config.gameHeight - bounds.height) / 2f);
+        invincible = false;
+
     }
 
     public void addDamage(float damage) {

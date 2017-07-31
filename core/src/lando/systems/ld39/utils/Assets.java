@@ -62,10 +62,13 @@ public class Assets {
     public static TextureRegion basicProjectileTex;
     public static TextureRegion zappaTex;
     public static TextureRegion missileTex;
+    public static TextureRegion brokenTruck;
 
     public static ShaderProgram hudShader;
     public static TextureRegion lightningTexture;
     public static TextureRegion healthTexture;
+
+    public static Animation<TextureRegion> bowserMusk;
 
     public static boolean initialized;
 
@@ -88,6 +91,7 @@ public class Assets {
         if (tween == null) {
             tween = new TweenManager();
             Tween.setCombinedAttributesLimit(4);
+            Tween.setWaypointsLimit(2);
             Tween.registerAccessor(Color.class, new ColorAccessor());
             Tween.registerAccessor(Rectangle.class, new RectangleAccessor());
             Tween.registerAccessor(Vector2.class, new Vector2Accessor());
@@ -143,6 +147,10 @@ public class Assets {
         basicProjectileTex = atlas.findRegion("basicProjectile");
         zappaTex = atlas.findRegion("ZappaProjectile1");
         missileTex = atlas.findRegion("rocket");
+        brokenTruck = atlas.findRegion("Trunk2");
+        
+        bowserMusk = new Animation<TextureRegion>(0.1f, atlas.findRegions("BowserMuskNoCar"), Animation.PlayMode.LOOP);
+
 
         map = mgr.get("images/usa-map-v1.png", Texture.class);
 

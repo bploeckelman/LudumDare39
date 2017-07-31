@@ -55,6 +55,7 @@ public class GameScreen extends BaseScreen {
 
     public boolean bossActive;
     public boolean killedMiniBoss;
+    public boolean killedMusk;
     public boolean pause;
 
     public Stats roundStats;
@@ -81,6 +82,8 @@ public class GameScreen extends BaseScreen {
         constraintOffset = new Vector2((camera.viewportWidth /2) - 10, camera.viewportHeight /2);
         pause = true;
         bossActive = false;
+        killedMiniBoss = false;
+        killedMusk = false;
         viewBounds = new Rectangle(0,0,camera.viewportWidth, camera.viewportHeight);
         createCar(currentUpgrades);
         Tween.to(alpha, 1, 1)
@@ -172,7 +175,7 @@ public class GameScreen extends BaseScreen {
             Bullet b = activeBullets.get(i);
             b.update(dt);
             for (Vehicle car : vehicles){
-                if (car != b.owner && car.bounds.contains(b.position) && !car.dead) {
+                if (car != b.owner && car.bounds.contains(b.position) && !car.dead && !car.invincible) {
                     if (b.owner instanceof EnemyCar && car instanceof EnemyCar) continue;
 
                     car.addDamage(b.damage);
@@ -243,6 +246,13 @@ public class GameScreen extends BaseScreen {
             }
             road.distanceTraveled = Math.min(road.distanceTraveled, road.endRoad/2f);
         }
+        if (!bossActive && road.distanceTraveled >= road.endRoad){
+            bossActive = true;
+            road.clearRoad(camera.position.y);
+            vehicles.add(EnemyCar.getMusk(this));
+        }
+
+        road.distanceTraveled = Math.min(road.distanceTraveled, road.endRoad);
 
         camera.update();
     }

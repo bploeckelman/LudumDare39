@@ -34,7 +34,7 @@ public class Item {
         items.put(Damage, new ItemGroup(None, "DamageSmall", "DamageLarge"));
         items.put(Axes, new ItemGroup(None, "TireAxes"));
         items.put(Weapons, new ItemGroup(None, "BasicGun", "Zappa", "RocketLauncher"));
-        items.put(EnemyChassis1, new ItemGroup("Enemy1", "Enemy4", "Enemy5", "Boss1"));
+        items.put(EnemyChassis1, new ItemGroup("Enemy1", "Enemy4", "Enemy5", "Boss1", "Truck1", "Truck2", "Falcon"));
         items.put(Explosions, new ItemGroup("Explosion1", "Explosion2", "Explosion3", "Explosion4"));
         items.put(Boss, new ItemGroup("Boss1"));
     }

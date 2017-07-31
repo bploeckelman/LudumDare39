@@ -21,7 +21,7 @@ import java.util.Random;
 public class Road {
     public Random rand = new Random();
     public float distanceTraveled;
-    public float endRoad = 150;
+    public float endRoad = 100;
     public float segmentLength = 400;
     public float shoulderWidth = 70;
     public Array<RoadDef> roadSegments;
@@ -144,6 +144,13 @@ public class Road {
                         roadIndex * segmentLength + (.5f + j) * dashLength, 2, (dashLength - 60) /2f,
                         4f, dashLength - 60, 1, 1, rotation);
             }
+        }
+    }
+
+    public void clearRoad(float yPosition){
+        int roadIndex = (int)(yPosition / segmentLength);
+        for (int i = roadSegments.size -1; i > roadIndex + 5; i--){
+            roadSegments.removeIndex(i);
         }
     }
 

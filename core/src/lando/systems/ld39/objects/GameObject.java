@@ -86,5 +86,6 @@ public abstract class GameObject {
         batch.draw(keyframe, bounds.x, bounds.y, bounds.width, bounds.height);
         if (GameScreen.DEBUG) {
             Assets.defaultNinePatch.draw(batch, collisionBounds.x, collisionBounds.y, collisionBounds.width, collisionBounds.height);
-        }    }
+        }
+    }
 }
