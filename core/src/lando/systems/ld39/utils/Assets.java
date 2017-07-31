@@ -76,6 +76,7 @@ public class Assets {
     public static TextureRegion healthTexture;
 
     public static Animation<TextureRegion> bowserMusk;
+    public static Animation<TextureRegion> carTalkAnim;
 
     public static boolean initialized;
 
@@ -164,7 +165,7 @@ public class Assets {
         brokenTruck = atlas.findRegion("Trunk2");
         
         bowserMusk = new Animation<TextureRegion>(0.1f, atlas.findRegions("BowserMuskNoCar"), Animation.PlayMode.LOOP);
-
+        carTalkAnim = new Animation<TextureRegion>(0.2f, atlas.findRegions("car-talk"), Animation.PlayMode.LOOP);
 
         map = mgr.get("images/usa-map-v1.png", Texture.class);
 
