@@ -1,5 +1,7 @@
 package lando.systems.ld39.objects;
 
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.primitives.MutableFloat;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -11,6 +13,7 @@ import com.badlogic.gdx.utils.Array;
 import lando.systems.ld39.screens.GameScreen;
 import lando.systems.ld39.utils.Assets;
 import lando.systems.ld39.utils.SoundManager;
+import lando.systems.ld39.utils.accessors.RectangleAccessor;
 
 /**
  * Created by Brian on 7/30/2017.
@@ -61,6 +64,7 @@ public class GameItem extends GameObject {
     public static final int Money = 1;
     public static final int Battery = 2;
     public static final int Weapon = 3;
+    public static final int Cone = 4;
 
     public static void load() {
         if (obstacles.size > 0) return;
@@ -68,7 +72,9 @@ public class GameItem extends GameObject {
         obstacles.add(new ItemData("palmtree", false, 50, false, 0, SoundManager.SoundOptions.cactus_crunch, 33, 54));
         obstacles.add(new ItemData("palmtree2", false, 50, false, 0, SoundManager.SoundOptions.cactus_crunch, 25, 62));
         obstacles.add(new ItemData("palmtree3", false, 50, false, 0, SoundManager.SoundOptions.cactus_crunch, 33, 52));
-        obstacles.add(new ItemData("cone", false, 5, true, 0.8f, SoundManager.SoundOptions.crash_thump));
+        ItemData coneData = new ItemData("cone", false, 5, true, 0.8f, SoundManager.SoundOptions.crash_thump);
+        coneData.pickupId = Cone;
+        obstacles.add(coneData);
 //        obstacles.add(new ItemData("manholecover", false, 0, false, 1, null));
 //        obstacles.add(new ItemData("barricade", false, 10, true, 0.9f, null));
 //        obstacles.add(new ItemData("barricade2", false, 10, true, 0.9f, null));
@@ -172,7 +178,7 @@ public class GameItem extends GameObject {
     boolean isPickingUp = false;
     Rectangle pickupBounds;
     float offsetY = 0;
-    float alpha = 1f;
+    MutableFloat alpha = new MutableFloat(1f);
 
     @Override
     public void update(float dt) {
@@ -204,7 +210,9 @@ public class GameItem extends GameObject {
             Assets.inflateRect(newBounds, 40 * (1 - pickupTime));
             bounds = newBounds;
             setY(gameScreen.camera.position.y - offsetY);
-            alpha -= dt;
+            if (item.pickupId != Cone) {
+                alpha.setValue(alpha.floatValue() - dt);
+            }
 
             pickupTime -= dt;
             if (pickupTime <= 0) {
@@ -241,7 +249,8 @@ public class GameItem extends GameObject {
     }
 
     private void handlePickup(PlayerCar car, ItemData item) {
-        if (!item.isPickup) return;
+        // Special cases all day long
+        if (!item.isPickup && item.pickupId != Cone) return;
         if (item.pickupSoundType != null) {
             SoundManager.playSound(item.pickupSoundType);
         }
@@ -271,17 +280,20 @@ public class GameItem extends GameObject {
             case Weapon:
                 car.pickupAxe();
                 break;
+            case Cone:
+                Tween.to(alpha, 1, 0.5f).target(0).start(Assets.tween);
+                break;
         }
     }
 
 
     @Override
     public void render(SpriteBatch batch) {
-        if (alpha <= 0) {
-            alpha = 0;
+        if (alpha.floatValue() <= 0) {
+            alpha.setValue(0f);
         }
 
-        batch.setColor(1, 1, 1, alpha);
+        batch.setColor(1, 1, 1, alpha.floatValue());
         super.render(batch);
         batch.setColor(Color.WHITE);
 
