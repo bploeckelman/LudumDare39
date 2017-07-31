@@ -227,7 +227,7 @@ public class UpgradeScreen extends BaseScreen {
                 allowPurchase = false;
                 if (selectedUpgrade.currentLevel != selectedUpgrade.maxLevel) {
                     final int cost = PlayerCar.upgradesMeta.get(selectedUpgrade.type).get(selectedUpgrade.currentLevel + 1).cost;
-                    if (cashMoneys.intValue() >= cost) {
+                    if (LudumDare39.game.gameStats.currentMoney >= cost) {
                         allowPurchase = true;
                     }
 
@@ -363,10 +363,9 @@ public class UpgradeScreen extends BaseScreen {
             SoundManager.playSound(SoundManager.SoundOptions.apply_upgrade);
 
             final int cost = PlayerCar.upgradesMeta.get(selectedUpgrade.type).get(selectedUpgrade.currentLevel + 1).cost;
-            final int currentCash = cashMoneys.intValue();
             LudumDare39.game.gameStats.currentMoney -= cost;
             Tween.to(cashMoneys, 1, 1)
-                    .target(currentCash - cost)
+                    .target(LudumDare39.game.gameStats.currentMoney)
                     .ease(Quart.OUT)
                     .start(Assets.tween);
         }
