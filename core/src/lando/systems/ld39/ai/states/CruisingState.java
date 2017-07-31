@@ -9,13 +9,16 @@ import lando.systems.ld39.objects.GameObject;
  * Created by dsgraham on 7/30/17.
  */
 public class CruisingState extends State {
+    private float cruiseSlowDown;
+
     public CruisingState(EnemyCar owner) {
         super(owner);
+        cruiseSlowDown = MathUtils.random(.6f, .9f);
     }
 
     @Override
     public void update(float dt) {
-        float carSpeed = Math.max(owner.gameScreen.playerCar.speed * .8f, 200f);
+        float carSpeed = Math.max(owner.gameScreen.playerCar.speed * cruiseSlowDown, 200f);
         float positionY = owner.position.y + carSpeed * dt;
         float topOfCar = positionY + owner.bounds.height/2f;
         float testPosition = topOfCar + 5f;

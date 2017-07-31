@@ -43,6 +43,7 @@ public class GameScreen extends BaseScreen {
     public Road road;
 
     public Array<GameObject> gameObjects = new Array<GameObject>();
+    public Array<Vehicle> vehicles = new Array<Vehicle>();
     public ParticleSystem particleSystem = new ParticleSystem();
 
     public PlayerCar playerCar;
@@ -98,7 +99,7 @@ public class GameScreen extends BaseScreen {
         playerCar = new PlayerCar(this);
         playerCar.constraintBounds = constraintBounds;
         playerCar.setUpgrades(currentUpgrades);
-        gameObjects.add(playerCar);
+        vehicles.add(playerCar);
     }
 
     // temp enemy gen
@@ -108,7 +109,7 @@ public class GameScreen extends BaseScreen {
         hammerTime += dt;
         if (hammerTime > 3) {
             hammerTime = 0;
-            gameObjects.add(EnemyCar.getEnemy(this));
+            vehicles.add(EnemyCar.getEnemy(this));
         }
     }
 
@@ -149,10 +150,10 @@ public class GameScreen extends BaseScreen {
         for(int i = activeBullets.size - 1; i >= 0; i--){
             Bullet b = activeBullets.get(i);
             b.update(dt);
-            for (GameObject car : gameObjects){
+            for (Vehicle car : vehicles){
                 if (!(car instanceof Vehicle)) continue;
                 if (car != b.owner && car.bounds.contains(b.position) && !car.dead) {
-                    ((Vehicle) car).addDamage(b.damage);
+                    car.addDamage(b.damage);
                     b.alive = false;
                     break;
                 }
@@ -170,6 +171,13 @@ public class GameScreen extends BaseScreen {
             o.update(dt);
             if (o.remove) {
                 gameObjects.removeIndex(i);
+            }
+        }
+        for (int i = vehicles.size -1; i >= 0; i--){
+            Vehicle v = vehicles.get(i);
+            v.update(dt);
+            if (v.remove) {
+                vehicles.removeIndex(i);
             }
         }
         if (playerCar.dead){
@@ -256,6 +264,9 @@ public class GameScreen extends BaseScreen {
 
     private void renderObjects(SpriteBatch batch) {
         // car is first element, make sure it's on top
+        for (int i = vehicles.size - 1; i >= 0; i--) {
+            vehicles.get(i).render(batch);
+        }
         for (int i = gameObjects.size - 1; i >= 0; i--) {
             gameObjects.get(i).render(batch);
         }
