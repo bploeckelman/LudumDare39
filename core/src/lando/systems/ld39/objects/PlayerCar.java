@@ -150,6 +150,7 @@ public class PlayerCar extends Vehicle {
                 coasting = false;
                 bullshitTimer = 0f;
                 SoundManager.stopSound(SoundManager.SoundOptions.coast);
+                SoundManager.playSound(SoundManager.SoundOptions.slowdown);
             }
             bounds.y -= offset;
         }
