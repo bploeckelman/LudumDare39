@@ -14,7 +14,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import lando.systems.ld39.objects.GameItem;
 import lando.systems.ld39.objects.Item;
 import lando.systems.ld39.objects.Upgrades;
 import lando.systems.ld39.utils.accessors.*;
@@ -119,6 +121,7 @@ public class Assets {
 
         // loads images in updates
         Item.load();
+        GameItem.load();
 
         carBase = atlas.findRegion("car-base");
 

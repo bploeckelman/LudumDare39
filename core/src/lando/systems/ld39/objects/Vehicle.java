@@ -15,15 +15,8 @@ public class Vehicle extends GameObject {
     public float health = 10;
     public float maxHealth = 10;
 
-    public Rectangle collisionBounds;
-
-    public static Rectangle defaultCollisionBounds = new Rectangle(8, 15, 38, 80);
-
-    public float animStateTime;
     protected Upgrades upgrades = new Upgrades();
 
-    protected float bounds_offset_x;
-    protected float bounds_offset_y;
     public float bulletDamage = 4;
     public float reloadTime = 2;
 
@@ -35,40 +28,9 @@ public class Vehicle extends GameObject {
         collisionBounds = new Rectangle();
 
         upgrades.setLevel(chassisType, 0);
-        keyframe = upgrades.getCurrentImage(chassisType, 0, false);
+        setKeyFrame(upgrades.getCurrentImage(chassisType, 0, false));
 
-        setSize(keyframe.getRegionWidth(), keyframe.getRegionHeight());
         setLocation((Config.gameWidth - bounds.width) / 2f, (Config.gameHeight - bounds.height) / 2f);
-    }
-
-    public void setX(float x) {
-        position.x = x;
-        bounds.x = position.x - bounds_offset_x;
-        collisionBounds.x = bounds.x + defaultCollisionBounds.x;
-    }
-
-    public void setY(float y) {
-        position.y = y;
-        bounds.y = position.y - bounds_offset_y;
-        collisionBounds.y = bounds.y + defaultCollisionBounds.y;
-    }
-
-    public void setLocation(float x, float y) {
-        setX(x);
-        setY(y);
-    }
-
-    public void setSize(float width, float height) {
-        bounds.width = width;
-        bounds.height = height;
-        collisionBounds.width = defaultCollisionBounds.width;
-        collisionBounds.height = defaultCollisionBounds.height;
-        bounds_offset_x = width / 2;
-        bounds_offset_y = height /2;
-    }
-
-    public void setBoundsLocation(float x, float y) {
-        setLocation(x + bounds_offset_x, y + bounds_offset_y);
     }
 
     // set individual upgrade - doesn't have to exist - if you set an item to a level, it'll get added to the car
@@ -86,7 +48,7 @@ public class Vehicle extends GameObject {
 
     @Override
     public void update(float dt) {
-        animStateTime += dt;
+        super.update(dt);
         if (health <= 0 ){
             dead = true;
         }

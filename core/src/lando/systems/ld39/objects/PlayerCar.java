@@ -12,6 +12,7 @@ import lando.systems.ld39.utils.Config;
 public class PlayerCar extends Vehicle {
 
     public static float minSpeed = 20;
+    public static Rectangle defaultCollisionBounds = new Rectangle(8, 15, 38, 80);
 
     // this is the bounds the car can move around
     public Rectangle constraintBounds;
