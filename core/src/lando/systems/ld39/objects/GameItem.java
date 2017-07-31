@@ -85,7 +85,7 @@ public class GameItem extends GameObject {
     }
 
     public static void AddItem(GameScreen gameScreen) {
-        boolean pickup = MathUtils.random.nextFloat() > 0.8f;
+        boolean pickup = MathUtils.random.nextFloat() > 0.92f;
 
         GameItem item = new GameItem(gameScreen, pickup);
 

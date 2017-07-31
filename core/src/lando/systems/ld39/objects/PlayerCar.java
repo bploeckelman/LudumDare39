@@ -393,10 +393,10 @@ public class PlayerCar extends Vehicle {
         float curRotation = 0;
         float turn = 15 + (10 * upgrades.getLevel(Item.Wheels));
 
-        if (isLeft()) {
-            curRotation = turn;
-        } else if (isRight()) {
+        if (isRight()) {
             curRotation = -turn;
+        } else if (isLeft()) {
+            curRotation = turn;
         }
         rotation = curRotation;
         super.render(batch);
