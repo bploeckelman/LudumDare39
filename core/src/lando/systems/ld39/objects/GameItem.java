@@ -2,6 +2,7 @@ package lando.systems.ld39.objects;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import lando.systems.ld39.screens.GameScreen;
 import lando.systems.ld39.utils.Assets;
@@ -18,6 +19,8 @@ public class GameItem extends GameObject {
         public float runoverDamage;
         public float inRoadPercentage;
         public int pickupId;
+        public float collisionLeft;
+        public float collisionRight;
 
         public ItemData(String textureImage, int pickupId, float inRoadPercentage) {
             this(textureImage, true, 0, true, inRoadPercentage);
@@ -25,11 +28,18 @@ public class GameItem extends GameObject {
         }
 
         public ItemData(String textureImage, boolean isPickup, float runoverDamage, boolean removeOnRunOver, float inRoadPercentage) {
+            this(textureImage, isPickup, runoverDamage, removeOnRunOver, inRoadPercentage, 0, 0);
+
+        }
+
+        public ItemData(String textureImage, boolean isPickup, float runoverDamage, boolean removeOnRunOver, float inRoadPercentage, float left, float right) {
             image = Assets.atlas.findRegion(textureImage);
             this.isPickup = isPickup;
             this.runoverDamage = runoverDamage;
             this.removeOnRunOver = removeOnRunOver;
             this.inRoadPercentage = inRoadPercentage;
+            collisionLeft = left;
+            collisionRight = right;
             pickupId = 0;
         }
     }
@@ -45,16 +55,16 @@ public class GameItem extends GameObject {
     public static void load() {
         if (obstacles.size > 0) return;
 
-        obstacles.add(new ItemData("palmtree", false, 100, false, 0));
-        obstacles.add(new ItemData("palmtree2", false, 100, false, 0));
-        obstacles.add(new ItemData("palmtree3", false, 100, false, 0));
+        obstacles.add(new ItemData("palmtree", false, 100, false, 0, 33, 54));
+        obstacles.add(new ItemData("palmtree2", false, 100, false, 0, 25, 62));
+        obstacles.add(new ItemData("palmtree3", false, 100, false, 0, 33, 52));
         obstacles.add(new ItemData("cone", false, 5, true, 0.9f));
 //        obstacles.add(new ItemData("manholecover", false, 0, false, 1));
 //        obstacles.add(new ItemData("barricade", false, 10, true, 0.9f));
 //        obstacles.add(new ItemData("barricade2", false, 10, true, 0.9f));
-        obstacles.add(new ItemData("treeA", false, 100, false, 0));
-        obstacles.add(new ItemData("treeC", false, 100, false, 0));
-        obstacles.add(new ItemData("treeD", false, 100, false, 0));
+        obstacles.add(new ItemData("treeA", false, 100, false, 0, 23, 42));
+        obstacles.add(new ItemData("treeC", false, 100, false, 0, 22, 37));
+        obstacles.add(new ItemData("treeD", false, 100, false, 0, 23, 42));
         obstacles.add(new ItemData("treeE", false, 100, false, 0));
         obstacles.add(new ItemData("treeF", false, 100, false, 0));
         obstacles.add(new ItemData("treeG", false, 100, false, 0));
@@ -84,12 +94,27 @@ public class GameItem extends GameObject {
         }
     }
 
+    @Override
+    protected void updateCollisionBounds(Rectangle bounds) {
+        if (item.collisionRight > 0 || item.collisionLeft > 0) {
+              bounds = new Rectangle(item.collisionLeft, 0, item.collisionRight - item.collisionLeft, bounds.height);
+        }
+        super.updateCollisionBounds(bounds);
+    }
+
     public static void AddItem(GameScreen gameScreen) {
-        boolean pickup = MathUtils.random.nextFloat() > 0.92f;
+        //boolean pickup = MathUtils.random.nextFloat() > 0.92f;
 
-        GameItem item = new GameItem(gameScreen, pickup);
+        GameItem item = new GameItem(gameScreen, false);
 
-        float x = 0;
+        PlayerCar car = gameScreen.playerCar;
+
+        // temp
+        //car.health = car.maxHealth;
+        //car.batteryLevel = car.maxBattery;
+        // end temp
+
+        float x;
         float y = gameScreen.camera.position.y + gameScreen.camera.viewportHeight;
 
         boolean inRoad = MathUtils.random.nextFloat() < item.item.inRoadPercentage;
@@ -100,10 +125,14 @@ public class GameItem extends GameObject {
         if (inRoad) {
             x = left + ((right - left) *  MathUtils.random.nextFloat());
         } else {
+            // move things that do more than 75% damage farther off road
+            float padding = (item.item.inRoadPercentage == 0 && item.item.runoverDamage > (car.maxHealth * .75)) ? 30 : 0;
+
             if (MathUtils.randomBoolean()) {
-                x = left * MathUtils.random.nextFloat();
+                x = (left - padding) * MathUtils.random.nextFloat();
             } else {
-                x = right + ((gameScreen.camera.viewportWidth - right) * MathUtils.random.nextFloat());
+                x = right + padding;
+                x +=  ((gameScreen.camera.viewportWidth - x) * MathUtils.random.nextFloat());
             }
         }
 
