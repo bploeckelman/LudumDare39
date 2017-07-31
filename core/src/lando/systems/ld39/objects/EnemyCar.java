@@ -10,6 +10,7 @@ import lando.systems.ld39.ai.StateMachine;
 import lando.systems.ld39.ai.Transition;
 import lando.systems.ld39.ai.states.CruisingState;
 import lando.systems.ld39.ai.states.FollowState;
+import lando.systems.ld39.ai.states.LeaderState;
 import lando.systems.ld39.ai.states.State;
 import lando.systems.ld39.screens.GameScreen;
 import lando.systems.ld39.utils.Assets;
@@ -185,10 +186,13 @@ public class EnemyCar extends Vehicle {
             testlevel = 0;
         }
         Type type = Type.cruiser;
-
-        if (MathUtils.random() > .5f){
+        float r = MathUtils.random();
+        if (r > .9f){
             type = Type.follower;
+        } else if (r > .5f){
+            type = Type.leader;
         }
+
         EnemyCar enemyCar = new EnemyCar(gameScreen, chassis, type);
         enemyCar.setUpgrade(chassis, newLevel);
 
@@ -217,10 +221,22 @@ public class EnemyCar extends Vehicle {
             case follower:
                 createFollower();
                 break;
+            case leader:
+                createLeader();
+                break;
         }
 
     }
 
+
+    public void createLeader() {
+        health = 30;
+        State initialState = new LeaderState(this);
+
+        Array<Transition> transitions = new Array<Transition>();
+
+        stateMachine = new StateMachine(initialState, transitions);
+    }
 
     public void createFollower() {
         State initialState = new FollowState(this);
@@ -229,6 +245,7 @@ public class EnemyCar extends Vehicle {
 
         stateMachine = new StateMachine(initialState, transitions);
     }
+
     public void createCruiser(){
         State initialState = new CruisingState(this);
 

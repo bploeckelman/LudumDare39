@@ -33,8 +33,11 @@ public class MapScreenHud {
     private static final float TIME_CASH_IN_ENEMIES_SCRAPPED = .75f;
 
     private static final float MONEY_PER_KM = 0.1f;
-    private static final int MONEY_PER_POWERUP = 8;
     private static final int MONEY_PER_ENEMY = 16;
+    private static final int MONEY_PER_POWERUP = 8;
+    private static final String MONEY_PER_ENEMY_STRING = "$16";
+    private static final String MONEY_PER_KM_STRING = "$0.1";
+    private static final String MONEY_PER_POWERUP_STRING = "$8";
 
     private static final Vector2 HUD_FRAME_ORIGIN = new Vector2(0.1f, 0.08f); // % of w!
     private static final Vector2 HUD_FRAME_DIMENSIONS = new Vector2(0.8f, 0.3f); // % of w & h;
@@ -133,10 +136,10 @@ public class MapScreenHud {
 
     private String getHudStats(int iteration, float distanceTraveled, int moneyCollected, int powerupsCollected, int enemiesScrapped) {
         return "Iteration: " + iteration + "\n"
-                + "Distance: " + ((int) distanceTraveled) + " km" + (" x $" + String.valueOf(MONEY_PER_KM)) + "\n"
-                + "Money: " + moneyCollected + (" x 1") + "\n"
-                + "Powerups: " + powerupsCollected + (" x $" + String.valueOf(MONEY_PER_POWERUP)) + "\n"
-                + "Eliminations: " + enemiesScrapped + (" x $" + String.valueOf(MONEY_PER_ENEMY));
+                + "Distance: " + ((int) distanceTraveled) + " km" + " x " + MONEY_PER_KM_STRING + "\n"
+                + "Money: " + moneyCollected + " x 1" + "\n"
+                + "Powerups: " + powerupsCollected + " x " + MONEY_PER_POWERUP_STRING + "\n"
+                + "Eliminations: " + enemiesScrapped + " x " + MONEY_PER_ENEMY_STRING;
     }
 
     /**

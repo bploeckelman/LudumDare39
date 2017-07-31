@@ -194,7 +194,7 @@ public class GameItem extends GameObject {
 
 
         PlayerCar car = gameScreen.playerCar;
-        if (car.collisionBounds.overlaps(bounds)) {
+        if (car.collisionBounds.overlaps(collisionBounds)) {
             car.addDamage(item.runoverDamage);
             if (car.health <= 0 && item.pickupSoundType != null) {
                 SoundManager.playSound(item.pickupSoundType);

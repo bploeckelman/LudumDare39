@@ -3,12 +3,10 @@ package lando.systems.ld39.objects;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.IntIntMap;
 import com.badlogic.gdx.utils.IntMap;
 import lando.systems.ld39.screens.GameScreen;
 import lando.systems.ld39.utils.Assets;
@@ -150,6 +148,11 @@ public class PlayerCar extends Vehicle {
                 SoundManager.stopSound(SoundManager.SoundOptions.coast);
             }
             bounds.y -= offset;
+        }
+
+        if (isUp()) {
+            gameScreen.particleSystem.addAccelerationParticles(position.x - tireOffset_x, position.y - tireOffset_y);
+            gameScreen.particleSystem.addAccelerationParticles(position.x + tireOffset_x, position.y - tireOffset_y);
         }
 
         float horiz_offset = handling * dt;
