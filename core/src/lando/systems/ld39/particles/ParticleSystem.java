@@ -1,10 +1,8 @@
 package lando.systems.ld39.particles;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pools;
@@ -47,6 +45,32 @@ public class ParticleSystem {
                         new TextureRegion(Assets.whitePixel));
 
                 activeParticles.add(part);
+        }
+    }
+
+    public void addAccelerationParticles(float x, float y) {
+        int particles = 30;
+        for (int i = 0; i < particles; i++) {
+            Particle particle = particlePool.obtain();
+            float speed = MathUtils.random(600f);
+            float dir = (float) (180 + (Math.pow(MathUtils.random(1f), 2) * 90 * (MathUtils.random(-1f, 1f) >= 0 ? 1 : -1)));
+            float px = x + MathUtils.random(-3f, 3f);
+            float py = y;
+            float vx = MathUtils.sinDeg(dir) * speed;
+            float vy = MathUtils.cosDeg(dir) * speed;
+            float scale = MathUtils.random(0.5f, 1f);
+            float ttl = MathUtils.random(.05f, .1f);
+            float greyValue = (float) (1f - Math.pow((double) MathUtils.random(1f),2.4));
+            particle.init(
+                    px, py,
+                    vx, vy,
+                    -vx, -vy, .5f,
+                    greyValue, greyValue, greyValue, 0.8f,
+                    greyValue, greyValue, greyValue, 0f,
+                    scale, ttl,
+                    new TextureRegion(Assets.whitePixel));
+
+            activeParticles.add(particle);
         }
     }
 
