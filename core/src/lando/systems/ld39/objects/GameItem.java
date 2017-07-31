@@ -168,7 +168,7 @@ public class GameItem extends GameObject {
         } else {
             // move things that do more than 75% damage farther off road
             float padding = (item.item.inRoadPercentage == 0 && item.item.runoverDamage > (car.maxHealth * .75)) ? item.bounds_offset_x : 0;
-
+            padding += gameScreen.road.shoulderWidth * 1.5f;
             if (MathUtils.randomBoolean()) {
                 x = (left - padding) * MathUtils.random.nextFloat();
             } else {
