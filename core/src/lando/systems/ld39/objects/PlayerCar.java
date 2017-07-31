@@ -205,16 +205,18 @@ public class PlayerCar extends Vehicle {
                     bulletPosition.add(-12, 0);
                 }
                 gameScreen.addBullet(this, bulletVelocity, bulletPosition, Assets.basicProjectileTex, 1);
+                SoundManager.playSound(SoundManager.SoundOptions.gunshot);
                 fireTime = .1f;
             } else if (upgrades.getLevel(Item.Weapons) == 2){
                 bulletPosition.set(position.x, position.y + bounds_offset_y);
                 gameScreen.addBullet(this, bulletVelocity, bulletPosition, Assets.zappaTex, 5);
+                SoundManager.playSound(SoundManager.SoundOptions.gunshot);
                 fireTime = .3f;
             } else if (upgrades.getLevel(Item.Weapons) == 3){
                 bulletPosition.set(position.x, position.y + bounds_offset_y);
                 gameScreen.addBullet(this, bulletVelocity, bulletPosition, Assets.missileTex, 10);
+                SoundManager.playSound(SoundManager.SoundOptions.gunshot);
                 fireTime = .5f;
-
             }
 
         }

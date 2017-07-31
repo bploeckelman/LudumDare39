@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import lando.systems.ld39.objects.EnemyCar;
 import lando.systems.ld39.utils.Assets;
+import lando.systems.ld39.utils.SoundManager;
 
 /**
  * Created by dsgraham on 7/30/17.
@@ -67,7 +68,7 @@ public class FollowState extends State {
             owner.gameScreen.addBullet(owner, bulletVelocity.set(0, carSpeed + 500),
                     bulletPosition.set(owner.position.x, positionY + owner.bounds.height/2f),
                     Assets.basicProjectileTex, 5);
-
+            SoundManager.playSound(SoundManager.SoundOptions.gunshot);
         }
     }
 

@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import lando.systems.ld39.objects.EnemyCar;
 import lando.systems.ld39.utils.Assets;
+import lando.systems.ld39.utils.SoundManager;
 
 /**
  * Created by dsgraham on 7/31/17.
@@ -73,7 +74,9 @@ public class LeaderState extends State {
                     bulletPosition.set(owner.position.x, positionY - owner.bounds.height/2f),
                     Assets.basicProjectileTex, 5);
 
-
+            SoundManager.playSound(SoundManager.SoundOptions.gunshot);
+            SoundManager.playSound(SoundManager.SoundOptions.gunshot);
+            SoundManager.playSound(SoundManager.SoundOptions.gunshot);
         }
     }
 
