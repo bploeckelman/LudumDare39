@@ -130,6 +130,7 @@ public class GameScreen extends BaseScreen {
     float addTime = 0;
     @Override
     public void update(float dt) {
+        camera.position.x = MathUtils.lerp(camera.position.x, camera.viewportWidth/2, .1f);
 //        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
 //            Gdx.app.exit();
 //        }
