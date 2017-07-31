@@ -79,6 +79,9 @@ public class GameItem extends GameObject {
 
         item = pickup ? pickups.get(MathUtils.random.nextInt(pickups.size)) : obstacles.get(MathUtils.random.nextInt(obstacles.size));
         setKeyFrame(item.image);
+        if (pickup) {
+            Assets.inflateRect(bounds, 10);
+        }
     }
 
     public static void AddItem(GameScreen gameScreen) {
