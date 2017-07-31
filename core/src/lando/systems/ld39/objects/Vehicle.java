@@ -57,7 +57,10 @@ public class Vehicle extends GameObject {
     public void update(float dt) {
         super.update(dt);
 
-        if (health <= 0 ){
+        if (health <= 0 && !dead){
+            if (!(this instanceof PlayerCar)) {
+                gameScreen.roundStats.enemiesScrapped += 1;
+            }
             dead = true;
         }
     }

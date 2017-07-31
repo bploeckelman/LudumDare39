@@ -96,14 +96,14 @@ public class GameItem extends GameObject {
 
         float left = gameScreen.road.getLeftEdge(y);
         float right = gameScreen.road.getRightEdge(y);
-
+        float shoulderBuffer = gameScreen.road.shoulderWidth * 1.5f;
         if (inRoad) {
             x = left + ((right - left) *  MathUtils.random.nextFloat());
         } else {
             if (MathUtils.randomBoolean()) {
-                x = left * MathUtils.random.nextFloat();
+                x = (left - item.bounds_offset_x - shoulderBuffer) * MathUtils.random.nextFloat();
             } else {
-                x = right + ((gameScreen.camera.viewportWidth - right) * MathUtils.random.nextFloat());
+                x = (right + item.bounds_offset_x + shoulderBuffer) + ((gameScreen.camera.viewportWidth - right) * MathUtils.random.nextFloat());
             }
         }
 
@@ -130,11 +130,13 @@ public class GameItem extends GameObject {
 
     private void handlePickup(PlayerCar car, ItemData item) {
         if (!item.isPickup) return;
+        gameScreen.roundStats.powerupsCollected += 1;
         switch (item.pickupId) {
             case Repair:
                 car.addDamage(-10);
                 break;
             case Money:
+                gameScreen.roundStats.powerupsCollected -= 1;
                 gameScreen.roundStats.moneyCollected += 10;
                 break;
             case Battery:

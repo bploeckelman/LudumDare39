@@ -102,6 +102,7 @@ public class GameScreen extends BaseScreen {
         playerCar = new PlayerCar(this);
         playerCar.constraintBounds = constraintBounds;
         playerCar.setUpgrades(currentUpgrades);
+        playerCar.setStatsBasedOnUpgradeLevels();
         vehicles.add(playerCar);
     }
 
