@@ -15,7 +15,7 @@ public class SoundManager {
 
     public enum SoundOptions {
         accelerate, coast, slowdown, cash_money, button_click, engine_start, apply_upgrade,
-        crash_1, crash_thump, crash_cars,
+        crash_1, crash_thump, crash_cars, cactus_crunch,
         pickup_money, pickup_repair, pickup_battery, pickup_weapon,
     }
 
@@ -45,6 +45,7 @@ public class SoundManager {
         soundMap.put(SoundOptions.pickup_repair, soundMap.get(SoundOptions.apply_upgrade));
         soundMap.put(SoundOptions.pickup_battery, Gdx.audio.newSound(Gdx.files.internal("sounds/pickup-battery.ogg")));
         soundMap.put(SoundOptions.pickup_weapon, Gdx.audio.newSound(Gdx.files.internal("sounds/pickup-weapon.ogg")));
+        soundMap.put(SoundOptions.cactus_crunch, Gdx.audio.newSound(Gdx.files.internal("sounds/cactus-crunch.ogg")));
 
         musicMap.put(MusicOptions.game, Gdx.audio.newMusic(Gdx.files.internal("sounds/music-game.mp3")));
         musicMap.put(MusicOptions.garage, Gdx.audio.newMusic(Gdx.files.internal("sounds/music-garage.mp3")));

@@ -65,26 +65,26 @@ public class GameItem extends GameObject {
     public static void load() {
         if (obstacles.size > 0) return;
 
-        obstacles.add(new ItemData("palmtree", false, 100, false, 0, SoundManager.SoundOptions.crash_1, 33, 54));
-        obstacles.add(new ItemData("palmtree2", false, 100, false, 0, SoundManager.SoundOptions.crash_1, 25, 62));
-        obstacles.add(new ItemData("palmtree3", false, 100, false, 0, SoundManager.SoundOptions.crash_1, 33, 52));
+        obstacles.add(new ItemData("palmtree", false, 50, false, 0, SoundManager.SoundOptions.cactus_crunch, 33, 54));
+        obstacles.add(new ItemData("palmtree2", false, 50, false, 0, SoundManager.SoundOptions.cactus_crunch, 25, 62));
+        obstacles.add(new ItemData("palmtree3", false, 50, false, 0, SoundManager.SoundOptions.cactus_crunch, 33, 52));
         obstacles.add(new ItemData("cone", false, 5, true, 0.8f, SoundManager.SoundOptions.crash_thump));
 //        obstacles.add(new ItemData("manholecover", false, 0, false, 1, null));
 //        obstacles.add(new ItemData("barricade", false, 10, true, 0.9f, null));
 //        obstacles.add(new ItemData("barricade2", false, 10, true, 0.9f, null));
-        obstacles.add(new ItemData("treeA", false, 100, false, 0, SoundManager.SoundOptions.crash_1, 23, 42));
-        obstacles.add(new ItemData("treeC", false, 100, false, 0, SoundManager.SoundOptions.crash_1, 22, 37));
-        obstacles.add(new ItemData("treeD", false, 100, false, 0, SoundManager.SoundOptions.crash_1, 23, 42));
-        obstacles.add(new ItemData("treeE", false, 100, false, 0, SoundManager.SoundOptions.crash_1));
-        obstacles.add(new ItemData("treeF", false, 100, false, 0, SoundManager.SoundOptions.crash_1));
-        obstacles.add(new ItemData("treeG", false, 100, false, 0, SoundManager.SoundOptions.crash_1));
-        obstacles.add(new ItemData("treeH", false, 100, false, 0, SoundManager.SoundOptions.crash_1));
-        obstacles.add(new ItemData("cactusA", false, 20, true, 0, SoundManager.SoundOptions.crash_1));
-        obstacles.add(new ItemData("cactusC", false, 20, true, 0, SoundManager.SoundOptions.crash_1));
-        obstacles.add(new ItemData("cactusD", false, 20, true, 0, SoundManager.SoundOptions.crash_1));
-        obstacles.add(new ItemData("cactusE", false, 20, true, 0, SoundManager.SoundOptions.crash_1));
-        obstacles.add(new ItemData("cactusF", false, 20, true, 0, SoundManager.SoundOptions.crash_1));
-        obstacles.add(new ItemData("cactusG", false, 20, true, 0, SoundManager.SoundOptions.crash_1));
+        obstacles.add(new ItemData("treeA", false, 50, false, 0, SoundManager.SoundOptions.cactus_crunch, 23, 42));
+        obstacles.add(new ItemData("treeC", false, 50, false, 0, SoundManager.SoundOptions.cactus_crunch, 22, 37));
+        obstacles.add(new ItemData("treeD", false, 50, false, 0, SoundManager.SoundOptions.cactus_crunch, 23, 42));
+        obstacles.add(new ItemData("treeE", false, 50, false, 0, SoundManager.SoundOptions.cactus_crunch));
+        obstacles.add(new ItemData("treeF", false, 50, false, 0, SoundManager.SoundOptions.cactus_crunch));
+        obstacles.add(new ItemData("treeG", false, 50, false, 0, SoundManager.SoundOptions.cactus_crunch));
+        obstacles.add(new ItemData("treeH", false, 50, false, 0, SoundManager.SoundOptions.cactus_crunch));
+        obstacles.add(new ItemData("cactusA", false, 20, true, 0, SoundManager.SoundOptions.cactus_crunch));
+        obstacles.add(new ItemData("cactusC", false, 20, true, 0, SoundManager.SoundOptions.cactus_crunch));
+        obstacles.add(new ItemData("cactusD", false, 20, true, 0, SoundManager.SoundOptions.cactus_crunch));
+        obstacles.add(new ItemData("cactusE", false, 20, true, 0, SoundManager.SoundOptions.cactus_crunch));
+        obstacles.add(new ItemData("cactusF", false, 20, true, 0, SoundManager.SoundOptions.cactus_crunch));
+        obstacles.add(new ItemData("cactusG", false, 20, true, 0, SoundManager.SoundOptions.cactus_crunch));
 
         pickups.add(new ItemData("repairPickup", Repair, 0.6f, SoundManager.SoundOptions.pickup_repair));
         pickups.add(new ItemData("moneyPickup", Money, 0.6f, SoundManager.SoundOptions.pickup_money));
@@ -219,10 +219,16 @@ public class GameItem extends GameObject {
             if (!item.isPickup && car.hasAxes()) {
                 car.hitAxe();
                 remove = true;
+                if (item.pickupSoundType != null) {
+                    SoundManager.playSound(item.pickupSoundType);
+                }
             } else {
                 car.addDamage(item.runoverDamage);
-                if (car.health <= 0 && item.pickupSoundType != null) {
+                if (item.pickupSoundType != null) {
                     SoundManager.playSound(item.pickupSoundType);
+                }
+                if (car.health <= 0) {
+                    SoundManager.playSound(SoundManager.SoundOptions.crash_1);
                 }
             }
             if (item.removeOnRunOver) {
