@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.Array;
 import lando.systems.ld39.ai.StateMachine;
 import lando.systems.ld39.ai.Transition;
 import lando.systems.ld39.ai.states.CruisingState;
+import lando.systems.ld39.ai.states.FollowState;
 import lando.systems.ld39.ai.states.State;
 import lando.systems.ld39.screens.GameScreen;
 import lando.systems.ld39.utils.Assets;
@@ -19,7 +20,7 @@ import lando.systems.ld39.utils.Assets;
 
 public class EnemyCar extends Vehicle {
 
-    enum Type {cruiser, follower, leader, rammer}
+    enum Type {cruiser, follower, leader, miniBoss, musk}
 
     private int chassis;
     public float relSpeed = 3f; // Relative speed
@@ -38,7 +39,7 @@ public class EnemyCar extends Vehicle {
     public EnemyCar(GameScreen gameScreen, int enemyChassis, Type type) {
         super(gameScreen, enemyChassis);
         chassis = enemyChassis;
-        deadTimer = 4;
+        deadTimer = 1;
         this.type = type;
         collisionDirection = new Vector2();
         collidedWithPlayerTimer = collidedWithPlayerTimerDefault;
@@ -94,6 +95,12 @@ public class EnemyCar extends Vehicle {
         } else if (collisionBounds.overlaps(gameScreen.playerCar.collisionBounds)) {
             // TODO: Collide
             if (!collidedWithPlayer) {
+                gameScreen.playerCar.health -= 4;
+                if (gameScreen.playerCar.upgrades.getLevel(Item.Axes) > 0){
+                    health -= 9;
+                    gameScreen.playerCar.hitAxe();
+                }
+                health -= 1;
                 Rectangle intersection = new Rectangle();
                 Intersector.intersectRectangles(collisionBounds, gameScreen.playerCar.collisionBounds, intersection);
                 if (intersection.width > intersection.height) {
@@ -149,11 +156,15 @@ public class EnemyCar extends Vehicle {
             testlevel = 0;
         }
         Type type = Type.cruiser;
+
+        if (MathUtils.random() > .5f){
+            type = Type.follower;
+        }
         EnemyCar enemyCar = new EnemyCar(gameScreen, chassis, type);
         enemyCar.setUpgrade(chassis, newLevel);
 
         float positionY = gameScreen.camera.position.y + gameScreen.camera.viewportHeight/2f + enemyCar.bounds_offset_y;
-        if (newLevel == 1){
+        if (type == Type.follower){
             positionY = gameScreen.camera.position.y - gameScreen.camera.viewportHeight/2f - enemyCar.bounds_offset_y;
         }
         float left = gameScreen.road.getLeftEdge(positionY);
@@ -167,11 +178,57 @@ public class EnemyCar extends Vehicle {
         return enemyCar;
     }
 
+
+
     public void initializeStates(){
-        State cruise = new CruisingState(this);
+        switch (type) {
+            case cruiser:
+                createCruiser();
+                break;
+            case follower:
+                createFollower();
+                break;
+        }
+
+    }
+
+
+    public void createFollower() {
+        State initialState = new FollowState(this);
 
         Array<Transition> transitions = new Array<Transition>();
 
-        stateMachine = new StateMachine(cruise, transitions);
+        stateMachine = new StateMachine(initialState, transitions);
+    }
+    public void createCruiser(){
+        State initialState = new CruisingState(this);
+
+        Array<Transition> transitions = new Array<Transition>();
+
+        stateMachine = new StateMachine(initialState, transitions);
+    }
+
+    public float avoidGrass(float positionY){
+        float topOfCar = positionY + bounds.height/2f;
+        float bottomOfCar = positionY - bounds.height/2f;
+        float testPosition = topOfCar + 5f;
+        float left = gameScreen.road.getLeftEdge(testPosition);
+        float right = gameScreen.road.getRightEdge(testPosition);
+        float deltaX = 0;
+        if (position.x - bounds.width/2 <= left) {deltaX += 4; }
+        if (position.x + bounds.width/2 >= right) {deltaX += -4; }
+
+        left = gameScreen.road.getLeftEdge(topOfCar);
+        right = gameScreen.road.getRightEdge(topOfCar);
+
+        if (position.x - bounds.width/2 <= left) {deltaX += 2; }
+        if (position.x + bounds.width/2 >= right) {deltaX += -2; }
+
+        left = gameScreen.road.getLeftEdge(bottomOfCar);
+        right = gameScreen.road.getRightEdge(bottomOfCar);
+
+        if (position.x - bounds.width/2 <= left) {deltaX += 4; }
+        if (position.x + bounds.width/2 >= right) {deltaX += -4; }
+        return deltaX;
     }
 }

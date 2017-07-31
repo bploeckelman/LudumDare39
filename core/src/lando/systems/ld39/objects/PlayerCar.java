@@ -329,7 +329,7 @@ public class PlayerCar extends Vehicle {
         maxHealth = upgradesMeta.get(Item.Chassis).get(upgrades.getLevel(Item.Chassis)).value;
         health = maxHealth;
 
-        maxSpeed = upgradesMeta.get(Item.Booster).get(upgrades.getLevel(Item.Booster)).value;
+        maxSpeed = upgradesMeta.get(Item.Engine).get(upgrades.getLevel(Item.Engine)).value;
         speed = 0;
 
         maxHandling = upgradesMeta.get(Item.Wheels).get(upgrades.getLevel(Item.Wheels)).value;
@@ -348,10 +348,10 @@ public class PlayerCar extends Vehicle {
         );
         Array<Upgrades.UpgradeItemMeta> engineUpgradeMeta = new Array<Upgrades.UpgradeItemMeta>();
         engineUpgradeMeta.addAll(
-                new Upgrades.UpgradeItemMeta(0, 50),
-                new Upgrades.UpgradeItemMeta(100, 100),
-                new Upgrades.UpgradeItemMeta(150, 150),
-                new Upgrades.UpgradeItemMeta(250, 250)
+                new Upgrades.UpgradeItemMeta(0, 500),
+                new Upgrades.UpgradeItemMeta(100, 1000),
+                new Upgrades.UpgradeItemMeta(150, 1500),
+                new Upgrades.UpgradeItemMeta(250, 2500)
         );
         Array<Upgrades.UpgradeItemMeta> boosterUpgradeMeta = new Array<Upgrades.UpgradeItemMeta>();
         boosterUpgradeMeta.addAll(

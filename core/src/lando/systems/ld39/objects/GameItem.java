@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import lando.systems.ld39.screens.GameScreen;
 import lando.systems.ld39.utils.Assets;
+import lando.systems.ld39.utils.SoundManager;
 
 /**
  * Created by Brian on 7/30/2017.
@@ -19,28 +20,33 @@ public class GameItem extends GameObject {
         public float runoverDamage;
         public float inRoadPercentage;
         public int pickupId;
+
         public float collisionLeft;
         public float collisionRight;
 
-        public ItemData(String textureImage, int pickupId, float inRoadPercentage) {
-            this(textureImage, true, 0, true, inRoadPercentage);
+        public SoundManager.SoundOptions pickupSoundType;
+
+
+        public ItemData(String textureImage, int pickupId, float inRoadPercentage, SoundManager.SoundOptions pickupSoundType) {
+            this(textureImage, true, 0, true, inRoadPercentage, pickupSoundType, 0, 0);
             this.pickupId = pickupId;
         }
 
-        public ItemData(String textureImage, boolean isPickup, float runoverDamage, boolean removeOnRunOver, float inRoadPercentage) {
-            this(textureImage, isPickup, runoverDamage, removeOnRunOver, inRoadPercentage, 0, 0);
 
+        public ItemData(String textureImage, boolean isPickup, float runoverDamage, boolean removeOnRunOver, float inRoadPercentage, SoundManager.SoundOptions pickupSoundType) {
+            this(textureImage, isPickup, runoverDamage, removeOnRunOver, inRoadPercentage, pickupSoundType, 0, 0);
         }
 
-        public ItemData(String textureImage, boolean isPickup, float runoverDamage, boolean removeOnRunOver, float inRoadPercentage, float left, float right) {
-            image = Assets.atlas.findRegion(textureImage);
+        public ItemData(String textureImage, boolean isPickup, float runoverDamage, boolean removeOnRunOver, float inRoadPercentage, SoundManager.SoundOptions pickupSoundType, float left, float right) {
+            this.image = Assets.atlas.findRegion(textureImage);
             this.isPickup = isPickup;
             this.runoverDamage = runoverDamage;
             this.removeOnRunOver = removeOnRunOver;
             this.inRoadPercentage = inRoadPercentage;
-            collisionLeft = left;
-            collisionRight = right;
-            pickupId = 0;
+            this.collisionLeft = left;
+            this.collisionRight = right;
+            this.pickupSoundType = pickupSoundType;
+            this.pickupId = 0;
         }
     }
 
@@ -55,31 +61,31 @@ public class GameItem extends GameObject {
     public static void load() {
         if (obstacles.size > 0) return;
 
-        obstacles.add(new ItemData("palmtree", false, 100, false, 0, 33, 54));
-        obstacles.add(new ItemData("palmtree2", false, 100, false, 0, 25, 62));
-        obstacles.add(new ItemData("palmtree3", false, 100, false, 0, 33, 52));
-        obstacles.add(new ItemData("cone", false, 5, true, 0.9f));
-//        obstacles.add(new ItemData("manholecover", false, 0, false, 1));
-//        obstacles.add(new ItemData("barricade", false, 10, true, 0.9f));
-//        obstacles.add(new ItemData("barricade2", false, 10, true, 0.9f));
-        obstacles.add(new ItemData("treeA", false, 100, false, 0, 23, 42));
-        obstacles.add(new ItemData("treeC", false, 100, false, 0, 22, 37));
-        obstacles.add(new ItemData("treeD", false, 100, false, 0, 23, 42));
-        obstacles.add(new ItemData("treeE", false, 100, false, 0));
-        obstacles.add(new ItemData("treeF", false, 100, false, 0));
-        obstacles.add(new ItemData("treeG", false, 100, false, 0));
-        obstacles.add(new ItemData("treeH", false, 100, false, 0));
-        obstacles.add(new ItemData("cactusA", false, 20, true, 0));
-        obstacles.add(new ItemData("cactusC", false, 20, true, 0));
-        obstacles.add(new ItemData("cactusD", false, 20, true, 0));
-        obstacles.add(new ItemData("cactusE", false, 20, true, 0));
-        obstacles.add(new ItemData("cactusF", false, 20, true, 0));
-        obstacles.add(new ItemData("cactusG", false, 20, true, 0));
+        obstacles.add(new ItemData("palmtree", false, 100, false, 0, SoundManager.SoundOptions.crash_1, 33, 54));
+        obstacles.add(new ItemData("palmtree2", false, 100, false, 0, SoundManager.SoundOptions.crash_1, 25, 62));
+        obstacles.add(new ItemData("palmtree3", false, 100, false, 0, SoundManager.SoundOptions.crash_1, 33, 52));
+        obstacles.add(new ItemData("cone", false, 5, true, 0.9f, null));
+//        obstacles.add(new ItemData("manholecover", false, 0, false, 1, null));
+//        obstacles.add(new ItemData("barricade", false, 10, true, 0.9f, null));
+//        obstacles.add(new ItemData("barricade2", false, 10, true, 0.9f, null));
+        obstacles.add(new ItemData("treeA", false, 100, false, 0, SoundManager.SoundOptions.crash_1, 23, 42));
+        obstacles.add(new ItemData("treeC", false, 100, false, 0, SoundManager.SoundOptions.crash_1, 22, 37));
+        obstacles.add(new ItemData("treeD", false, 100, false, 0, SoundManager.SoundOptions.crash_1, 23, 42));
+        obstacles.add(new ItemData("treeE", false, 100, false, 0, SoundManager.SoundOptions.crash_1));
+        obstacles.add(new ItemData("treeF", false, 100, false, 0, SoundManager.SoundOptions.crash_1));
+        obstacles.add(new ItemData("treeG", false, 100, false, 0, SoundManager.SoundOptions.crash_1));
+        obstacles.add(new ItemData("treeH", false, 100, false, 0, SoundManager.SoundOptions.crash_1));
+        obstacles.add(new ItemData("cactusA", false, 20, true, 0, SoundManager.SoundOptions.crash_1));
+        obstacles.add(new ItemData("cactusC", false, 20, true, 0, SoundManager.SoundOptions.crash_1));
+        obstacles.add(new ItemData("cactusD", false, 20, true, 0, SoundManager.SoundOptions.crash_1));
+        obstacles.add(new ItemData("cactusE", false, 20, true, 0, SoundManager.SoundOptions.crash_1));
+        obstacles.add(new ItemData("cactusF", false, 20, true, 0, SoundManager.SoundOptions.crash_1));
+        obstacles.add(new ItemData("cactusG", false, 20, true, 0, SoundManager.SoundOptions.crash_1));
 
-        pickups.add(new ItemData("repairPickup", Repair, 0.6f));
-        pickups.add(new ItemData("moneyPickup", Money, 0.6f));
-        pickups.add(new ItemData("batteryPickup", Battery, 0.6f));
-        pickups.add(new ItemData("weaponPickup", Weapon, 0.6f));
+        pickups.add(new ItemData("repairPickup", Repair, 0.6f, SoundManager.SoundOptions.pickup_repair));
+        pickups.add(new ItemData("moneyPickup", Money, 0.6f, SoundManager.SoundOptions.pickup_money));
+        pickups.add(new ItemData("batteryPickup", Battery, 0.6f, SoundManager.SoundOptions.pickup_battery));
+        pickups.add(new ItemData("weaponPickup", Weapon, 0.6f, SoundManager.SoundOptions.pickup_weapon));
     }
 
     private ItemData item;
@@ -121,7 +127,7 @@ public class GameItem extends GameObject {
 
         float left = gameScreen.road.getLeftEdge(y);
         float right = gameScreen.road.getRightEdge(y);
-
+        float shoulderBuffer = gameScreen.road.shoulderWidth * 1.5f;
         if (inRoad) {
             x = left + ((right - left) *  MathUtils.random.nextFloat());
         } else {
@@ -147,6 +153,9 @@ public class GameItem extends GameObject {
         PlayerCar car = gameScreen.playerCar;
         if (car.collisionBounds.overlaps(bounds)) {
             car.addDamage(item.runoverDamage);
+            if (car.health <= 0 && item.pickupSoundType != null) {
+                SoundManager.playSound(item.pickupSoundType);
+            }
             if (item.removeOnRunOver) {
                 handlePickup(car, item);
                 remove = true;
@@ -159,11 +168,16 @@ public class GameItem extends GameObject {
 
     private void handlePickup(PlayerCar car, ItemData item) {
         if (!item.isPickup) return;
+        if (item.pickupSoundType != null) {
+            SoundManager.playSound(item.pickupSoundType);
+        }
+        gameScreen.roundStats.powerupsCollected += 1;
         switch (item.pickupId) {
             case Repair:
                 car.addDamage(-10);
                 break;
             case Money:
+                gameScreen.roundStats.powerupsCollected -= 1;
                 gameScreen.roundStats.moneyCollected += 10;
                 break;
             case Battery:

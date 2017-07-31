@@ -21,7 +21,7 @@ import java.util.Random;
 public class Road {
     public Random rand = new Random();
     public float distanceTraveled;
-    public float endRoad = 500;
+    public float endRoad = 150;
     public float segmentLength = 400;
     public float shoulderWidth = 70;
     public Array<RoadDef> roadSegments;

@@ -124,7 +124,7 @@ public class MapScreen extends BaseScreen {
     }
 
     public void setCurrentStage(MapScreen.Stage stage) {
-        System.out.println("MapScreen | setCurrentStage | stage=" + stage.toString());
+//        System.out.println("MapScreen | setCurrentStage | stage=" + stage.toString());
         this.currentStage = stage;
         this.currentStagePercent = 0f;
         this.currentStageTime = 0f;

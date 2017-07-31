@@ -225,7 +225,7 @@ public class MapScreenHud {
     }
 
     private void setCurrentStage(MapScreenHud.Stage newStage) {
-        System.out.println("setCurrentStage, newStage=" + newStage.toString());
+//        System.out.println("setCurrentStage, newStage=" + newStage.toString());
         this.currentStage = newStage;
         this.currentStagePercent = 0f;
         this.currentStageTime = 0f;

@@ -14,7 +14,8 @@ public class SoundManager {
     public static final float MUSIC_VOLUME = 0.25f;
 
     public enum SoundOptions {
-        accelerate, coast, cash_money, button_click, engine_start, apply_upgrade,
+        accelerate, coast, cash_money, button_click, engine_start, apply_upgrade, crash_1,
+        pickup_money, pickup_repair, pickup_battery, pickup_weapon,
     }
 
     public enum MusicOptions {
@@ -35,6 +36,11 @@ public class SoundManager {
         soundMap.put(SoundOptions.button_click, Gdx.audio.newSound(Gdx.files.internal("sounds/button-boop.ogg")));
         soundMap.put(SoundOptions.engine_start, Gdx.audio.newSound(Gdx.files.internal("sounds/engine-start.ogg")));
         soundMap.put(SoundOptions.apply_upgrade, Gdx.audio.newSound(Gdx.files.internal("sounds/upgrade-drill.ogg")));
+        soundMap.put(SoundOptions.crash_1, Gdx.audio.newSound(Gdx.files.internal("sounds/crash-1.ogg")));
+        soundMap.put(SoundOptions.pickup_money, Gdx.audio.newSound(Gdx.files.internal("sounds/pickup-money.ogg")));
+        soundMap.put(SoundOptions.pickup_repair, soundMap.get(SoundOptions.apply_upgrade));
+        soundMap.put(SoundOptions.pickup_battery, Gdx.audio.newSound(Gdx.files.internal("sounds/pickup-battery.ogg")));
+        soundMap.put(SoundOptions.pickup_weapon, Gdx.audio.newSound(Gdx.files.internal("sounds/pickup-weapon.ogg")));
 
         musicMap.put(MusicOptions.game, Gdx.audio.newMusic(Gdx.files.internal("sounds/music-game.mp3")));
         musicMap.put(MusicOptions.garage, Gdx.audio.newMusic(Gdx.files.internal("sounds/music-garage.mp3")));

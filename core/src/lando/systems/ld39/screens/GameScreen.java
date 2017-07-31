@@ -102,6 +102,7 @@ public class GameScreen extends BaseScreen {
         playerCar = new PlayerCar(this);
         playerCar.constraintBounds = constraintBounds;
         playerCar.setUpgrades(currentUpgrades);
+        playerCar.setStatsBasedOnUpgradeLevels();
         vehicles.add(playerCar);
     }
 
@@ -109,6 +110,7 @@ public class GameScreen extends BaseScreen {
     private float hammerTime = 7;
 
     private void addEnemy(float dt) {
+        if (vehicles.size > 2) return;
         hammerTime += dt;
         if (hammerTime > 3) {
             hammerTime = 0;
@@ -154,7 +156,6 @@ public class GameScreen extends BaseScreen {
             Bullet b = activeBullets.get(i);
             b.update(dt);
             for (Vehicle car : vehicles){
-                if (!(car instanceof Vehicle)) continue;
                 if (car != b.owner && car.bounds.contains(b.position) && !car.dead) {
                     car.addDamage(b.damage);
                     b.alive = false;
