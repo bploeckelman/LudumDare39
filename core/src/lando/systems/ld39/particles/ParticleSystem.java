@@ -48,6 +48,31 @@ public class ParticleSystem {
         }
     }
 
+    public void addSkidMarks(float x, float y, float speed){
+        for (int dX = -2 ; dX < 2; dX ++){
+            for (int dY = -1; dY < speed; dY ++){
+                Particle particle = particlePool.obtain();
+                float px = x + dX;
+                float py = y + dY;
+                float vx = 0;
+                float vy = 0;
+                float scale = MathUtils.random(1f, 2f);
+                float ttl = MathUtils.random(.5f, 1f);
+                float greyValue = MathUtils.random(.2f);
+                particle.init(
+                        px, py,
+                        vx, vy,
+                        -vx, -vy, .5f,
+                        greyValue, greyValue, greyValue, 1f,
+                        greyValue, greyValue, greyValue, 1f,
+                        scale, ttl,
+                        new TextureRegion(Assets.whitePixel));
+
+                activeParticles.add(particle);
+            }
+        }
+    }
+
     public void addAccelerationParticles(float x, float y) {
         int particles = 30;
         for (int i = 0; i < particles; i++) {

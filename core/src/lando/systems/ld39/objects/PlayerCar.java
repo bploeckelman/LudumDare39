@@ -154,6 +154,8 @@ public class PlayerCar extends Vehicle {
                 SoundManager.stopSound(SoundManager.SoundOptions.coast);
                 SoundManager.playSound(SoundManager.SoundOptions.slowdown);
             }
+            gameScreen.particleSystem.addSkidMarks(position.x - tireOffset_x, position.y - tireOffset_y, speed * dt);
+            gameScreen.particleSystem.addSkidMarks(position.x + tireOffset_x, position.y - tireOffset_y, speed * dt);
             bounds.y -= offset;
         }
 
