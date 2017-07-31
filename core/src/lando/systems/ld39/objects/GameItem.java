@@ -66,10 +66,10 @@ public class GameItem extends GameObject {
         obstacles.add(new ItemData("cactusF", false, 20, true, 0));
         obstacles.add(new ItemData("cactusG", false, 20, true, 0));
 
-        pickups.add(new ItemData("repairPickup", Repair, 0.8f));
-        pickups.add(new ItemData("moneyPickup", Money, 0.8f));
-        pickups.add(new ItemData("batteryPickup", Battery, 0.8f));
-        pickups.add(new ItemData("weaponPickup", Weapon, 0.8f));
+        pickups.add(new ItemData("repairPickup", Repair, 0.6f));
+        pickups.add(new ItemData("moneyPickup", Money, 0.6f));
+        pickups.add(new ItemData("batteryPickup", Battery, 0.6f));
+        pickups.add(new ItemData("weaponPickup", Weapon, 0.6f));
     }
 
     private ItemData item;
@@ -82,7 +82,7 @@ public class GameItem extends GameObject {
     }
 
     public static void AddItem(GameScreen gameScreen) {
-        boolean pickup = MathUtils.random.nextFloat() > 0.97f;
+        boolean pickup = MathUtils.random.nextFloat() > 0.8f;
 
         GameItem item = new GameItem(gameScreen, pickup);
 
@@ -135,7 +135,11 @@ public class GameItem extends GameObject {
                 gameScreen.roundStats.moneyCollected += 10;
                 break;
             case Battery:
-                car.batteryLevel += 10;
+                float level = car.batteryLevel + 10;
+                if (level > car.maxBattery) {
+                    level = car.maxBattery;
+                }
+                car.batteryLevel = level;
                 break;
             case Weapon:
                 car.pickupAxe();
