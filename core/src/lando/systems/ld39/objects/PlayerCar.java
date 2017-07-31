@@ -15,7 +15,7 @@ import lando.systems.ld39.utils.Config;
 public class PlayerCar extends Vehicle {
 
     public static float minSpeed = 20;
-    public static Rectangle defaultCollisionBounds = new Rectangle(8, 15, 38, 80);
+//    public static Rectangle defaultCollisionBounds = new Rectangle(8, 15, 38, 80);
 
     // this is the bounds the car can move around
     public Rectangle constraintBounds;
@@ -95,6 +95,14 @@ public class PlayerCar extends Vehicle {
     }
 
     @Override
+    protected void updateCollisionBounds(Rectangle bounds) {
+        collisionBounds.set(bounds);
+        Assets.inflateRect(collisionBounds, -4, -10);
+        collision_offset_x = collisionBounds.width / 2;
+        collision_offset_y = collisionBounds.height / 2;
+    }
+
+    @Override
     public void update(float dt) {
         super.update(dt);
 
@@ -110,7 +118,7 @@ public class PlayerCar extends Vehicle {
         bounds.x = position.x - bounds_offset_x;
         bounds.y = position.y - bounds_offset_y;
 
-        float offset = 200 * dt;
+        float offset = 200f * dt;
         if (isUp()) {
             bounds.y += offset;
         } else if (isDown()) {
@@ -130,14 +138,14 @@ public class PlayerCar extends Vehicle {
         position.x = bounds.x + bounds_offset_x;
         position.y = bounds.y + bounds_offset_y;
 
-        collisionBounds.x = bounds.x + defaultCollisionBounds.x;
-        collisionBounds.y = bounds.y + defaultCollisionBounds.y;
 
         testSetUpgradesAndRemoveThisMethod();
 
         setSpeed();
         updateBattery(dt);
         offRoadSlowdown(dt);
+        updateCollisionBounds(bounds);
+
     }
 
     private float fireTime = 0;

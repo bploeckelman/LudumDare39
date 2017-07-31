@@ -5,7 +5,13 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
+import lando.systems.ld39.ai.StateMachine;
+import lando.systems.ld39.ai.Transition;
+import lando.systems.ld39.ai.states.CruisingState;
+import lando.systems.ld39.ai.states.State;
 import lando.systems.ld39.screens.GameScreen;
+import lando.systems.ld39.utils.Assets;
 
 /**
  * Created by Brian on 7/30/2017.
@@ -16,19 +22,22 @@ public class EnemyCar extends Vehicle {
     private int chassis;
     public float relSpeed = 3f; // Relative speed
     private float deadTimer;
+    private StateMachine stateMachine;
+    public int type;
     private boolean collidedWithPlayer = false;
     private float collidedWithPlayerTimer;
     private static float collidedWithPlayerTimerDefault = 1f;
     private Vector2 collisionDirection;
 
     public EnemyCar(GameScreen gameScreen) {
-        this(gameScreen, Item.EnemyChassis1);
+        this(gameScreen, Item.EnemyChassis1, 0);
     }
 
-    public EnemyCar(GameScreen gameScreen, int enemyChassis) {
+    public EnemyCar(GameScreen gameScreen, int enemyChassis, int type) {
         super(gameScreen, enemyChassis);
         chassis = enemyChassis;
         deadTimer = 4;
+        this.type = type;
         collisionDirection = new Vector2();
         collidedWithPlayerTimer = collidedWithPlayerTimerDefault;
 
@@ -42,6 +51,14 @@ public class EnemyCar extends Vehicle {
         if (max != -1) {
             setUpgrade(item, MathUtils.random(max));
         }
+    }
+
+    @Override
+    protected void updateCollisionBounds(Rectangle bounds) {
+        collisionBounds.set(bounds);
+        Assets.inflateRect(collisionBounds, -4, -10);
+        collision_offset_x = collisionBounds.width / 2;
+        collision_offset_y = collisionBounds.height / 2;
     }
 
     @Override
@@ -99,11 +116,12 @@ public class EnemyCar extends Vehicle {
             }
         } else {
             // Follow player
-            float distance = position.dst(playerPosition);
-            Vector2 direction = (new Vector2(position)).sub(playerPosition).nor();
-
-            position.add(- (direction.x * relSpeed), (gameScreen.playerCar.speed * dt)- (direction.y * relSpeed));
-            setLocation(position.x, position.y);
+//            float distance = position.dst(playerPosition);
+//            Vector2 direction = (new Vector2(position)).sub(playerPosition).nor();
+//
+//            position.add(- (direction.x * relSpeed), (gameScreen.playerCar.speed *dt)- (direction.y * relSpeed));
+//            setLocation(position.x, position.y);
+            stateMachine.update(dt);
         }
     }
 
@@ -129,10 +147,9 @@ public class EnemyCar extends Vehicle {
             testlevel = 0;
         }
 
-        Vehicle enemyCar = new EnemyCar(gameScreen, chassis);
+        EnemyCar enemyCar = new EnemyCar(gameScreen, chassis, newLevel);
         enemyCar.setUpgrade(chassis, newLevel);
 
-        Vector2 position = gameScreen.playerCar.position;
         float positionY = gameScreen.camera.position.y + gameScreen.camera.viewportHeight/2f + enemyCar.bounds_offset_y;
         if (newLevel == 1){
             positionY = gameScreen.camera.position.y - gameScreen.camera.viewportHeight/2f - enemyCar.bounds_offset_y;
@@ -143,8 +160,16 @@ public class EnemyCar extends Vehicle {
 
 
         enemyCar.setLocation(positionX, positionY);
-
+        enemyCar.initializeStates();
 
         return enemyCar;
+    }
+
+    public void initializeStates(){
+        State cruise = new CruisingState(this);
+
+        Array<Transition> transitions = new Array<Transition>();
+
+        stateMachine = new StateMachine(cruise, transitions);
     }
 }

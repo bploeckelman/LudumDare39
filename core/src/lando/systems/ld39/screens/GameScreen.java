@@ -106,7 +106,7 @@ public class GameScreen extends BaseScreen {
 
     private void addEnemy(float dt) {
         hammerTime += dt;
-        if (hammerTime > 5) {
+        if (hammerTime > 3) {
             hammerTime = 0;
             gameObjects.add(EnemyCar.getEnemy(this));
         }
@@ -197,7 +197,8 @@ public class GameScreen extends BaseScreen {
         float deltaY = playerCar.getSpeed() * dt;
 
         // move camera based on car speed - update position of car in so it doesn't drop
-        playerCar.position.y += deltaY;
+        playerCar.setLocation(playerCar.position.x, playerCar.position.y + deltaY);
+//        playerCar.position.y += deltaY;
         camera.position.y += deltaY;
         constraintBounds.y += deltaY;
         if (!bossActive) {

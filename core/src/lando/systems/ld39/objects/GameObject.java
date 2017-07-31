@@ -41,7 +41,7 @@ public abstract class GameObject {
     public void setX(float x) {
         position.x = x;
         bounds.x = position.x - bounds_offset_x;
-        collisionBounds.x = position.x - bounds_offset_y;
+        collisionBounds.x = position.x - collision_offset_x;
     }
 
     public void setY(float y) {
@@ -84,5 +84,7 @@ public abstract class GameObject {
         bounds.y = position.y - bounds_offset_y;
 
         batch.draw(keyframe, bounds.x, bounds.y, bounds.width, bounds.height);
-    }
+        if (GameScreen.DEBUG) {
+            Assets.defaultNinePatch.draw(batch, collisionBounds.x, collisionBounds.y, collisionBounds.width, collisionBounds.height);
+        }    }
 }

@@ -230,4 +230,11 @@ public class Assets {
         return outColor;
     }
 
+    public static void inflateRect(Rectangle rect, float amountX, float amountY){
+        rect.x -= amountX;
+        rect.y -= amountY;
+        rect.width += 2f*amountX;
+        rect.height += 2f*amountY;
+    }
+
 }

@@ -26,11 +26,11 @@ public class MapScreenHud {
         COMPLETE
     }
 
-    private static final float TIME_CASH_IN_PAUSE = 0.5f;
-    private static final float TIME_CASH_IN_DISTANCE = 2f;
-    private static final float TIME_CASH_IN_MONEY_COLLECTED = 2f;
-    private static final float TIME_CASH_IN_POWERUPS = 2f;
-    private static final float TIME_CASH_IN_ENEMIES_SCRAPPED = 2f;
+    private static final float TIME_CASH_IN_PAUSE = 0.2f;
+    private static final float TIME_CASH_IN_DISTANCE = .5f;
+    private static final float TIME_CASH_IN_MONEY_COLLECTED = .5f;
+    private static final float TIME_CASH_IN_POWERUPS = .5f;
+    private static final float TIME_CASH_IN_ENEMIES_SCRAPPED = .5f;
 
     private static final float MONEY_PER_KM = 0.1f;
     private static final int MONEY_PER_POWERUP = 8;

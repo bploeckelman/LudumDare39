@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.IntIntMap;
 import lando.systems.ld39.screens.GameScreen;
+import lando.systems.ld39.utils.Assets;
 import lando.systems.ld39.utils.Config;
 
 public class Vehicle extends GameObject {
@@ -89,6 +90,10 @@ public class Vehicle extends GameObject {
         if (isExploded()) {
             render(batch, Item.Explosions, true);
         }
+        if (GameScreen.DEBUG) {
+            Assets.defaultNinePatch.draw(batch, collisionBounds.x, collisionBounds.y, collisionBounds.width, collisionBounds.height);
+        }
+
     }
 
     protected void render(SpriteBatch batch, int item, boolean animate) {
