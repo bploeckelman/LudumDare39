@@ -85,7 +85,7 @@ public class MapScreen extends BaseScreen {
                         setCurrentStage(ANIMATE_TRAVEL);
                     }
                 }))
-                .push(Tween.to(animationPercent, 1, TIME_DRAW_ROUTE_TRAVELED * Math.max(roundStats.distanceTraveledPercent, 0.4f))
+                .push(Tween.to(animationPercent, 1, TIME_DRAW_ROUTE_TRAVELED * Math.min(1f, Math.max(roundStats.distanceTraveledPercent, 0.4f)))
                         .ease(TweenEquations.easeInOutQuad)
                         .target(1))
                 .pushPause(TIME_PAUSE)
