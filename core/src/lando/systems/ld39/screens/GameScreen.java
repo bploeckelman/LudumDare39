@@ -145,6 +145,20 @@ public class GameScreen extends BaseScreen {
 
         particleSystem.update(dt);
 
+        if (killedMusk && !alreadyTransitioning){
+            alreadyTransitioning = true;
+            // TODO: make this a radder transition
+            Tween.to(alpha, 1, 1)
+                    .target(1)
+                    .setCallback(new TweenCallback() {
+                        @Override
+                        public void onEvent(int i, BaseTween<?> baseTween) {
+                            LudumDare39.game.setScreen(new EndScreen());
+                        }
+                    })
+                    .start(Assets.tween);
+        }
+
         if (playerCar.dead && killedBy == null) {
             killedBy = new KilledBy("Too much damage", Assets.healthTexture, hudCamera);
         }
@@ -164,7 +178,7 @@ public class GameScreen extends BaseScreen {
                         .start(Assets.tween);
             }
         }
-        if (pause) return;
+        if (pause || killedMusk) return;
 
         addItems(dt);
 

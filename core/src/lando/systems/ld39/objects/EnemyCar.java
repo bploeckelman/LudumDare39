@@ -116,6 +116,9 @@ public class EnemyCar extends Vehicle {
                 gameScreen.killedMiniBoss = true;
                 gameScreen.bossActive = false;
             }
+            if (type == Type.musk){
+                gameScreen.killedMusk = true;
+            }
             deadTimer -= dt;
             if (deadTimer < 0){
                 remove = true;
