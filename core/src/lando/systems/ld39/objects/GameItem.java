@@ -1,8 +1,10 @@
 package lando.systems.ld39.objects;
 
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import lando.systems.ld39.screens.GameScreen;
 import lando.systems.ld39.utils.Assets;
@@ -89,6 +91,8 @@ public class GameItem extends GameObject {
     }
 
     private ItemData item;
+    private float animTime = 0;
+    private boolean animate = false;
 
     public GameItem(GameScreen gameScreen, boolean pickup) {
         this(gameScreen, pickup, -1);
@@ -104,6 +108,8 @@ public class GameItem extends GameObject {
                 pickupId = MathUtils.random.nextInt(pickups.size);
             }
             item = pickups.get(pickupId);
+            animTime = 1.0f;
+            animate = true;
         }
 
         setKeyFrame(item.image);
@@ -159,9 +165,33 @@ public class GameItem extends GameObject {
         gameScreen.gameObjects.add(item);
     }
 
+    float dist = 0;
+
     @Override
     public void update(float dt) {
         super.update(dt);
+
+        if (animate) {
+            OrthographicCamera cam = gameScreen.camera;
+            float topY = cam.position.y + cam.viewportHeight * 0.4f;
+
+            if (animTime == 1f) {
+                dist = topY - position.y;
+            }
+            animTime -= dt;
+            if (animTime <= 0) {
+                animate = false;
+                animTime = 0;
+            }
+
+            float destX = gameScreen.road.getLeftEdge(topY);
+            destX += (gameScreen.road.getRightEdge(topY) - destX) / 2;
+
+            float curX = MathUtils.lerp(position.x, destX, 1 - animTime);
+            float curY = topY - (dist * animTime);
+            setLocation(curX, curY);
+        }
+
 
         PlayerCar car = gameScreen.playerCar;
         if (car.collisionBounds.overlaps(bounds)) {
