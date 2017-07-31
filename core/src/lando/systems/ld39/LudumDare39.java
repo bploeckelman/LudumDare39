@@ -14,6 +14,7 @@ public class LudumDare39 extends ApplicationAdapter {
 
 	public static LudumDare39 game;
 
+	public int roundNumber = 1;
 	public Stats gameStats;
 
 	private BaseScreen screen;
@@ -30,6 +31,13 @@ public class LudumDare39 extends ApplicationAdapter {
 		gameStats = new Stats();
 
 		setScreen(new TitleScreen());
+//		Stats roundStats = new Stats();
+//		roundStats.distanceTraveledPercent = 0.34f;
+//		roundStats.currentMoney = 128;
+//		roundStats.moneyCollected = 256;
+//		roundStats.enemiesScrapped = 4;
+//		roundStats.powerupsCollected = 4;
+//		setScreen( new MapScreen(roundStats, new PlayerCar(new GameScreen())));
 	}
 
 	@Override

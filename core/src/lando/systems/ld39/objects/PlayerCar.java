@@ -5,6 +5,9 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.IntIntMap;
+import com.badlogic.gdx.utils.IntMap;
 import lando.systems.ld39.screens.GameScreen;
 import lando.systems.ld39.utils.Assets;
 import lando.systems.ld39.utils.Config;
@@ -20,6 +23,9 @@ public class PlayerCar extends Vehicle {
     public float speed = 0;
     public float maxSpeed = 500;
 
+    public float handling = 200;
+    public float maxHandling;
+
     public float batteryLevel;
     public float maxBattery;
 
@@ -27,18 +33,14 @@ public class PlayerCar extends Vehicle {
     private Vector2 bulletPosition;
     private boolean alternateGun;
 
+    public static IntMap<Array<Upgrades.UpgradeItemMeta>> upgradesMeta;
+
     // TODO: addon layers
 
     public PlayerCar(GameScreen gameScreen) {
         super(gameScreen, Item.Chassis);
 
-        // TODO: make this based on upgrades
-        maxBattery = 10;
-        batteryLevel = maxBattery;
-        maxHealth = 100;
-        health = maxHealth;
-        maxSpeed = 1000f;
-
+        initializeUpgradesMeta();
 
         bulletVelocity = new Vector2();
         bulletPosition = new Vector2();
@@ -56,6 +58,8 @@ public class PlayerCar extends Vehicle {
         upgrades.setLevel(Item.Damage, 0);
         upgrades.setLevel(Item.Weapons, 0);
         upgrades.setLevel(Item.Axes, 0);
+
+        setStatsBasedOnUpgradeLevels();
     }
 
     public float getSpeed() {
@@ -64,6 +68,18 @@ public class PlayerCar extends Vehicle {
             currentSpeed *= 10;
         }
         return currentSpeed;
+    }
+
+    @Override
+    public void setUpgrades(IntIntMap upgradeItems) {
+        super.setUpgrades(upgradeItems);
+        setStatsBasedOnUpgradeLevels();
+    }
+
+    @Override
+    public void setUpgrade(int type, int level) {
+        super.setUpgrade(type, level);
+        setStatsBasedOnUpgradeLevels();
     }
 
     private int axeHits = 0;
@@ -101,10 +117,11 @@ public class PlayerCar extends Vehicle {
             bounds.y -= offset;
         }
 
+        float horiz_offset = handling * dt;
         if (isRight()) {
-            bounds.x += offset;
+            bounds.x += horiz_offset;
         } else if (isLeft()) {
-            bounds.x -= offset;
+            bounds.x -= horiz_offset;
         }
 
         constrainBounds(bounds);
@@ -217,7 +234,7 @@ public class PlayerCar extends Vehicle {
     private void setSpeed() {
         // i can't drive 55
         gameScreen.camera.project(tempVector3.set(position.x, position.y, 0));
-        float screenPercent = tempVector3.y / gameScreen.camera.viewportHeight;
+        float screenPercent = tempVector3.y / (gameScreen.camera.viewportHeight * 0.62f);
         speed = minSpeed + ((maxSpeed - minSpeed) * (screenPercent));
     }
 
@@ -267,7 +284,73 @@ public class PlayerCar extends Vehicle {
     }
 
     public float getBatteryPercent(){
-        return batteryLevel/maxBattery;
+        return batteryLevel / maxBattery;
+    }
+
+    private void setStatsBasedOnUpgradeLevels() {
+        maxBattery = upgradesMeta.get(Item.Battery).get(upgrades.getLevel(Item.Battery)).value;
+        batteryLevel = maxBattery;
+
+        maxHealth = upgradesMeta.get(Item.Chassis).get(upgrades.getLevel(Item.Chassis)).value;
+        health = maxHealth;
+
+        maxSpeed = upgradesMeta.get(Item.Booster).get(upgrades.getLevel(Item.Booster)).value;
+        speed = 0;
+
+        maxHandling = upgradesMeta.get(Item.Wheels).get(upgrades.getLevel(Item.Wheels)).value;
+        handling = maxHandling;
+    }
+
+    private void initializeUpgradesMeta() {
+        if (upgradesMeta != null) return;
+
+        Array<Upgrades.UpgradeItemMeta> batteryUpgradeMeta = new Array<Upgrades.UpgradeItemMeta>();
+        batteryUpgradeMeta.addAll(
+                new Upgrades.UpgradeItemMeta(0, 10),
+                new Upgrades.UpgradeItemMeta(200, 50),
+                new Upgrades.UpgradeItemMeta(300, 100),
+                new Upgrades.UpgradeItemMeta(500, 200)
+        );
+        Array<Upgrades.UpgradeItemMeta> engineUpgradeMeta = new Array<Upgrades.UpgradeItemMeta>();
+        engineUpgradeMeta.addAll(
+                new Upgrades.UpgradeItemMeta(0, 50),
+                new Upgrades.UpgradeItemMeta(200, 100),
+                new Upgrades.UpgradeItemMeta(300, 150),
+                new Upgrades.UpgradeItemMeta(400, 250)
+        );
+        Array<Upgrades.UpgradeItemMeta> boosterUpgradeMeta = new Array<Upgrades.UpgradeItemMeta>();
+        boosterUpgradeMeta.addAll(
+                new Upgrades.UpgradeItemMeta(0, 500),
+                new Upgrades.UpgradeItemMeta(200, 1000),
+                new Upgrades.UpgradeItemMeta(400, 1500)
+        );
+        Array<Upgrades.UpgradeItemMeta> weaponsUpgradeMeta = new Array<Upgrades.UpgradeItemMeta>();
+        weaponsUpgradeMeta.addAll(
+                new Upgrades.UpgradeItemMeta(0, 0),
+                new Upgrades.UpgradeItemMeta(200, 0),
+                new Upgrades.UpgradeItemMeta(300, 0),
+                new Upgrades.UpgradeItemMeta(500, 0)
+        );
+        Array<Upgrades.UpgradeItemMeta> chassisUpgradeMeta = new Array<Upgrades.UpgradeItemMeta>();
+        chassisUpgradeMeta.addAll(
+                new Upgrades.UpgradeItemMeta(0, 100),
+                new Upgrades.UpgradeItemMeta(200, 200),
+                new Upgrades.UpgradeItemMeta(300, 400)
+        );
+        Array<Upgrades.UpgradeItemMeta> wheelsUpgradeMeta = new Array<Upgrades.UpgradeItemMeta>();
+        wheelsUpgradeMeta.addAll(
+                new Upgrades.UpgradeItemMeta(0, 200),
+                new Upgrades.UpgradeItemMeta(200, 300),
+                new Upgrades.UpgradeItemMeta(300, 400)
+        );
+
+        upgradesMeta = new IntMap<Array<Upgrades.UpgradeItemMeta>>();
+        upgradesMeta.put(Item.Engine, engineUpgradeMeta);
+        upgradesMeta.put(Item.Battery, batteryUpgradeMeta);
+        upgradesMeta.put(Item.Wheels, wheelsUpgradeMeta);
+        upgradesMeta.put(Item.Booster, boosterUpgradeMeta);
+        upgradesMeta.put(Item.Chassis, chassisUpgradeMeta);
+        upgradesMeta.put(Item.Weapons, weaponsUpgradeMeta);
     }
 
 }

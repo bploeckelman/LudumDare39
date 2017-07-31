@@ -46,7 +46,6 @@ public class EnemyCar extends Vehicle {
     public void update(float dt) {
         super.update(dt);
         if (dead){
-            // TODO: use explosion textures instead
             deadTimer -= dt;
             if (deadTimer < 0){
                 remove = true;
@@ -74,7 +73,7 @@ public class EnemyCar extends Vehicle {
 //        batch.draw(Assets.whitePixel, bounds.x, bounds.y, bounds.width, bounds.height);
 //        batch.setColor(Color.WHITE);
 
-        render(batch, Item.EnemyChassis1, true);
+        render(batch, chassis, true);
         super.render(batch);
     }
 
@@ -94,8 +93,17 @@ public class EnemyCar extends Vehicle {
         enemyCar.setUpgrade(chassis, newLevel);
 
         Vector2 position = gameScreen.playerCar.position;
-        // adjust initial starting point
-        enemyCar.setLocation(position.x, position.y - gameScreen.playerCar.bounds.height - 100);
+        float positionY = gameScreen.camera.position.y + gameScreen.camera.viewportHeight/2f + enemyCar.bounds_offset_y;
+        if (newLevel == 1){
+            positionY = gameScreen.camera.position.y - gameScreen.camera.viewportHeight/2f - enemyCar.bounds_offset_y;
+        }
+        float left = gameScreen.road.getLeftEdge(positionY);
+        float right = gameScreen.road.getRightEdge(positionY);
+        float positionX = MathUtils.random(left + enemyCar.bounds_offset_x, right - enemyCar.bounds_offset_x);
+
+
+        enemyCar.setLocation(positionX, positionY);
+
 
         return enemyCar;
     }

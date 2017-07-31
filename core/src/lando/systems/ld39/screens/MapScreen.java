@@ -3,7 +3,6 @@ package lando.systems.ld39.screens;
 import aurelienribon.tweenengine.*;
 import aurelienribon.tweenengine.primitives.MutableFloat;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -19,6 +18,7 @@ import lando.systems.ld39.utils.Config;
 
 import static lando.systems.ld39.screens.MapScreen.Stage.ANIMATE_TRAVEL;
 import static lando.systems.ld39.screens.MapScreen.Stage.FADE_OUT;
+import static lando.systems.ld39.screens.MapScreen.Stage.HUD_CONTROL;
 
 public class MapScreen extends BaseScreen {
 
@@ -43,11 +43,14 @@ public class MapScreen extends BaseScreen {
     private float currentStageTime = 0;
     private MapScreenHud mapScreenHud;
 
-    private Stats roundStats;
+    private final Stats roundStats;
+    private final PlayerCar playerCar;
 
     public enum Stage {
         FADE_IN,
         ANIMATE_TRAVEL,
+        HUD_CONTROL,
+        HUD_COMPLETE,
         FADE_OUT
     }
 
@@ -56,11 +59,12 @@ public class MapScreen extends BaseScreen {
      *
      * @param roundStats
      */
-    public MapScreen(Stats roundStats, final PlayerCar playerCar) {
+    public MapScreen(Stats roundStats, PlayerCar playerCar) {
 
         this.roundStats = roundStats;
+        this.playerCar = playerCar;
         currentStage = Stage.FADE_IN;
-        mapScreenHud = new MapScreenHud(roundStats);
+        mapScreenHud = new MapScreenHud(this, roundStats);
 
         routeSpline = new CatmullRomSpline<Vector2>(Map.ROUTE_POINTS, false);
         routePoints = new Vector2[Map.ROUTE_RASTER_COUNT];
@@ -87,6 +91,19 @@ public class MapScreen extends BaseScreen {
                 .push(Tween.call(new TweenCallback() {
                     @Override
                     public void onEvent(int i, BaseTween<?> baseTween) {
+                        setCurrentStage(HUD_CONTROL);
+                    }
+                }))
+                .start(Assets.tween);
+
+    }
+
+    private void onHudComplete() {
+        System.out.println("MapScreen | onHudComplete");
+        Timeline.createSequence()
+                .push(Tween.call(new TweenCallback() {
+                    @Override
+                    public void onEvent(int i, BaseTween<?> baseTween) {
                         setCurrentStage(FADE_OUT);
                     }
                 }))
@@ -100,13 +117,23 @@ public class MapScreen extends BaseScreen {
                     }
                 }))
                 .start(Assets.tween);
-
     }
 
-    private void setCurrentStage(Stage stage) {
+    public void setCurrentStage(MapScreen.Stage stage) {
+        System.out.println("MapScreen | setCurrentStage | stage=" + stage.toString());
         this.currentStage = stage;
         this.currentStagePercent = 0f;
         this.currentStageTime = 0f;
+        switch (stage) {
+            case HUD_CONTROL:
+                mapScreenHud.takeControl();
+                break;
+            case HUD_COMPLETE:
+                onHudComplete();
+                break;
+            default:
+                // do nothing
+        }
     }
 
     @Override
@@ -120,6 +147,10 @@ public class MapScreen extends BaseScreen {
         // Update the currentStagePercent
         if (currentStagePercent < 1) {
             switch (currentStage) {
+                case HUD_COMPLETE:
+                case HUD_CONTROL:
+                    // currentStageTime and % don't matter
+                    break;
                 case ANIMATE_TRAVEL:
                     // We want the percentage to reflect the ease, so pass that % through instead.
                     currentStagePercent = animationPercent.floatValue();

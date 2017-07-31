@@ -2,6 +2,7 @@ package lando.systems.ld39.objects;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntIntMap;
 
 /**
@@ -11,6 +12,16 @@ import com.badlogic.gdx.utils.IntIntMap;
 public class Upgrades {
 
     private IntIntMap upgrades = new IntIntMap();
+
+    public static class UpgradeItemMeta {
+        public int cost;
+        public int value;
+
+        public UpgradeItemMeta(int cost, int value) {
+            this.cost = cost;
+            this.value = value;
+        }
+    }
 
     public TextureRegion getCurrentImage(int type, float animTimer, boolean animate) {
         int level = upgrades.get(type, -1);

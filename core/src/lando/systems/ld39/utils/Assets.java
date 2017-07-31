@@ -38,6 +38,7 @@ public class Assets {
     public static Texture grassTexture;
     public static Texture roadTexture;
     public static Texture gravelTexture;
+    public static Texture desertTexture;
 
     public static TextureAtlas atlas;
     public static NinePatch defaultNinePatch;
@@ -96,6 +97,8 @@ public class Assets {
         mgr.load("images/grass.png", Texture.class);
         mgr.load("images/road.png", Texture.class);
         mgr.load("images/gravel.png", Texture.class);
+        mgr.load("images/desert.png", Texture.class);
+
 
 
 
@@ -115,6 +118,8 @@ public class Assets {
         roadTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
         gravelTexture = mgr.get("images/gravel.png");
         gravelTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
+        desertTexture = mgr.get("images/desert.png");
+        desertTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
 
         testTexture = atlas.findRegion("badlogic");
         whitePixel = atlas.findRegion("white-pixel");
