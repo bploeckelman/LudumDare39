@@ -110,6 +110,7 @@ public class GameScreen extends BaseScreen {
     private float hammerTime = 7;
 
     private void addEnemy(float dt) {
+        if (vehicles.size > 2) return;
         hammerTime += dt;
         if (hammerTime > 3) {
             hammerTime = 0;

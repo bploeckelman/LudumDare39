@@ -39,7 +39,7 @@ public class EnemyCar extends Vehicle {
     public EnemyCar(GameScreen gameScreen, int enemyChassis, Type type) {
         super(gameScreen, enemyChassis);
         chassis = enemyChassis;
-        deadTimer = 4;
+        deadTimer = 1;
         this.type = type;
         collisionDirection = new Vector2();
         collidedWithPlayerTimer = collidedWithPlayerTimerDefault;
