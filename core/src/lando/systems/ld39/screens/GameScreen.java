@@ -31,7 +31,7 @@ import lando.systems.ld39.utils.SoundManager;
  */
 public class GameScreen extends BaseScreen {
 
-    public static boolean DEBUG = true;
+    public static boolean DEBUG = false;
 
     public static float zoomScale = 0.15f;
     public static float maxZoom = 1.6f;
@@ -298,55 +298,6 @@ public class GameScreen extends BaseScreen {
         String text = (int)(percent * 100) + "%";
         Assets.drawString(batch, text, 10, camera.viewportHeight/2 + 70,Color.WHITE, .35f, Assets.font, 100, Align.center);
 //            hud.render(batch);
-    }
-
-    // ------------------------------------------------------------------------
-    // InputAdapter Overrides
-    // ------------------------------------------------------------------------
-
-    @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        cameraTouchStart.set(camera.position);
-        touchStart.set(screenX, screenY, 0);
-
-        return true;
-    }
-
-    @Override
-    public boolean touchDragged(int screenX, int screenY, int pointer) {
-        camera.position.x = cameraTouchStart.x + (touchStart.x - screenX) * camera.zoom;
-        camera.position.y = cameraTouchStart.y + (screenY - touchStart.y) * camera.zoom;
-        if (cameraTouchStart.dst(camera.position) > DRAG_DELTA) {
-            cancelTouchUp = true;
-        }
-        return true;
-    }
-
-    @Override
-    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        if (cancelTouchUp) {
-            cancelTouchUp = false;
-            return false;
-        }
-
-        return false;
-    }
-
-    private Vector3 currentUnprojectedTouch = new Vector3();
-    @Override
-    public boolean scrolled(int change) {
-        camera.unproject(currentUnprojectedTouch.set(Gdx.input.getX(), Gdx.input.getY(), 0));
-        camera.zoom += change * camera.zoom * zoomScale;
-
-        updateCamera(Gdx.graphics.getDeltaTime());
-
-        float prevUnprojectedTouchX = currentUnprojectedTouch.x;
-        float prevUnprojectedTouchY = currentUnprojectedTouch.y;
-        camera.unproject(currentUnprojectedTouch.set(Gdx.input.getX(), Gdx.input.getY(), 0));
-        camera.position.add(prevUnprojectedTouchX - currentUnprojectedTouch.x, prevUnprojectedTouchY - currentUnprojectedTouch.y, 0);
-        camera.update();
-
-        return true;
     }
 
     public void removeAllBullets(){
