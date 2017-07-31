@@ -2,6 +2,7 @@ package lando.systems.ld39.objects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -385,6 +386,20 @@ public class PlayerCar extends Vehicle {
         upgradesMeta.put(Item.Booster, boosterUpgradeMeta);
         upgradesMeta.put(Item.Chassis, chassisUpgradeMeta);
         upgradesMeta.put(Item.Weapons, weaponsUpgradeMeta);
+    }
+
+    @Override
+    public void render(SpriteBatch batch) {
+        float curRotation = 0;
+        float turn = 15 + (10 * upgrades.getLevel(Item.Wheels));
+
+        if (isLeft()) {
+            curRotation = turn;
+        } else if (isRight()) {
+            curRotation = -turn;
+        }
+        rotation = curRotation;
+        super.render(batch);
     }
 
 }

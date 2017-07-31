@@ -14,7 +14,7 @@ public class SoundManager {
     public static final float MUSIC_VOLUME = 0.25f;
 
     public enum SoundOptions {
-        accelerate, coast
+        accelerate, coast, cashMoney
     }
 
     public enum MusicOptions {
@@ -30,6 +30,8 @@ public class SoundManager {
     public static void load(boolean playMusic) {
         soundMap.put(SoundOptions.accelerate, Gdx.audio.newSound(Gdx.files.internal("sounds/accelerate.ogg")));
         soundMap.put(SoundOptions.coast, Gdx.audio.newSound(Gdx.files.internal("sounds/coast.ogg")));
+        // make a money sound for the konami code!
+        soundMap.put(SoundOptions.cashMoney, Gdx.audio.newSound(Gdx.files.internal("sounds/coast.ogg")));
 
         musicMap.put(MusicOptions.game, Gdx.audio.newMusic(Gdx.files.internal("sounds/music-game.mp3")));
         musicMap.put(MusicOptions.garage, Gdx.audio.newMusic(Gdx.files.internal("sounds/music-garage.mp3")));

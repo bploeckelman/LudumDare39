@@ -94,6 +94,8 @@ public class GameScreen extends BaseScreen {
                     }
                 })
                 .start(Assets.tween);
+
+        Gdx.input.setInputProcessor(this);
     }
 
     private void createCar(IntIntMap currentUpgrades) {
@@ -355,5 +357,22 @@ public class GameScreen extends BaseScreen {
         Bullet b = bulletsPool.obtain();
         b.init(position, velocity, owner, tex, damage);
         activeBullets.add(b);
+    }
+
+
+    int[] sequence = new int [] { Input.Keys.UP, Input.Keys.UP, Input.Keys.DOWN, Input.Keys.DOWN, Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.B, Input.Keys.A};
+    int index = 0;
+    public boolean keyUp(int keyCode) {
+        if (index >= sequence.length) index = 0;
+        if (sequence[index] == keyCode) {
+            if (++index == sequence.length) {
+                SoundManager.playSound(SoundManager.SoundOptions.cashMoney);
+                roundStats.moneyCollected += 10000;
+                index = 0;
+            }
+        } else {
+            index = 0;
+        }
+        return false;
     }
 }

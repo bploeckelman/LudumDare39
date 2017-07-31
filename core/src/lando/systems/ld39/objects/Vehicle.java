@@ -103,10 +103,11 @@ public class Vehicle extends GameObject {
 
     }
 
+    protected float rotation = 0f;
     protected void render(SpriteBatch batch, int item, boolean animate) {
         TextureRegion image = upgrades.getCurrentImage(item, animStateTime, animate);
         if (image != null) {
-            batch.draw(image, bounds.x, bounds.y, bounds.width, bounds.height);
+            batch.draw(image, bounds.x, bounds.y, bounds_offset_x, bounds_offset_y, bounds.width, bounds.height, 1f, 1f, rotation);
         }
     }
 
