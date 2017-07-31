@@ -42,6 +42,7 @@ public class Assets {
     public static Texture gravelTexture;
     public static Texture desertTexture;
     public static Texture blackPixel;
+    public static Texture titleScreen;
 
     public static TextureAtlas atlas;
     public static NinePatch defaultNinePatch;
@@ -107,6 +108,7 @@ public class Assets {
         mgr.load("images/gravel.png", Texture.class);
         mgr.load("images/desert.png", Texture.class);
         mgr.load("images/black-pixel.png", Texture.class);
+        mgr.load("images/title-screen.png", Texture.class);
 
         batch = new SpriteBatch();
         shapes = new ShapeRenderer();
@@ -127,6 +129,7 @@ public class Assets {
         desertTexture = mgr.get("images/desert.png");
         desertTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
         blackPixel = mgr.get("images/black-pixel.png");
+        titleScreen = mgr.get("images/title-screen.png");
 
         testTexture = atlas.findRegion("badlogic");
         whitePixel = atlas.findRegion("white-pixel");

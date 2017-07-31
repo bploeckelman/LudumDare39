@@ -53,8 +53,8 @@ public class TitleScreen extends BaseScreen {
         batch.setProjectionMatrix(hudCamera.combined);
         batch.begin();
         {
-            batch.draw(Assets.testTexture, 0, 0, hudCamera.viewportWidth, hudCamera.viewportHeight);
-            Assets.drawString(batch, "Click to Start", 0, hudCamera.viewportHeight / 2f + 30f, new Color(0, 1, 0, clickAlpha), .4f, Assets.font, hudCamera.viewportWidth, Align.center);
+            batch.draw(Assets.titleScreen, 0, 0, hudCamera.viewportWidth, hudCamera.viewportHeight);
+            Assets.drawString(batch, "Click to Start", 0, 30f, new Color(0, 1, 0, clickAlpha), .4f, Assets.font, hudCamera.viewportWidth, Align.center);
 
             batch.setColor(0, 0, 0, alpha.floatValue());
             batch.draw(Assets.whitePixel, 0, 0, hudCamera.viewportWidth, hudCamera.viewportHeight);
