@@ -27,9 +27,9 @@ public class MoveToTopState extends State {
         float positionY = 0;
 
         if (deltaY < 0){
-            positionY = -1;
+            positionY = -2;
         } else if (deltaY > 0){
-            positionY = 1;
+            positionY = 2;
         }
 
 

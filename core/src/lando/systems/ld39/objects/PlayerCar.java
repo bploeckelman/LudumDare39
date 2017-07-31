@@ -73,7 +73,7 @@ public class PlayerCar extends Vehicle {
     public float getSpeed() {
         float currentSpeed = speed;
         if (isBoosting()) {
-            currentSpeed *= 10;
+            currentSpeed *= 1.5;
         }
         return currentSpeed;
     }
@@ -287,8 +287,11 @@ public class PlayerCar extends Vehicle {
         speed = minSpeed + ((maxSpeed - minSpeed) * (screenPercent));
     }
 
+
     private void constrainBounds(Rectangle bounds) {
         if (constraintBounds == null) return;
+
+        constraintBounds.y = gameScreen.camera.position.y - gameScreen.camera.viewportHeight/2f;
 
         if (bounds.x < constraintBounds.x) {
             bounds.x = constraintBounds.x;
@@ -355,17 +358,17 @@ public class PlayerCar extends Vehicle {
 
         Array<Upgrades.UpgradeItemMeta> batteryUpgradeMeta = new Array<Upgrades.UpgradeItemMeta>();
         batteryUpgradeMeta.addAll(
-                new Upgrades.UpgradeItemMeta(0, 40),
-                new Upgrades.UpgradeItemMeta(100, 100),
-                new Upgrades.UpgradeItemMeta(200, 200),
-                new Upgrades.UpgradeItemMeta(400, 500)
+                new Upgrades.UpgradeItemMeta(0, 20),
+                new Upgrades.UpgradeItemMeta(50, 40),
+                new Upgrades.UpgradeItemMeta(300, 60),
+                new Upgrades.UpgradeItemMeta(800, 120)
         );
         Array<Upgrades.UpgradeItemMeta> engineUpgradeMeta = new Array<Upgrades.UpgradeItemMeta>();
         engineUpgradeMeta.addAll(
-                new Upgrades.UpgradeItemMeta(0, 500),
-                new Upgrades.UpgradeItemMeta(100, 1000),
-                new Upgrades.UpgradeItemMeta(150, 1500),
-                new Upgrades.UpgradeItemMeta(250, 2500)
+                new Upgrades.UpgradeItemMeta(0, 300),
+                new Upgrades.UpgradeItemMeta(100, 500),
+                new Upgrades.UpgradeItemMeta(900, 750),
+                new Upgrades.UpgradeItemMeta(1800, 1000)
         );
         Array<Upgrades.UpgradeItemMeta> boosterUpgradeMeta = new Array<Upgrades.UpgradeItemMeta>();
         boosterUpgradeMeta.addAll(
@@ -377,14 +380,14 @@ public class PlayerCar extends Vehicle {
         weaponsUpgradeMeta.addAll(
                 new Upgrades.UpgradeItemMeta(0, 0),
                 new Upgrades.UpgradeItemMeta(100, 0),
-                new Upgrades.UpgradeItemMeta(200, 0),
-                new Upgrades.UpgradeItemMeta(400, 0)
+                new Upgrades.UpgradeItemMeta(400, 0),
+                new Upgrades.UpgradeItemMeta(800, 0)
         );
         Array<Upgrades.UpgradeItemMeta> chassisUpgradeMeta = new Array<Upgrades.UpgradeItemMeta>();
         chassisUpgradeMeta.addAll(
                 new Upgrades.UpgradeItemMeta(0, 100),
-                new Upgrades.UpgradeItemMeta(100, 200),
-                new Upgrades.UpgradeItemMeta(200, 400)
+                new Upgrades.UpgradeItemMeta(400, 200),
+                new Upgrades.UpgradeItemMeta(1200, 400)
         );
         Array<Upgrades.UpgradeItemMeta> wheelsUpgradeMeta = new Array<Upgrades.UpgradeItemMeta>();
         wheelsUpgradeMeta.addAll(

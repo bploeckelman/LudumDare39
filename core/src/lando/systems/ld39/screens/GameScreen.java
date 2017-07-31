@@ -58,6 +58,7 @@ public class GameScreen extends BaseScreen {
     public boolean killedMiniBoss;
     public boolean killedMusk;
     public boolean pause;
+    public boolean alreadyTransitioning;
 
     public Stats roundStats;
 
@@ -75,6 +76,7 @@ public class GameScreen extends BaseScreen {
 
     public void init(IntIntMap currentUpgrades) {
         roundStats = new Stats();
+        alreadyTransitioning = false;
         alpha.setValue(1);
         road = new Road();
 
@@ -147,8 +149,9 @@ public class GameScreen extends BaseScreen {
             killedBy = new KilledBy("Too much damage", Assets.healthTexture, hudCamera);
         }
 
-        if ((pause && killedBy != null)) {
-            if (Gdx.input.justTouched()) {
+        if ((pause && killedBy != null && !alreadyTransitioning)) {
+            if (Gdx.input.justTouched() || Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+                alreadyTransitioning = true;
                 Tween.to(alpha, 1, 1)
                         .target(1)
                         .setCallback(new TweenCallback() {
