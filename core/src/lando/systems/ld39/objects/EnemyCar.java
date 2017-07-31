@@ -19,21 +19,23 @@ import lando.systems.ld39.utils.Assets;
 
 public class EnemyCar extends Vehicle {
 
+    enum Type {cruiser, follower, leader, rammer}
+
     private int chassis;
     public float relSpeed = 3f; // Relative speed
     private float deadTimer;
     private StateMachine stateMachine;
-    public int type;
+    public Type type;
     private boolean collidedWithPlayer = false;
     private float collidedWithPlayerTimer;
     private static float collidedWithPlayerTimerDefault = 1f;
     private Vector2 collisionDirection;
 
     public EnemyCar(GameScreen gameScreen) {
-        this(gameScreen, Item.EnemyChassis1, 0);
+        this(gameScreen, Item.EnemyChassis1, Type.cruiser);
     }
 
-    public EnemyCar(GameScreen gameScreen, int enemyChassis, int type) {
+    public EnemyCar(GameScreen gameScreen, int enemyChassis, Type type) {
         super(gameScreen, enemyChassis);
         chassis = enemyChassis;
         deadTimer = 4;
@@ -146,8 +148,8 @@ public class EnemyCar extends Vehicle {
         if (testlevel == Item.getMaxLevel(chassis)) {
             testlevel = 0;
         }
-
-        EnemyCar enemyCar = new EnemyCar(gameScreen, chassis, newLevel);
+        Type type = Type.cruiser;
+        EnemyCar enemyCar = new EnemyCar(gameScreen, chassis, type);
         enemyCar.setUpgrade(chassis, newLevel);
 
         float positionY = gameScreen.camera.position.y + gameScreen.camera.viewportHeight/2f + enemyCar.bounds_offset_y;

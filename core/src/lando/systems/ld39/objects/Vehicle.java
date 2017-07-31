@@ -50,6 +50,7 @@ public class Vehicle extends GameObject {
     @Override
     public void update(float dt) {
         super.update(dt);
+
         if (health <= 0 ){
             dead = true;
         }
