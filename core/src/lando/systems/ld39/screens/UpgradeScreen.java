@@ -133,6 +133,7 @@ public class UpgradeScreen extends BaseScreen {
 
         playerCar.animStateTime += dt;
         playerCar.setUpgrades(currentUpgrades);
+        playerCar.setStatsBasedOnUpgradeLevels();
         playerCar.setSize(carRegion.width, carRegion.height);
         playerCar.setBoundsLocation(carRegion.x, carRegion.y);
     }

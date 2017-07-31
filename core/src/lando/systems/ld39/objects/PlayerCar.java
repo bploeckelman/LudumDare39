@@ -2,6 +2,7 @@ package lando.systems.ld39.objects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -71,15 +72,15 @@ public class PlayerCar extends Vehicle {
     }
 
     @Override
-    public void setUpgrades(IntIntMap upgradeItems) {
-        super.setUpgrades(upgradeItems);
-        setStatsBasedOnUpgradeLevels();
-    }
+    public void addDamage(float damage) {
+        super.addDamage(damage);
 
-    @Override
-    public void setUpgrade(int type, int level) {
-        super.setUpgrade(type, level);
-        setStatsBasedOnUpgradeLevels();
+        int damageLevel = (int)(3 * (1 - health/maxHealth));
+        if (damageLevel > 2) {
+            damageLevel = 2;
+        }
+
+        setUpgrade(Item.Damage, damageLevel);
     }
 
     private int axeHits = 0;
@@ -295,7 +296,7 @@ public class PlayerCar extends Vehicle {
         return batteryLevel / maxBattery;
     }
 
-    private void setStatsBasedOnUpgradeLevels() {
+    public void setStatsBasedOnUpgradeLevels() {
         maxBattery = upgradesMeta.get(Item.Battery).get(upgrades.getLevel(Item.Battery)).value;
         batteryLevel = maxBattery;
 

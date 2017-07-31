@@ -117,7 +117,7 @@ public class GameItem extends GameObject {
 
         PlayerCar car = gameScreen.playerCar;
         if (car.collisionBounds.overlaps(bounds)) {
-            car.health -= item.runoverDamage;
+            car.addDamage(item.runoverDamage);
             if (item.removeOnRunOver) {
                 handlePickup(car, item);
                 remove = true;
@@ -132,7 +132,7 @@ public class GameItem extends GameObject {
         if (!item.isPickup) return;
         switch (item.pickupId) {
             case Repair:
-                car.health += 10;
+                car.addDamage(-10);
                 break;
             case Money:
                 gameScreen.roundStats.moneyCollected += 10;

@@ -2,6 +2,7 @@ package lando.systems.ld39.objects;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.IntIntMap;
 import lando.systems.ld39.screens.GameScreen;
@@ -32,6 +33,11 @@ public class Vehicle extends GameObject {
         setKeyFrame(upgrades.getCurrentImage(chassisType, 0, false));
 
         setLocation((Config.gameWidth - bounds.width) / 2f, (Config.gameHeight - bounds.height) / 2f);
+    }
+
+    public void addDamage(float damage) {
+        float currentHealth = health - damage;
+        health = MathUtils.clamp(currentHealth, 0, maxHealth);
     }
 
     // set individual upgrade - doesn't have to exist - if you set an item to a level, it'll get added to the car

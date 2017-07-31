@@ -152,7 +152,7 @@ public class GameScreen extends BaseScreen {
             for (GameObject car : gameObjects){
                 if (!(car instanceof Vehicle)) continue;
                 if (car != b.owner && car.bounds.contains(b.position) && !car.dead) {
-                    ((Vehicle) car).health -= b.damage;
+                    ((Vehicle) car).addDamage(b.damage);
                     b.alive = false;
                     break;
                 }
