@@ -17,8 +17,8 @@ public class FollowState extends State {
 
     public FollowState(EnemyCar owner) {
         super(owner);
-        followDistance = MathUtils.random(150, 400);
-        reloadDelay = 3;
+        followDistance = MathUtils.random(150, 250);
+        reloadDelay = 1;
         bulletPosition = new Vector2();
         bulletVelocity = new Vector2();
     }
@@ -29,7 +29,7 @@ public class FollowState extends State {
         float deltaY = (owner.gameScreen.playerCar.position.y - followDistance) - owner.position.y;
         float speedMul = 1;
         float positionY = 0;
-        if (deltaY < - 20){
+        if (deltaY < - 200){
             speedMul = 1 + (deltaY/1000f);
         } else if (deltaY > 20){
             speedMul = 1.2f;
@@ -64,7 +64,7 @@ public class FollowState extends State {
             reloadDelay = 1;
             owner.gameScreen.addBullet(owner, bulletVelocity.set(0, carSpeed + 500),
                     bulletPosition.set(owner.position.x, positionY + owner.bounds.height/2f),
-                    Assets.basicProjectileTex, 2);
+                    Assets.basicProjectileTex, 5);
 
         }
     }
