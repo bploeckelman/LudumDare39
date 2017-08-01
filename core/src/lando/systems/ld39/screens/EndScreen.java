@@ -4,6 +4,7 @@ import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
+import aurelienribon.tweenengine.equations.Back;
 import aurelienribon.tweenengine.primitives.MutableFloat;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -101,7 +102,7 @@ public class EndScreen extends BaseScreen {
                 Timeline.createSequence()
                         .push(Tween.to(boyGirlCarPosX, 1, 1f).target(boy_girl_car_target1))
                         .pushPause(0.5f)
-                        .push(Tween.to(boyGirlCarPosX, 1, 0.5f).target(boy_girl_car_target2))
+                        .push(Tween.to(boyGirlCarPosX, 1, 0.75f).target(boy_girl_car_target2))
                         .pushPause(0.5f)
                         .push(Tween.to(boyGirlCarPosX, 1, 1f).target(boy_girl_car_target3))
                         .push(Tween.to(boyGirlCarPosX, 1, 0.5f).target(boy_girl_car_target4))
