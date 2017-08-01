@@ -192,6 +192,7 @@ public class EndScreen extends BaseScreen {
             + "Built with Lib[RED]GDX[] [PINK]<3[]";
 
     private void renderCredits(SpriteBatch batch) {
+        Assets.eightBitFont.setColor(Color.WHITE);
         Assets.eightBitFont.draw(batch, credits,
                 (hudCamera.viewportWidth / 2f) - (credits_text_width / 2f),
                 hudCamera.viewportHeight - margin,
