@@ -8,5 +8,6 @@ import com.badlogic.gdx.graphics.Color;
 public class Config                                                                                         {
     public static int gameWidth = 800                                                                       ;
     public static int gameHeight = 600                                                                      ;
+    public static boolean resizable = false                                                                 ;
     public static Color bgColor = new Color(.1f,.1f,.3f,1)                                     ;
                                                                                                             }

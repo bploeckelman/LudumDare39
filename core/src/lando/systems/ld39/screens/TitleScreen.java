@@ -42,7 +42,8 @@ public class TitleScreen extends BaseScreen {
                     .setCallback(new TweenCallback() {
                         @Override
                         public void onEvent(int i, BaseTween<?> baseTween) {
-                            LudumDare39.game.setScreen(new IntroScreen());
+//                            LudumDare39.game.setScreen(new IntroScreen());
+                            LudumDare39.game.setScreen(new EndScreen());
 
                         }
                     })

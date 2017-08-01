@@ -82,6 +82,10 @@ public class Assets {
 
     public static Animation<TextureRegion> bowserMusk;
     public static Animation<TextureRegion> carTalkAnim;
+    public static Animation<TextureRegion> boyCarAnim;
+    public static Animation<TextureRegion> girlCarAnim;
+    public static Animation<Texture> endCutSceneAnim;
+    public static Animation<Texture> endCutSceneGrassAnim;
 
     public static boolean initialized;
 
@@ -120,6 +124,22 @@ public class Assets {
         mgr.load("images/title-screen1.png", Texture.class);
         mgr.load("images/title-screen2.png", Texture.class);
         mgr.load("images/upgrade-garage-bg.png", Texture.class);
+
+        mgr.load("images/CutScene_0.png", Texture.class);
+        mgr.load("images/CutScene_1.png", Texture.class);
+        mgr.load("images/CutScene_2.png", Texture.class);
+        mgr.load("images/CutScene_3.png", Texture.class);
+        mgr.load("images/CutScene_4.png", Texture.class);
+        mgr.load("images/CutScene_5.png", Texture.class);
+        mgr.load("images/CutScene_6.png", Texture.class);
+        mgr.load("images/CutScene_7.png", Texture.class);
+        mgr.load("images/CutScene_8.png", Texture.class);
+        mgr.load("images/CutScene_9.png", Texture.class);
+        mgr.load("images/CutScene_10.png", Texture.class);
+        mgr.load("images/CutScene_11.png", Texture.class);
+
+        mgr.load("images/CutScene_Grass_0.png", Texture.class);
+        mgr.load("images/CutScene_Grass_1.png", Texture.class);
 
         batch = new SpriteBatch();
         shapes = new ShapeRenderer();
@@ -176,6 +196,53 @@ public class Assets {
         
         bowserMusk = new Animation<TextureRegion>(0.1f, atlas.findRegions("BowserMuskNoCar"), Animation.PlayMode.LOOP);
         carTalkAnim = new Animation<TextureRegion>(0.2f, atlas.findRegions("car-talk"), Animation.PlayMode.LOOP);
+
+        endCutSceneAnim = new Animation<Texture>(0.2f,
+                mgr.get("images/CutScene_0.png", Texture.class),
+                mgr.get("images/CutScene_0.png", Texture.class),
+                mgr.get("images/CutScene_0.png", Texture.class),
+                mgr.get("images/CutScene_1.png", Texture.class),
+                mgr.get("images/CutScene_1.png", Texture.class),
+                mgr.get("images/CutScene_1.png", Texture.class),
+                mgr.get("images/CutScene_2.png", Texture.class),
+                mgr.get("images/CutScene_2.png", Texture.class),
+                mgr.get("images/CutScene_2.png", Texture.class),
+                mgr.get("images/CutScene_3.png", Texture.class),
+                mgr.get("images/CutScene_3.png", Texture.class),
+                mgr.get("images/CutScene_3.png", Texture.class),
+                mgr.get("images/CutScene_4.png", Texture.class),
+                mgr.get("images/CutScene_4.png", Texture.class),
+                mgr.get("images/CutScene_4.png", Texture.class),
+                mgr.get("images/CutScene_5.png", Texture.class),
+                mgr.get("images/CutScene_5.png", Texture.class),
+                mgr.get("images/CutScene_5.png", Texture.class),
+                mgr.get("images/CutScene_6.png", Texture.class),
+                mgr.get("images/CutScene_6.png", Texture.class),
+                mgr.get("images/CutScene_6.png", Texture.class),
+                mgr.get("images/CutScene_7.png", Texture.class),
+                mgr.get("images/CutScene_7.png", Texture.class),
+                mgr.get("images/CutScene_7.png", Texture.class),
+                mgr.get("images/CutScene_8.png", Texture.class),
+                mgr.get("images/CutScene_8.png", Texture.class),
+                mgr.get("images/CutScene_8.png", Texture.class),
+                mgr.get("images/CutScene_9.png", Texture.class),
+                mgr.get("images/CutScene_9.png", Texture.class),
+                mgr.get("images/CutScene_10.png", Texture.class),
+                mgr.get("images/CutScene_10.png", Texture.class),
+                mgr.get("images/CutScene_11.png", Texture.class),
+                mgr.get("images/CutScene_11.png", Texture.class)
+        );
+
+        endCutSceneGrassAnim = new Animation<Texture>(0.1f,
+                mgr.get("images/CutScene_Grass_0.png", Texture.class),
+                mgr.get("images/CutScene_Grass_1.png", Texture.class)
+        );
+        endCutSceneGrassAnim.setPlayMode(Animation.PlayMode.LOOP);
+
+        boyCarAnim = new Animation<TextureRegion>(0.1f, atlas.findRegions("boycar"));
+        girlCarAnim = new Animation<TextureRegion>(0.1f, atlas.findRegions("girlcar"));
+        boyCarAnim.setPlayMode(Animation.PlayMode.LOOP);
+        girlCarAnim.setPlayMode(Animation.PlayMode.LOOP);
 
         map = mgr.get("images/usa-map-v1.png", Texture.class);
 
