@@ -182,6 +182,7 @@ public class Assets {
         defaultNinePatch = new NinePatch(atlas.findRegion("ninepatch"), 6,6,6,6);
         speechNinePatch = new NinePatch(atlas.findRegion("speech"), 12, 12, 12, 12);
         eightBitFont = new BitmapFont(Gdx.files.internal("fonts/emulogic-16pt.fnt"));
+        eightBitFont.getData().markupEnabled = true;
 
         final Texture distText = new Texture(Gdx.files.internal("fonts/ubuntu.png"), true);
         distText.setFilter(Texture.TextureFilter.MipMapLinearNearest, Texture.TextureFilter.Linear);

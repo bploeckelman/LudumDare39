@@ -24,6 +24,8 @@ import lando.systems.ld39.objects.*;
 import lando.systems.ld39.particles.ParticleSystem;
 import lando.systems.ld39.road.Road;
 import lando.systems.ld39.ui.KilledBy;
+import lando.systems.ld39.ui.TutorialInfo;
+import lando.systems.ld39.ui.TutorialManager;
 import lando.systems.ld39.utils.Assets;
 import lando.systems.ld39.utils.Config;
 import lando.systems.ld39.utils.Screenshake;
@@ -35,6 +37,7 @@ import lando.systems.ld39.utils.SoundManager;
 public class GameScreen extends BaseScreen {
 
     public static boolean DEBUG = false;
+    public static boolean firstRun = true;
 
     public static float maxZoom = 1.6f;
     public static float minZoom = 0.2f;
@@ -64,6 +67,7 @@ public class GameScreen extends BaseScreen {
 
     public KilledBy killedBy;
     public Screenshake shaker;
+    public TutorialManager tutorial;
 
     public GameScreen() {
         PlayerCar tempPlayerCar = new PlayerCar(this);
@@ -75,6 +79,9 @@ public class GameScreen extends BaseScreen {
     }
 
     public void init(IntIntMap currentUpgrades) {
+        if (firstRun) {
+            tutorial = new TutorialManager(this);
+        }
         roundStats = new Stats();
         alreadyTransitioning = false;
         alpha.setValue(1);
@@ -132,6 +139,11 @@ public class GameScreen extends BaseScreen {
     float addTime = 0;
     @Override
     public void update(float dt) {
+        if (tutorial != null && tutorial.isDisplayed()){
+            firstRun = false;
+            tutorial.update(dt);
+            return;
+        }
         camera.position.x = MathUtils.lerp(camera.position.x, camera.viewportWidth/2, .1f);
 //        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
 //            Gdx.app.exit();
@@ -324,6 +336,9 @@ public class GameScreen extends BaseScreen {
 
                 Assets.drawString(batch, "Now Speed  : " + (int) playerCar.speed, 10f, 120f, Color.WHITE, 0.3f, Assets.font);
                 Assets.drawString(batch, "Max Speed  : " + (int) playerCar.maxSpeed, 10f, 140f, Color.WHITE, 0.3f, Assets.font);
+            }
+            if (tutorial != null){
+                tutorial.render(batch);
             }
         }
         batch.end();

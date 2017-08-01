@@ -5,6 +5,7 @@ import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -81,6 +82,10 @@ public class IntroScreen extends BaseScreen {
             final float width = 3f * keyframe.getRegionWidth();
             final float height = 3f * keyframe.getRegionHeight();
             batch.draw(keyframe, hudCamera.viewportWidth - width - margin, margin, width, height);
+            batch.setColor(0, 0, 0, alpha.floatValue());
+            batch.draw(Assets.whitePixel, 0, 0, hudCamera.viewportWidth, hudCamera.viewportHeight);
+
+            batch.setColor(Color.WHITE);
         }
         batch.end();
 
