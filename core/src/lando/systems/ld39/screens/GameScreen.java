@@ -260,7 +260,6 @@ public class GameScreen extends BaseScreen {
             SoundManager.soundMap.get(SoundManager.SoundOptions.coast).stop();
             shaker.shake(2f);
 
-            // TODO make this move to MapScreen
             // Set the distanceTraveledPercent
             roundStats.distanceTraveledPercent = (road.distanceTraveled)/road.endRoad;
             pause = true;

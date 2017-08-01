@@ -146,7 +146,6 @@ public class EnemyCar extends Vehicle {
                 setLocation(position.x, position.y);
             }
         } else if (collisionBounds.overlaps(gameScreen.playerCar.collisionBounds)) {
-            // TODO: Collide
             if (!collidedWithPlayer) {
                 gameScreen.playerCar.health -= 4;
                 if (gameScreen.playerCar.upgrades.getLevel(Item.Axes) > 0){

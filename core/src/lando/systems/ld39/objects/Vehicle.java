@@ -25,7 +25,6 @@ public class Vehicle extends GameObject {
 
 
 
-    // TODO: addon layers
 
     public Vehicle(GameScreen gameScreen, int chassisType) {
         super(gameScreen);

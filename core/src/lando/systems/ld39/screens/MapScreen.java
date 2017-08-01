@@ -102,7 +102,7 @@ public class MapScreen extends BaseScreen {
     }
 
     private void onHudComplete() {
-        System.out.println("MapScreen | onHudComplete");
+//        System.out.println("MapScreen | onHudComplete");
         SoundManager.setMusicVolume(0f, 1f);
         Timeline.createSequence()
                 .push(Tween.call(new TweenCallback() {

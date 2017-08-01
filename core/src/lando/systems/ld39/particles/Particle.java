@@ -112,7 +112,6 @@ public class Particle implements Pool.Poolable {
         batch.setColor(r, g, b, a);
         batch.draw(region, pos.x, pos.y, scale.floatValue(), scale.floatValue());
         batch.setColor(Color.WHITE);
-        // TODO: rotation?
     }
 
 }

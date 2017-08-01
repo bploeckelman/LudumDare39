@@ -40,8 +40,6 @@ public class PlayerCar extends Vehicle {
 
     public static IntMap<Array<Upgrades.UpgradeItemMeta>> upgradesMeta;
 
-    // TODO: addon layers
-
     public PlayerCar(GameScreen gameScreen) {
         super(gameScreen, Item.Chassis);
 
